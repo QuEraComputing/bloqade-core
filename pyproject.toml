@@ -1,6 +1,6 @@
 [project]
 name = "bloqade-geometry"
-version = "0.5.2"
+version = "0.5.3"
 description = "Components for defining and manipulating geometric objects in Bloqade for neutral atom quantum computing."
 readme = "README.md"
 authors = [
