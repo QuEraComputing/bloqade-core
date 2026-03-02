@@ -15,7 +15,6 @@ from .types import FilledGrid
 
 @dialect.register
 class FilledGridMethods(MethodTable):
-
     @impl(stmts.Vacate)
     def vacate(self, interp: Interpreter, frame: Frame, stmt: stmts.Vacate):
         zone = frame.get_casted(stmt.zone, Grid)

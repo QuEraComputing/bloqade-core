@@ -16,23 +16,30 @@ NumX = TypeVar("NumX")
 NumY = TypeVar("NumY")
 
 
+def _normalize_index(size: int, index: int) -> int:
+    """Normalize a single index for a sequence of length size (e.g. -1 -> last)."""
+    if index < 0:
+        index += size
+    if index < 0 or index >= size:
+        raise IndexError("Index out of range")
+    return index
+
+
 def get_indices(size: int, index: Any) -> ilist.IList[int, Any]:
     if isinstance(index, slice):
-        return ilist.IList(range(size)[index])
+        return ilist.IList(list(range(*index.indices(size))))
     elif isinstance(index, int):
-        if index < 0:
-            index += size
-
-        if index < 0 or index >= size:
-            raise IndexError("Index out of range")
-
-        return ilist.IList([index])
+        return ilist.IList([_normalize_index(size, index)])
 
     index = ilist.IList(list(index))
     if any(not isinstance(i, int) for i in index.data):
         raise TypeError("Index must be an int, slice, or Sequence of ints")
 
-    return index
+    normalized = [_normalize_index(size, i) for i in index.data]
+
+    if any(a >= b for a, b in zip(normalized[:-1], normalized[1:])):
+        raise ValueError("Subgrid indices must be in strictly ascending order")
+    return ilist.IList(normalized)
 
 
 @dataclasses.dataclass
@@ -241,16 +248,13 @@ class Grid(ir.Data["Grid"], Generic[NumX, NumY]):
         Returns:
             Grid: The sub-grid view.
         """
-        if isinstance(x_indices, ilist.IList):
-            x_indices = x_indices.data
-
-        if isinstance(y_indices, ilist.IList):
-            y_indices = y_indices.data
+        x_indices = get_indices(len(self.x_spacing) + 1, x_indices)
+        y_indices = get_indices(len(self.y_spacing) + 1, y_indices)
 
         return SubGrid(
             parent=self,
-            x_indices=ilist.IList(x_indices),
-            y_indices=ilist.IList(y_indices),
+            x_indices=x_indices,
+            y_indices=y_indices,
         )
 
     @overload
@@ -598,9 +602,11 @@ class SubGrid(Grid[NumX, NumY]):
         )
 
     def get_view(self, x_indices, y_indices):
+        x_indices = get_indices(len(self.x_indices), x_indices)
+        y_indices = get_indices(len(self.y_indices), y_indices)
         return self.parent.get_view(
-            x_indices=ilist.IList([self.x_indices[x_index] for x_index in x_indices]),
-            y_indices=ilist.IList([self.y_indices[y_index] for y_index in y_indices]),
+            ilist.IList([self.x_indices.data[i] for i in x_indices.data]),
+            ilist.IList([self.y_indices.data[i] for i in y_indices.data]),
         )
 
     def __hash__(self):

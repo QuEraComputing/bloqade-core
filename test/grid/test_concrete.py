@@ -8,7 +8,6 @@ from bloqade.geometry.dialects import grid
 
 
 class TestGridInterpreter:
-
     def _get_grid(self):
         return grid.Grid.from_positions([1, 2], [3, 4])
 
