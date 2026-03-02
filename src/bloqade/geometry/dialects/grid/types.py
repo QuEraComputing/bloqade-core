@@ -298,6 +298,9 @@ class Grid(ir.Data["Grid"], Generic[NumX, NumY]):
         self, indices: tuple[ilist.IList[int, Nx], ilist.IList[int, Ny]]
     ) -> "Grid[Nx, Ny]": ...
 
+    @overload
+    def __getitem__(self, indices: tuple[list[int], list[int]]) -> "Grid[Any, Any]": ...
+
     def __getitem__(self, indices):
         if len(indices) != 2:
             raise IndexError("Grid indexing requires two indices (x, y)")
