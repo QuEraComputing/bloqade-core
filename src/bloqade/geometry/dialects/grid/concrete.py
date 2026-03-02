@@ -8,7 +8,6 @@ from .types import Grid
 
 @dialect.register
 class GridInterpreter(MethodTable):
-
     @impl(stmts.FromPositions)
     def from_positions(
         self,
