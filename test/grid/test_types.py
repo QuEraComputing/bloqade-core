@@ -78,6 +78,15 @@ class TestGrid:
         assert subgrid.x_init == 1
         assert subgrid.y_init == 2
 
+    def test_getitem_with_plain_lists(self):
+        """Grid __getitem__ accepts plain list[int] indices (same as get_view)."""
+        subgrid = self.grid_obj[[0, 2], [0, 2]]
+        expected = self.grid_obj.get_view(ilist.IList([0, 2]), ilist.IList([0, 2]))
+        assert subgrid.x_spacing == expected.x_spacing
+        assert subgrid.y_spacing == expected.y_spacing
+        assert subgrid.x_init == expected.x_init
+        assert subgrid.y_init == expected.y_init
+
     def test_shift(self):
         shifted_grid = self.grid_obj.shift(1, 2)
         expected_grid = Grid(
