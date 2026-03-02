@@ -7,7 +7,6 @@ from bloqade.geometry.dialects.grid.types import Grid
 
 
 class TestGrid:
-
     def _get_grid(self):
         return Grid(
             x_spacing=(1, 2, 3),
@@ -77,6 +76,43 @@ class TestGrid:
         assert subgrid.y_spacing == (9,)
         assert subgrid.x_init == 1
         assert subgrid.y_init == 2
+
+    def test_get_view_out_of_bounds_raises(self):
+        """Out-of-bounds indices (e.g. y=7 when grid has 3 rows) raise IndexError."""
+        with pytest.raises(IndexError, match="Index out of range"):
+            self.grid_obj.get_view(ilist.IList([0]), ilist.IList([7]))
+        with pytest.raises(IndexError, match="Index out of range"):
+            self.grid_obj.get_view(ilist.IList([15]), ilist.IList([0]))
+        with pytest.raises(IndexError, match="Index out of range"):
+            self.grid_obj.get_view(ilist.IList([0, 1]), ilist.IList([0, 3]))
+
+    def test_get_view_negative_index_last(self):
+        """-1 means last index (Python convention), not second-to-last."""
+        # Grid has 4 x positions (0..3) and 3 y positions (0..2). -1 should be last.
+        subgrid = self.grid_obj.get_view(ilist.IList([-1]), ilist.IList([-1]))
+        # Last x position is 7, last y is 11; single-point subgrid has no spacing
+        assert subgrid.x_init == 7
+        assert subgrid.y_init == 11
+        assert subgrid.x_positions == (7,)
+        assert subgrid.y_positions == (11,)
+
+    def test_get_view_indices_must_be_ascending(self):
+        """Subgrid indices must be in strictly ascending order after normalization."""
+        with pytest.raises(ValueError, match="strictly ascending order"):
+            self.grid_obj.get_view(ilist.IList([2, 0]), ilist.IList([0]))
+        with pytest.raises(ValueError, match="strictly ascending order"):
+            self.grid_obj.get_view(ilist.IList([0, 1, 1]), ilist.IList([0]))
+        with pytest.raises(ValueError, match="strictly ascending order"):
+            self.grid_obj.get_view(ilist.IList([0]), ilist.IList([2, 1]))
+
+    def test_getitem_with_plain_lists(self):
+        """Grid __getitem__ accepts plain list[int] indices (same as get_view)."""
+        subgrid = self.grid_obj[[0, 2], [0, 2]]
+        expected = self.grid_obj.get_view(ilist.IList([0, 2]), ilist.IList([0, 2]))
+        assert subgrid.x_spacing == expected.x_spacing
+        assert subgrid.y_spacing == expected.y_spacing
+        assert subgrid.x_init == expected.x_init
+        assert subgrid.y_init == expected.y_init
 
     def test_shift(self):
         shifted_grid = self.grid_obj.shift(1, 2)
@@ -288,7 +324,6 @@ class TestGrid:
 
 
 class TestSubGrid(TestGrid):
-
     def _get_grid(self):
         grid_obj = super()._get_grid()
         return grid_obj.get_view(ilist.IList([0, 1, 2, 3]), ilist.IList([0, 1, 2]))

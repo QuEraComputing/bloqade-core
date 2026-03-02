@@ -12,7 +12,6 @@ from .types import Grid, GridType
 
 @dialect.register(key="typeinfer")
 class TypeInferMethods(MethodTable):
-
     @impl(New)
     def inter_new(self, _: TypeInference, frame: Frame[types.TypeAttribute], node: New):
         def get_len(typ: types.TypeAttribute):
