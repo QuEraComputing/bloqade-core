@@ -15,13 +15,13 @@ Ny = TypeVar("Ny")
 @_wraps(Vacate)
 def vacate(
     zone: grid.Grid[Nx, Ny],
-    vacancies: ilist.IList[tuple[int, int], Any],
+    vacancies: ilist.IList[tuple[int, int], Any] | list[tuple[int, int]],
 ) -> FilledGrid[Nx, Ny]:
     """Create a FilledGrid by vacating specified positions from a grid.
 
     Args:
         zone: The original grid from which positions will be vacated.
-        vacancies: An IList of (x_index, y_index) tuples indicating positions to vacate
+        vacancies: An IList or list of (x_index, y_index) tuples indicating positions to vacate
 
     Returns:
         A FilledGrid with the specified vacancies.
@@ -33,13 +33,13 @@ def vacate(
 @_wraps(Fill)
 def fill(
     zone: grid.Grid[Nx, Ny],
-    filled: ilist.IList[tuple[int, int], Any],
+    filled: ilist.IList[tuple[int, int], Any] | list[tuple[int, int]],
 ) -> FilledGrid[Nx, Ny]:
     """Create a FilledGrid by filling specified positions in a grid.
 
     Args:
         zone: The original grid in which positions will be filled.
-        filled: An IList of (x_index, y_index) tuples indicating positions to fill
+        filled: An IList or list of (x_index, y_index) tuples indicating positions to fill
 
     Returns:
         A FilledGrid with the specified positions filled.

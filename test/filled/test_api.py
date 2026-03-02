@@ -144,3 +144,34 @@ def test_get_view():
     view = filled_1.get_view(ilist.IList([0, 2]), ilist.IList([0, 2]))
 
     assert view.vacancies == frozenset([(0, 0), (0, 1)])
+
+
+def test_vacate_with_plain_list():
+    """filled.vacate accepts plain list[tuple[int,int]] in geometry (round-trips like IList)."""
+    from bloqade.geometry.prelude import geometry
+
+    @geometry
+    def with_list():
+        zone = grid.from_positions([0, 1, 2], [0, 1, 2])
+        return filled.vacate(zone, [(0, 0), (1, 1), (2, 2)])
+
+    parent = grid.Grid.from_positions([0, 1, 2], [0, 1, 2])
+    expected = filled.FilledGrid.vacate(
+        parent,
+        frozenset([(0, 0), (1, 1), (2, 2)]),
+    )
+    assert with_list() == expected
+
+
+def test_fill_with_plain_list():
+    """filled.fill accepts plain list[tuple[int,int]] in geometry."""
+    from bloqade.geometry.prelude import geometry
+
+    @geometry
+    def with_list():
+        zone = grid.from_positions([0, 1, 2], [0, 1, 2])
+        return filled.fill(zone, [(0, 0), (1, 1)])
+
+    parent = grid.Grid.from_positions([0, 1, 2], [0, 1, 2])
+    expected = filled.FilledGrid.fill(parent, [(0, 0), (1, 1)])
+    assert with_list() == expected
