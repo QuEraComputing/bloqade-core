@@ -37,16 +37,16 @@
 </code></pre></div> <div class="doc doc-contents "> <p>The initial y position of the grid, or None if not set.</p> </div> </div> <div class="doc doc-object doc-attribute"> <h3 id=bloqade.geometry.dialects.grid.types.Grid.y_positions class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code> <span class="doc doc-object-name doc-attribute-name">y_positions</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-cached"><code>cached</code></small> <small class="doc doc-label doc-label-property"><code>property</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=n>y_positions</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>float</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span>
 </code></pre></div> <div class="doc doc-contents "> <p>Y positions of the grid.</p> <details class=note open> <summary>Note</summary> <p>If <code>y_init</code> is None, returns an empty tuple.</p> </details> </div> </div> <div class="doc doc-object doc-attribute"> <h3 id=bloqade.geometry.dialects.grid.types.Grid.y_spacing class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code> <span class="doc doc-object-name doc-attribute-name">y_spacing</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=n>y_spacing</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>float</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span>
 </code></pre></div> <div class="doc doc-contents "> <p>A tuple of y spacings between grid points.</p> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.geometry.dialects.grid.types.Grid.col_y_pos class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">col_y_pos</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>col_y_pos</span><span class=p>(</span><span class=n>column_index</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>[</span><span class=nb>float</span><span class=p>,</span> <span class=n>NumY</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Get the y positions of a specific column in the grid.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>column_index</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>The index of the column.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=kirin.dialects.ilist.IList>IList</span>[<span title=float>float</span>, <span title=bloqade.geometry.dialects.grid.types.NumY>NumY</span>]</code> </td> <td> <div class=doc-md-description> <p>IList[float, NumY]: The y positions of the specified column.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>506</span>
-<span class=normal>507</span>
-<span class=normal>508</span>
-<span class=normal>509</span>
-<span class=normal>510</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Get the y positions of a specific column in the grid.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>column_index</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>The index of the column.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=kirin.dialects.ilist.IList>IList</span>[<span title=float>float</span>, <span title=bloqade.geometry.dialects.grid.types.NumY>NumY</span>]</code> </td> <td> <div class=doc-md-description> <p>IList[float, NumY]: The y positions of the specified column.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>510</span>
 <span class=normal>511</span>
 <span class=normal>512</span>
 <span class=normal>513</span>
 <span class=normal>514</span>
-<span class=normal>515</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>col_y_pos</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>column_index</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>[</span><span class=nb>float</span><span class=p>,</span> <span class=n>NumY</span><span class=p>]:</span>
+<span class=normal>515</span>
+<span class=normal>516</span>
+<span class=normal>517</span>
+<span class=normal>518</span>
+<span class=normal>519</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>col_y_pos</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>column_index</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>[</span><span class=nb>float</span><span class=p>,</span> <span class=n>NumY</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Get the y positions of a specific column in the grid.</span>
 
 <span class=sd>    Args:</span>
@@ -62,14 +62,7 @@
 <span class=p>)</span>
 </code></pre></div> <div class="doc doc-contents "> <p>Create a grid from sequence of x and y positions.</p> <p>Args:</p> <pre><code>x_positions (Sequence[float]): The x positions.
 y_positions (Sequence[float]): The y positions.
-</code></pre> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>Grid</code></td> <td> </td> <td> <div class=doc-md-description> <p>A grid object with the specified x and y positions.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 79</span>
-<span class=normal> 80</span>
-<span class=normal> 81</span>
-<span class=normal> 82</span>
-<span class=normal> 83</span>
-<span class=normal> 84</span>
-<span class=normal> 85</span>
-<span class=normal> 86</span>
+</code></pre> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>Grid</code></td> <td> </td> <td> <div class=doc-md-description> <p>A grid object with the specified x and y positions.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 86</span>
 <span class=normal> 87</span>
 <span class=normal> 88</span>
 <span class=normal> 89</span>
@@ -95,7 +88,14 @@ y_positions (Sequence[float]): The y positions.
 <span class=normal>109</span>
 <span class=normal>110</span>
 <span class=normal>111</span>
-<span class=normal>112</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@classmethod</span>
+<span class=normal>112</span>
+<span class=normal>113</span>
+<span class=normal>114</span>
+<span class=normal>115</span>
+<span class=normal>116</span>
+<span class=normal>117</span>
+<span class=normal>118</span>
+<span class=normal>119</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@classmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>from_positions</span><span class=p>(</span>
     <span class=bp>cls</span><span class=p>,</span>
     <span class=n>x_positions</span><span class=p>:</span> <span class=n>Sequence</span><span class=p>[</span><span class=nb>float</span><span class=p>],</span>
@@ -130,16 +130,16 @@ y_positions (Sequence[float]): The y positions.
 
     <span class=k>return</span> <span class=bp>cls</span><span class=p>(</span><span class=n>x_spacing</span><span class=p>,</span> <span class=n>y_spacing</span><span class=p>,</span> <span class=n>x_init</span><span class=p>,</span> <span class=n>y_init</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.geometry.dialects.grid.types.Grid.get class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get</span><span class=p>(</span><span class=n>idx</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>int</span><span class=p>,</span> <span class=nb>int</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>float</span><span class=p>,</span> <span class=nb>float</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Get the (x, y) position at the specified grid index.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>idx</code> </td> <td> <code><span title=tuple>tuple</span>[<span title=int>int</span>, <span title=int>int</span>]</code> </td> <td> <div class=doc-md-description> <p>The (x, y) index in the grid.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=tuple>tuple</span>[<span title=float>float</span>, <span title=float>float</span>]</code> </td> <td> <div class=doc-md-description> <p>tuple[float, float]: The (x, y) position in the grid.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>200</span>
-<span class=normal>201</span>
-<span class=normal>202</span>
-<span class=normal>203</span>
-<span class=normal>204</span>
-<span class=normal>205</span>
-<span class=normal>206</span>
-<span class=normal>207</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Get the (x, y) position at the specified grid index.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>idx</code> </td> <td> <code><span title=tuple>tuple</span>[<span title=int>int</span>, <span title=int>int</span>]</code> </td> <td> <div class=doc-md-description> <p>The (x, y) index in the grid.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=tuple>tuple</span>[<span title=float>float</span>, <span title=float>float</span>]</code> </td> <td> <div class=doc-md-description> <p>tuple[float, float]: The (x, y) position in the grid.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>207</span>
 <span class=normal>208</span>
-<span class=normal>209</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>idx</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>int</span><span class=p>,</span> <span class=nb>int</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>float</span><span class=p>,</span> <span class=nb>float</span><span class=p>]:</span>
+<span class=normal>209</span>
+<span class=normal>210</span>
+<span class=normal>211</span>
+<span class=normal>212</span>
+<span class=normal>213</span>
+<span class=normal>214</span>
+<span class=normal>215</span>
+<span class=normal>216</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>idx</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>int</span><span class=p>,</span> <span class=nb>int</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>float</span><span class=p>,</span> <span class=nb>float</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Get the (x, y) position at the specified grid index.</span>
 
 <span class=sd>    Args:</span>
@@ -167,14 +167,7 @@ y_positions (Sequence[float]): The y positions.
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a></code> </td> <td> <div class=doc-md-description> <p>The sub-grid view.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>234</span>
-<span class=normal>235</span>
-<span class=normal>236</span>
-<span class=normal>237</span>
-<span class=normal>238</span>
-<span class=normal>239</span>
-<span class=normal>240</span>
-<span class=normal>241</span>
+  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a></code> </td> <td> <div class=doc-md-description> <p>The sub-grid view.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>241</span>
 <span class=normal>242</span>
 <span class=normal>243</span>
 <span class=normal>244</span>
@@ -187,7 +180,11 @@ y_positions (Sequence[float]): The y positions.
 <span class=normal>251</span>
 <span class=normal>252</span>
 <span class=normal>253</span>
-<span class=normal>254</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_view</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>x_indices</span><span class=p>,</span> <span class=n>y_indices</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>&quot;Grid&quot;</span><span class=p>:</span>
+<span class=normal>254</span>
+<span class=normal>255</span>
+<span class=normal>256</span>
+<span class=normal>257</span>
+<span class=normal>258</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_view</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>x_indices</span><span class=p>,</span> <span class=n>y_indices</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>&quot;Grid&quot;</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Get a sub-grid view based on the specified x and y indices.</span>
 
 <span class=sd>    Args:</span>
@@ -197,28 +194,25 @@ y_positions (Sequence[float]): The y positions.
 <span class=sd>    Returns:</span>
 <span class=sd>        Grid: The sub-grid view.</span>
 <span class=sd>    &quot;&quot;&quot;</span>
-    <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>x_indices</span><span class=p>,</span> <span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>):</span>
-        <span class=n>x_indices</span> <span class=o>=</span> <span class=n>x_indices</span><span class=o>.</span><span class=n>data</span>
-
-    <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>y_indices</span><span class=p>,</span> <span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>):</span>
-        <span class=n>y_indices</span> <span class=o>=</span> <span class=n>y_indices</span><span class=o>.</span><span class=n>data</span>
+    <span class=n>x_indices</span> <span class=o>=</span> <span class=n>get_indices</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>x_spacing</span><span class=p>)</span> <span class=o>+</span> <span class=mi>1</span><span class=p>,</span> <span class=n>x_indices</span><span class=p>)</span>
+    <span class=n>y_indices</span> <span class=o>=</span> <span class=n>get_indices</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>y_spacing</span><span class=p>)</span> <span class=o>+</span> <span class=mi>1</span><span class=p>,</span> <span class=n>y_indices</span><span class=p>)</span>
 
     <span class=k>return</span> <span class=n>SubGrid</span><span class=p>(</span>
         <span class=n>parent</span><span class=o>=</span><span class=bp>self</span><span class=p>,</span>
-        <span class=n>x_indices</span><span class=o>=</span><span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>(</span><span class=n>x_indices</span><span class=p>),</span>
-        <span class=n>y_indices</span><span class=o>=</span><span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>(</span><span class=n>y_indices</span><span class=p>),</span>
+        <span class=n>x_indices</span><span class=o>=</span><span class=n>x_indices</span><span class=p>,</span>
+        <span class=n>y_indices</span><span class=o>=</span><span class=n>y_indices</span><span class=p>,</span>
     <span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.geometry.dialects.grid.types.Grid.is_equal class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">is_equal</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>is_equal</span><span class=p>(</span><span class=n>other</span><span class=p>:</span> <span class=n>Any</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>bool</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Check if two grid geometry are equal.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>68</span>
-<span class=normal>69</span>
-<span class=normal>70</span>
-<span class=normal>71</span>
-<span class=normal>72</span>
-<span class=normal>73</span>
-<span class=normal>74</span>
-<span class=normal>75</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Check if two grid geometry are equal.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>75</span>
 <span class=normal>76</span>
-<span class=normal>77</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>is_equal</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>other</span><span class=p>:</span> <span class=n>Any</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>bool</span><span class=p>:</span>
+<span class=normal>77</span>
+<span class=normal>78</span>
+<span class=normal>79</span>
+<span class=normal>80</span>
+<span class=normal>81</span>
+<span class=normal>82</span>
+<span class=normal>83</span>
+<span class=normal>84</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>is_equal</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>other</span><span class=p>:</span> <span class=n>Any</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>bool</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Check if two grid geometry are equal.&quot;&quot;&quot;</span>
     <span class=k>if</span> <span class=ow>not</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>other</span><span class=p>,</span> <span class=n>Grid</span><span class=p>):</span>
         <span class=k>return</span> <span class=kc>False</span>
@@ -236,11 +230,7 @@ y_positions (Sequence[float]): The y positions.
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a>[<span title=bloqade.geometry.dialects.grid.types.NumX>NumX</span>, <span title=bloqade.geometry.dialects.grid.types.NumY>NumY</span>]</code> </td> <td> <div class=doc-md-description> <p>Grid[NumX, NumY]: A new grid with the specified repetitions and gaps.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>467</span>
-<span class=normal>468</span>
-<span class=normal>469</span>
-<span class=normal>470</span>
-<span class=normal>471</span>
+  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a>[<span title=bloqade.geometry.dialects.grid.types.NumX>NumX</span>, <span title=bloqade.geometry.dialects.grid.types.NumY>NumY</span>]</code> </td> <td> <div class=doc-md-description> <p>Grid[NumX, NumY]: A new grid with the specified repetitions and gaps.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>471</span>
 <span class=normal>472</span>
 <span class=normal>473</span>
 <span class=normal>474</span>
@@ -262,7 +252,11 @@ y_positions (Sequence[float]): The y positions.
 <span class=normal>490</span>
 <span class=normal>491</span>
 <span class=normal>492</span>
-<span class=normal>493</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>repeat</span><span class=p>(</span>
+<span class=normal>493</span>
+<span class=normal>494</span>
+<span class=normal>495</span>
+<span class=normal>496</span>
+<span class=normal>497</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>repeat</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span> <span class=n>x_times</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span> <span class=n>y_times</span><span class=p>:</span> <span class=nb>int</span><span class=p>,</span> <span class=n>x_gap</span><span class=p>:</span> <span class=nb>float</span><span class=p>,</span> <span class=n>y_gap</span><span class=p>:</span> <span class=nb>float</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>&quot;Grid[NumX, NumY]&quot;</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Repeat the grid in both x and y directions with specified gaps.</span>
@@ -290,16 +284,16 @@ y_positions (Sequence[float]): The y positions.
         <span class=n>y_init</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>y_init</span><span class=p>,</span>
     <span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.geometry.dialects.grid.types.Grid.row_x_pos class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">row_x_pos</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>row_x_pos</span><span class=p>(</span><span class=n>row_index</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>[</span><span class=nb>float</span><span class=p>,</span> <span class=n>NumX</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Get the x positions of a specific row in the grid.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>row_index</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>The index of the row.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=kirin.dialects.ilist.IList>IList</span>[<span title=float>float</span>, <span title=bloqade.geometry.dialects.grid.types.NumX>NumX</span>]</code> </td> <td> <div class=doc-md-description> <p>IList[float, NumX]: The x positions of the specified row.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>495</span>
-<span class=normal>496</span>
-<span class=normal>497</span>
-<span class=normal>498</span>
-<span class=normal>499</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Get the x positions of a specific row in the grid.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>row_index</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>The index of the row.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=kirin.dialects.ilist.IList>IList</span>[<span title=float>float</span>, <span title=bloqade.geometry.dialects.grid.types.NumX>NumX</span>]</code> </td> <td> <div class=doc-md-description> <p>IList[float, NumX]: The x positions of the specified row.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>499</span>
 <span class=normal>500</span>
 <span class=normal>501</span>
 <span class=normal>502</span>
 <span class=normal>503</span>
-<span class=normal>504</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>row_x_pos</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>row_index</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>[</span><span class=nb>float</span><span class=p>,</span> <span class=n>NumX</span><span class=p>]:</span>
+<span class=normal>504</span>
+<span class=normal>505</span>
+<span class=normal>506</span>
+<span class=normal>507</span>
+<span class=normal>508</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>row_x_pos</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>row_index</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>[</span><span class=nb>float</span><span class=p>,</span> <span class=n>NumX</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Get the x positions of a specific row in the grid.</span>
 
 <span class=sd>    Args:</span>
@@ -315,11 +309,7 @@ y_positions (Sequence[float]): The y positions.
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a>[<span title=bloqade.geometry.dialects.grid.types.NumX>NumX</span>, <span title=bloqade.geometry.dialects.grid.types.NumY>NumY</span>]</code> </td> <td> <div class=doc-md-description> <p>Grid[NumX, NumY]: A new grid with scaled x and y spacings</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>336</span>
-<span class=normal>337</span>
-<span class=normal>338</span>
-<span class=normal>339</span>
-<span class=normal>340</span>
+  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a>[<span title=bloqade.geometry.dialects.grid.types.NumX>NumX</span>, <span title=bloqade.geometry.dialects.grid.types.NumY>NumY</span>]</code> </td> <td> <div class=doc-md-description> <p>Grid[NumX, NumY]: A new grid with scaled x and y spacings</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>340</span>
 <span class=normal>341</span>
 <span class=normal>342</span>
 <span class=normal>343</span>
@@ -331,7 +321,11 @@ y_positions (Sequence[float]): The y positions.
 <span class=normal>349</span>
 <span class=normal>350</span>
 <span class=normal>351</span>
-<span class=normal>352</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>scale</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>x_scale</span><span class=p>:</span> <span class=nb>float</span><span class=p>,</span> <span class=n>y_scale</span><span class=p>:</span> <span class=nb>float</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>&quot;Grid[NumX, NumY]&quot;</span><span class=p>:</span>
+<span class=normal>352</span>
+<span class=normal>353</span>
+<span class=normal>354</span>
+<span class=normal>355</span>
+<span class=normal>356</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>scale</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>x_scale</span><span class=p>:</span> <span class=nb>float</span><span class=p>,</span> <span class=n>y_scale</span><span class=p>:</span> <span class=nb>float</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>&quot;Grid[NumX, NumY]&quot;</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Scale the grid spacings by the specified x and y factors with fixed x and y initial positions.</span>
 
 <span class=sd>    Args:</span>
@@ -356,11 +350,7 @@ y_positions (Sequence[float]): The y positions.
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a>[<span title=bloqade.geometry.dialects.grid.types.NumX>NumX</span>, <span title=bloqade.geometry.dialects.grid.types.NumY>NumY</span>]</code> </td> <td> <div class=doc-md-description> <p>Grid[NumX, NumY]: A new grid with the specified initial positions.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>354</span>
-<span class=normal>355</span>
-<span class=normal>356</span>
-<span class=normal>357</span>
-<span class=normal>358</span>
+  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a>[<span title=bloqade.geometry.dialects.grid.types.NumX>NumX</span>, <span title=bloqade.geometry.dialects.grid.types.NumY>NumY</span>]</code> </td> <td> <div class=doc-md-description> <p>Grid[NumX, NumY]: A new grid with the specified initial positions.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>358</span>
 <span class=normal>359</span>
 <span class=normal>360</span>
 <span class=normal>361</span>
@@ -371,7 +361,11 @@ y_positions (Sequence[float]): The y positions.
 <span class=normal>366</span>
 <span class=normal>367</span>
 <span class=normal>368</span>
-<span class=normal>369</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>set_init</span><span class=p>(</span>
+<span class=normal>369</span>
+<span class=normal>370</span>
+<span class=normal>371</span>
+<span class=normal>372</span>
+<span class=normal>373</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>set_init</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span> <span class=n>x_init</span><span class=p>:</span> <span class=nb>float</span> <span class=o>|</span> <span class=kc>None</span><span class=p>,</span> <span class=n>y_init</span><span class=p>:</span> <span class=nb>float</span> <span class=o>|</span> <span class=kc>None</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>&quot;Grid[NumX, NumY]&quot;</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Set the initial positions of the grid.</span>
@@ -393,11 +387,7 @@ y_positions (Sequence[float]): The y positions.
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a>[<span title=bloqade.geometry.dialects.grid.types.NumX>NumX</span>, <span title=bloqade.geometry.dialects.grid.types.NumY>NumY</span>]</code> </td> <td> <div class=doc-md-description> <p>Grid[NumX, NumY]: A new grid with the specified shifts applied to the initial positions.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>371</span>
-<span class=normal>372</span>
-<span class=normal>373</span>
-<span class=normal>374</span>
-<span class=normal>375</span>
+  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a>[<span title=bloqade.geometry.dialects.grid.types.NumX>NumX</span>, <span title=bloqade.geometry.dialects.grid.types.NumY>NumY</span>]</code> </td> <td> <div class=doc-md-description> <p>Grid[NumX, NumY]: A new grid with the specified shifts applied to the initial positions.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>375</span>
 <span class=normal>376</span>
 <span class=normal>377</span>
 <span class=normal>378</span>
@@ -409,7 +399,11 @@ y_positions (Sequence[float]): The y positions.
 <span class=normal>384</span>
 <span class=normal>385</span>
 <span class=normal>386</span>
-<span class=normal>387</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>shift</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>x_shift</span><span class=p>:</span> <span class=nb>float</span><span class=p>,</span> <span class=n>y_shift</span><span class=p>:</span> <span class=nb>float</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>&quot;Grid[NumX, NumY]&quot;</span><span class=p>:</span>
+<span class=normal>387</span>
+<span class=normal>388</span>
+<span class=normal>389</span>
+<span class=normal>390</span>
+<span class=normal>391</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>shift</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>x_shift</span><span class=p>:</span> <span class=nb>float</span><span class=p>,</span> <span class=n>y_shift</span><span class=p>:</span> <span class=nb>float</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>&quot;Grid[NumX, NumY]&quot;</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Shift the grid by the specified x and y amounts.</span>
 
 <span class=sd>    Args:</span>
@@ -434,11 +428,7 @@ y_positions (Sequence[float]): The y positions.
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a></code> </td> <td> <div class=doc-md-description> <p>a grid object</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>x_indices</code> </td> <td> <code><span title=float>float</span></code> </td> <td> <div class=doc-md-description> <p>a list/ilist of x indices to shift</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>x_shift</code> </td> <td> <code><span title=float>float</span></code> </td> <td> <div class=doc-md-description> <p>shift in the x direction</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p>Returns: Grid: a new grid object that has been shifted</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>389</span>
-<span class=normal>390</span>
-<span class=normal>391</span>
-<span class=normal>392</span>
-<span class=normal>393</span>
+  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a></code> </td> <td> <div class=doc-md-description> <p>a grid object</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>x_indices</code> </td> <td> <code><span title=float>float</span></code> </td> <td> <div class=doc-md-description> <p>a list/ilist of x indices to shift</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>x_shift</code> </td> <td> <code><span title=float>float</span></code> </td> <td> <div class=doc-md-description> <p>shift in the x direction</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p>Returns: Grid: a new grid object that has been shifted</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>393</span>
 <span class=normal>394</span>
 <span class=normal>395</span>
 <span class=normal>396</span>
@@ -471,7 +461,11 @@ y_positions (Sequence[float]): The y positions.
 <span class=normal>423</span>
 <span class=normal>424</span>
 <span class=normal>425</span>
-<span class=normal>426</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>shift_subgrid_x</span><span class=p>(</span>
+<span class=normal>426</span>
+<span class=normal>427</span>
+<span class=normal>428</span>
+<span class=normal>429</span>
+<span class=normal>430</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>shift_subgrid_x</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span> <span class=n>x_indices</span><span class=p>:</span> <span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>[</span><span class=nb>int</span><span class=p>,</span> <span class=n>Nx</span><span class=p>]</span> <span class=o>|</span> <span class=nb>slice</span><span class=p>,</span> <span class=n>x_shift</span><span class=p>:</span> <span class=nb>float</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>&quot;Grid[NumX, NumY]&quot;</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Shift a sub grid of grid in the x directions.</span>
@@ -517,11 +511,7 @@ y_positions (Sequence[float]): The y positions.
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a></code> </td> <td> <div class=doc-md-description> <p>a grid object</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>y_indices</code> </td> <td> <code><span title=float>float</span></code> </td> <td> <div class=doc-md-description> <p>a list/ilist of y indices to shift</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>y_shift</code> </td> <td> <code><span title=float>float</span></code> </td> <td> <div class=doc-md-description> <p>shift in the y direction</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p>Returns: Grid: a new grid object that has been shifted</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>428</span>
-<span class=normal>429</span>
-<span class=normal>430</span>
-<span class=normal>431</span>
-<span class=normal>432</span>
+  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a></code> </td> <td> <div class=doc-md-description> <p>a grid object</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>y_indices</code> </td> <td> <code><span title=float>float</span></code> </td> <td> <div class=doc-md-description> <p>a list/ilist of y indices to shift</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>y_shift</code> </td> <td> <code><span title=float>float</span></code> </td> <td> <div class=doc-md-description> <p>shift in the y direction</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p>Returns: Grid: a new grid object that has been shifted</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>432</span>
 <span class=normal>433</span>
 <span class=normal>434</span>
 <span class=normal>435</span>
@@ -554,7 +544,11 @@ y_positions (Sequence[float]): The y positions.
 <span class=normal>462</span>
 <span class=normal>463</span>
 <span class=normal>464</span>
-<span class=normal>465</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>shift_subgrid_y</span><span class=p>(</span>
+<span class=normal>465</span>
+<span class=normal>466</span>
+<span class=normal>467</span>
+<span class=normal>468</span>
+<span class=normal>469</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>shift_subgrid_y</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span> <span class=n>y_indices</span><span class=p>:</span> <span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>[</span><span class=nb>int</span><span class=p>,</span> <span class=n>Ny</span><span class=p>]</span> <span class=o>|</span> <span class=nb>slice</span><span class=p>,</span> <span class=n>y_shift</span><span class=p>:</span> <span class=nb>float</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>&quot;Grid[NumX, NumY]&quot;</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Shift a sub grid of grid in the y directions.</span>
@@ -593,17 +587,17 @@ y_positions (Sequence[float]): The y positions.
         <span class=n>y_init</span><span class=o>=</span><span class=n>y_init</span><span class=p>,</span>
     <span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.geometry.dialects.grid.types.Grid.x_bounds class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">x_bounds</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>x_bounds</span><span class=p>()</span>
-</code></pre></div> <div class="doc doc-contents "> <p>X bounds of the grid, which is <code>(x_init, x_init + width)</code>.</p> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If x_init is None, cannot compute bounds.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>136</span>
-<span class=normal>137</span>
-<span class=normal>138</span>
-<span class=normal>139</span>
-<span class=normal>140</span>
-<span class=normal>141</span>
-<span class=normal>142</span>
-<span class=normal>143</span>
+</code></pre></div> <div class="doc doc-contents "> <p>X bounds of the grid, which is <code>(x_init, x_init + width)</code>.</p> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If x_init is None, cannot compute bounds.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>143</span>
 <span class=normal>144</span>
 <span class=normal>145</span>
-<span class=normal>146</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>x_bounds</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+<span class=normal>146</span>
+<span class=normal>147</span>
+<span class=normal>148</span>
+<span class=normal>149</span>
+<span class=normal>150</span>
+<span class=normal>151</span>
+<span class=normal>152</span>
+<span class=normal>153</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>x_bounds</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;X bounds of the grid, which is `(x_init, x_init + width)`.</span>
 
 <span class=sd>    Raises:</span>
@@ -615,17 +609,17 @@ y_positions (Sequence[float]): The y positions.
 
     <span class=k>return</span> <span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>x_init</span><span class=p>,</span> <span class=bp>self</span><span class=o>.</span><span class=n>x_init</span> <span class=o>+</span> <span class=bp>self</span><span class=o>.</span><span class=n>width</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.geometry.dialects.grid.types.Grid.y_bounds class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">y_bounds</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>y_bounds</span><span class=p>()</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Y bounds of the grid, which is <code>(y_init, y_init + height)</code>.</p> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If y_init is None, cannot compute bounds.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>148</span>
-<span class=normal>149</span>
-<span class=normal>150</span>
-<span class=normal>151</span>
-<span class=normal>152</span>
-<span class=normal>153</span>
-<span class=normal>154</span>
-<span class=normal>155</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Y bounds of the grid, which is <code>(y_init, y_init + height)</code>.</p> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If y_init is None, cannot compute bounds.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>155</span>
 <span class=normal>156</span>
 <span class=normal>157</span>
-<span class=normal>158</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>y_bounds</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+<span class=normal>158</span>
+<span class=normal>159</span>
+<span class=normal>160</span>
+<span class=normal>161</span>
+<span class=normal>162</span>
+<span class=normal>163</span>
+<span class=normal>164</span>
+<span class=normal>165</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>y_bounds</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Y bounds of the grid, which is `(y_init, y_init + height)`.</span>
 
 <span class=sd>    Raises:</span>
@@ -691,13 +685,17 @@ y_positions (Sequence[float]): The y positions.
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a></code> </td> <td> <div class=doc-md-description> <p>The sub-grid view.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>600</span>
-<span class=normal>601</span>
-<span class=normal>602</span>
-<span class=normal>603</span>
-<span class=normal>604</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_view</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>x_indices</span><span class=p>,</span> <span class=n>y_indices</span><span class=p>):</span>
+  </span> (<code>bloqade.geometry.dialects.grid.types.Grid</code>)' href=#bloqade.geometry.dialects.grid.types.Grid>Grid</a></code> </td> <td> <div class=doc-md-description> <p>The sub-grid view.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/geometry/dialects/grid/types.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>604</span>
+<span class=normal>605</span>
+<span class=normal>606</span>
+<span class=normal>607</span>
+<span class=normal>608</span>
+<span class=normal>609</span>
+<span class=normal>610</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_view</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>x_indices</span><span class=p>,</span> <span class=n>y_indices</span><span class=p>):</span>
+    <span class=n>x_indices</span> <span class=o>=</span> <span class=n>get_indices</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>x_indices</span><span class=p>),</span> <span class=n>x_indices</span><span class=p>)</span>
+    <span class=n>y_indices</span> <span class=o>=</span> <span class=n>get_indices</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>y_indices</span><span class=p>),</span> <span class=n>y_indices</span><span class=p>)</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>parent</span><span class=o>.</span><span class=n>get_view</span><span class=p>(</span>
-        <span class=n>x_indices</span><span class=o>=</span><span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>([</span><span class=bp>self</span><span class=o>.</span><span class=n>x_indices</span><span class=p>[</span><span class=n>x_index</span><span class=p>]</span> <span class=k>for</span> <span class=n>x_index</span> <span class=ow>in</span> <span class=n>x_indices</span><span class=p>]),</span>
-        <span class=n>y_indices</span><span class=o>=</span><span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>([</span><span class=bp>self</span><span class=o>.</span><span class=n>y_indices</span><span class=p>[</span><span class=n>y_index</span><span class=p>]</span> <span class=k>for</span> <span class=n>y_index</span> <span class=ow>in</span> <span class=n>y_indices</span><span class=p>]),</span>
+        <span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>([</span><span class=bp>self</span><span class=o>.</span><span class=n>x_indices</span><span class=o>.</span><span class=n>data</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=n>x_indices</span><span class=o>.</span><span class=n>data</span><span class=p>]),</span>
+        <span class=n>ilist</span><span class=o>.</span><span class=n>IList</span><span class=p>([</span><span class=bp>self</span><span class=o>.</span><span class=n>y_indices</span><span class=o>.</span><span class=n>data</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=n>y_indices</span><span class=o>.</span><span class=n>data</span><span class=p>]),</span>
     <span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> </div> </div> </div> </div> </div> </div> </article> </div> <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script> </div> <button type=button class="md-top md-icon" data-md-component=top hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg> Back to top </button> </main> <footer class=md-footer> <nav class="md-footer__inner md-grid" aria-label=Footer> <a href=../_interface/ class="md-footer__link md-footer__link--prev" aria-label="Previous: statements"> <div class="md-footer__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg> </div> <div class=md-footer__title> <span class=md-footer__direction> Previous </span> <div class=md-ellipsis> statements </div> </div> </a> <a href=../../filled/_interface/ class="md-footer__link md-footer__link--next" aria-label="Next: statements"> <div class=md-footer__title> <span class=md-footer__direction> Next </span> <div class=md-ellipsis> statements </div> </div> <div class="md-footer__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg> </div> </a> </nav> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-copyright> <div class=md-copyright__highlight> Copyright &copy; 2024- QuEra Computing, Inc. </div> Made with <a href=https://squidfunk.github.io/mkdocs-material/ target=_blank rel=noopener> Material for MkDocs </a> </div> <div class=md-social> <a href=https://x.com/QueraComputing target=_blank rel=noopener title=x.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg> </a> <a href=https://www.linkedin.com/company/quera-computing-inc/ target=_blank rel=noopener title=www.linkedin.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg> </a> </div> </div> </div> </footer> </div> <div class=md-dialog data-md-component=dialog> <div class="md-dialog__inner md-typeset"></div> </div> <script id=__config type=application/json>{"annotate": null, "base": "../../../../../..", "features": ["announce.dismiss", "content.action.view", "content.action.edit", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "navigation.footer", "search.highlight", "search.suggest", "toc.follow"], "search": "../../../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script> <script src=../../../../../../assets/javascripts/bundle.79ae519e.min.js></script> <script src=../../../../../../scripts/katex.js></script> <script src=https://unpkg.com/katex@0/dist/katex.min.js></script> <script src=https://unpkg.com/katex@0/dist/contrib/auto-render.min.js></script> </body> </html>
