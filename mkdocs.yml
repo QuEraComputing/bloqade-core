@@ -1,10 +1,10 @@
-site_name: bloqade-geometry
-repo_name: bloqade-geometry
-repo_url: https://github.com/QuEraComputing/bloqade-geometry
+site_name: bloqade-core
+repo_name: bloqade-core
+repo_url: https://github.com/QuEraComputing/bloqade-core
 site_description: >-
-  Bloqade Geometry
+  Bloqade-Core: core building blocks for the Bloqade ecosystem
 edit_uri: "edit/main/docs/"
-site_url: https://github.com/QuEraComputing/bloqade-geometry
+site_url: https://github.com/QuEraComputing/bloqade-core
 
 # Page tree
 nav:
