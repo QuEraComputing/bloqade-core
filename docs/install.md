@@ -1,10 +1,10 @@
 # Installation
 
-Bloqade Geometry is available on the PyPI registry. Bloqade Geometry supports Python
+Bloqade-Core is available on the PyPI registry. Bloqade-Core supports Python
 3.10 or later. We recommend using Python 3.10+ for the best experience.
 
 We strongly recommend developing project using [`uv`](https://docs.astral.sh/uv/),
-which is the official development environment for Kirin and Bloqade Geometry. You can
+which is the official development environment for Kirin and Bloqade-Core. You can
 install `uv` using the following command:
 
 === "Linux and macOS"
@@ -22,7 +22,7 @@ install `uv` using the following command:
 
 ## Install package:
 ```bash
-uv add bloqade-geometry
+uv add bloqade-core
 ```
 
 ## Development
