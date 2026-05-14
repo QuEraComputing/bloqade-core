@@ -4,7 +4,7 @@ version = "0.6.0-dev"
 description = "Components for defining and manipulating geometric objects in Bloqade for neutral atom quantum computing."
 readme = "README.md"
 authors = [
-    { name = "Phillip Weinberg", email = "pweinberg@quera.com" }
+    { name = "Phillip Weinberg", email = "pweinberg@quera.com" },
     { name = "Kai-Hsin Wu", email = "khwu@quera.com" }
 ]
 dependencies = [
