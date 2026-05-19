@@ -414,11 +414,13 @@ class SingleKernelTask(TaskABC[FutureType]):
         msg = "=" * 60 + "\n"
         msg += "DRY RUN -- NO PROGRAM WAS ACTUALLY SUBMITTED FOR EXECUTION\n"
         msg += "Would now submit a task containing a single subtask for the kernel:\n"
-        kernel_print = f"{self.kernel.sym_name}("
         if self.arguments is not None:
-            for arg in self.arguments:
-                kernel_print += f"{arg}, "
-        kernel_print += ")"
+            formatted_arguments = ", ".join(
+                f"{key}={value}" for key, value in self.arguments.items()
+            )
+        else:
+            formatted_arguments = ""
+        kernel_print = f"{self.kernel.sym_name}({formatted_arguments})"
         shots = self.num_shots if isinstance(self.num_shots, int) else self.num_shots[0]
         msg += f"  * {kernel_print} - {shots} shots\n"
         msg += "Set dry_run=False to actually execute this kernel.\n"

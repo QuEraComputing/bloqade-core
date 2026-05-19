@@ -159,11 +159,12 @@ class Result:
         subtasks = self.subtasks(verify=verify)
         return [subtask["arguments"] for subtask in subtasks]
 
-    def full_arguments(self) -> list[dict]:
+    def full_arguments(self) -> list[dict | None]:
         """Return all stored subtask arguments without merging task IDs.
 
         Returns:
-            list[dict]: Arguments for every selected stored subtask row.
+            list[dict | None]: Arguments for every selected stored subtask row,
+                including `None` for rows without arguments.
         """
         return self.storage.get_arguments(storage_filter=self.storage_filter)
 
