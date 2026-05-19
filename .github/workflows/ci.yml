@@ -38,7 +38,7 @@ jobs:
         uses: codecov/codecov-action@v6
         with:
           files: coverage.xml # optional
-          fail_ci_if_error: true # optional (default = false)
+          fail_ci_if_error: false # optional (default = false) -- TODO change back to true once we fix codecov after rename
           verbose: true # optional (default = false)
           token: ${{ secrets.CODECOV_TOKEN }} # required
       - name: Archive code coverage results
