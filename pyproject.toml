@@ -8,7 +8,9 @@ authors = [
     { name = "Kai-Hsin Wu", email = "khwu@quera.com" }
 ]
 dependencies = [
-    "kirin-toolchain~=0.22.0",
+    "kirin-toolchain~=0.22.11",
+    "loguru>=0.7.3",
+    "qlam-core>=0.2.0",
 ]
 requires-python = ">= 3.10"
 
