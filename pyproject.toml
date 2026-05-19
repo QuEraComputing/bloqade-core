@@ -1,6 +1,6 @@
 [project]
 name = "bloqade-core"
-version = "0.6.0-dev"
+version = "0.7.0-dev"
 description = "Core Components in Bloqade for neutral atom quantum computing."
 readme = "README.md"
 authors = [
