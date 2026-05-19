@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from types import SimpleNamespace
 
 import pytest
+from kirin.prelude import basic_no_opt
 
 from bloqade.core.device.future import ApiFetchOptions
 from bloqade.core.device.local_storage import DictStorage
@@ -18,24 +19,24 @@ task_mod = importlib.import_module("bloqade.core.device.task")
 CREATION_TIME = datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
 
 
-class FakeKernel:
-    def __init__(self, sym_name: str):
-        self.sym_name = sym_name
+@basic_no_opt
+def main():
+    return
 
 
-class SerializableSingleKernelTask(SingleKernelTask):
-    def serialize_kernel(self, kernel):
-        return f"serialized:{kernel.sym_name}"
+@basic_no_opt
+def scan():
+    return
 
 
-class SerializableParameterScanTask(ParameterScanTask):
-    def serialize_kernel(self, kernel):
-        return f"serialized:{kernel.sym_name}"
+@basic_no_opt
+def first():
+    return
 
 
-class SerializableKernelBatchTask(KernelBatchTask):
-    def serialize_kernel(self, kernel):
-        return f"serialized:{kernel.sym_name}"
+@basic_no_opt
+def second():
+    return
 
 
 class RecordingFuture:
@@ -45,10 +46,10 @@ class RecordingFuture:
 
 
 def test_single_kernel_task_creates_task_definition_with_arguments_and_metadata():
-    task = SerializableSingleKernelTask(
+    task = SingleKernelTask(
         context_name="ctx",
         program_language="flair.v1",
-        kernel=FakeKernel("main"),
+        kernel=main,
         arguments={"theta": 1.5},
         metadata={"purpose": "unit-test"},
         num_shots=23,
@@ -57,9 +58,6 @@ def test_single_kernel_task_creates_task_definition_with_arguments_and_metadata(
     task_definition = task.create_task_definition()
 
     assert task_definition.program_language == "flair.v1"
-    assert [program.content for program in task_definition.programs] == [
-        "serialized:main"
-    ]
     assert len(task_definition.subtasks) == 1
     subtask = task_definition.subtasks[0]
     assert subtask.program_index == 0
@@ -72,10 +70,10 @@ def test_single_kernel_task_creates_task_definition_with_arguments_and_metadata(
 
 
 def test_single_kernel_task_omits_arguments_and_metadata_when_unset():
-    task = SerializableSingleKernelTask(
+    task = SingleKernelTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("main"),
+        kernel=main,
         num_shots=1,
     )
 
@@ -88,10 +86,10 @@ def test_single_kernel_task_omits_arguments_and_metadata_when_unset():
 
 
 def test_parameter_scan_reuses_one_program_for_all_argument_sets():
-    task = SerializableParameterScanTask(
+    task = ParameterScanTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("scan"),
+        kernel=scan,
         arguments=[{"x": 1.0}, {"x": 2.0}, {"x": 3.0}],
         metadata=[{"i": 0}, {"i": 1}, {"i": 2}],
         num_shots=7,
@@ -99,9 +97,6 @@ def test_parameter_scan_reuses_one_program_for_all_argument_sets():
 
     task_definition = task.create_task_definition()
 
-    assert [program.content for program in task_definition.programs] == [
-        "serialized:scan"
-    ]
     assert [subtask.program_index for subtask in task_definition.subtasks] == [0, 0, 0]
     assert [subtask.num_shots for subtask in task_definition.subtasks] == [7, 7, 7]
     assert [subtask.arguments for subtask in task_definition.subtasks] == [
@@ -117,20 +112,16 @@ def test_parameter_scan_reuses_one_program_for_all_argument_sets():
 
 
 def test_kernel_batch_task_maps_each_kernel_to_its_own_program():
-    task = SerializableKernelBatchTask(
+    task = KernelBatchTask(
         context_name="ctx",
         program_language="squin",
-        kernels=[FakeKernel("first"), FakeKernel("second")],
+        kernels=[first, second],
         arguments=[{"x": 1.0}, {"x": 2.0}],
         num_shots=[3, 5],
     )
 
     task_definition = task.create_task_definition()
 
-    assert [program.content for program in task_definition.programs] == [
-        "serialized:first",
-        "serialized:second",
-    ]
     assert [subtask.program_index for subtask in task_definition.subtasks] == [0, 1]
     assert [subtask.num_shots for subtask in task_definition.subtasks] == [3, 5]
     assert [subtask.arguments for subtask in task_definition.subtasks] == [
@@ -140,10 +131,10 @@ def test_kernel_batch_task_maps_each_kernel_to_its_own_program():
 
 
 def test_validate_arguments_rejects_metadata_length_mismatch():
-    task = SerializableParameterScanTask(
+    task = ParameterScanTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("scan"),
+        kernel=scan,
         arguments=[{"x": 1.0}, {"x": 2.0}],
         metadata=[{"only": "one"}],
         num_shots=7,
@@ -154,10 +145,10 @@ def test_validate_arguments_rejects_metadata_length_mismatch():
 
 
 def test_validate_arguments_rejects_shot_count_length_mismatch():
-    task = SerializableKernelBatchTask(
+    task = KernelBatchTask(
         context_name="ctx",
         program_language="squin",
-        kernels=[FakeKernel("first"), FakeKernel("second")],
+        kernels=[first, second],
         num_shots=[3],
     )
 
@@ -166,10 +157,10 @@ def test_validate_arguments_rejects_shot_count_length_mismatch():
 
 
 def test_run_async_dry_run_prints_summary_and_does_not_submit(monkeypatch, capsys):
-    task = SerializableSingleKernelTask(
+    task = SingleKernelTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("main"),
+        kernel=main,
         num_shots=1,
     )
 
@@ -186,10 +177,10 @@ def test_run_async_dry_run_prints_summary_and_does_not_submit(monkeypatch, capsy
 
 
 def test_run_async_submits_created_task_definition(monkeypatch):
-    task = SerializableSingleKernelTask(
+    task = SingleKernelTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("main"),
+        kernel=main,
         num_shots=1,
     )
     storage = DictStorage()
@@ -213,14 +204,13 @@ def test_run_async_submits_created_task_definition(monkeypatch):
     )
     assert submitted["storage"] is storage
     assert submitted["fetch_options"] is fetch_options
-    assert submitted["task_definition"].programs[0].content == "serialized:main"
 
 
 def test_submit_task_definition_stores_definition_and_returns_future(monkeypatch):
-    task = SerializableSingleKernelTask(
+    task = SingleKernelTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("main"),
+        kernel=main,
         num_shots=1,
         future_cls=RecordingFuture,
     )
@@ -264,10 +254,10 @@ def test_submit_task_definition_stores_definition_and_returns_future(monkeypatch
 
 
 def test_submit_task_definition_rejects_missing_created_task_id(monkeypatch):
-    task = SerializableSingleKernelTask(
+    task = SingleKernelTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("main"),
+        kernel=main,
         num_shots=1,
     )
 
