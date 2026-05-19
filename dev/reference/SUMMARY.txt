@@ -1,4 +1,13 @@
 * bloqade
+    * [core](bloqade/core/index.md)
+        * [device](bloqade/core/device/index.md)
+            * [device](bloqade/core/device/device.md)
+            * [future](bloqade/core/device/future.md)
+            * [local_storage](bloqade/core/device/local_storage.md)
+            * [log_info](bloqade/core/device/log_info.md)
+            * [mixins](bloqade/core/device/mixins.md)
+            * [result](bloqade/core/device/result.md)
+            * [task](bloqade/core/device/task.md)
     * [geometry](bloqade/geometry/index.md)
         * [dialects](bloqade/geometry/dialects/index.md)
             * [filled](bloqade/geometry/dialects/filled/index.md)
