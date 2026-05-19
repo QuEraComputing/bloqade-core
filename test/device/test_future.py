@@ -361,7 +361,7 @@ def test_fetch_subtask_page_parses_results_and_tracks_first_incomplete_page():
 
     client = FakeResultsClient()
 
-    done = future._fetch_subtask_page(client=client, subtask_page=3)
+    done = future._fetch_subtask_page(client=client, subtask_page=3)  # type: ignore
 
     assert done is True
     assert future._first_incomplete_subtask_page == 3

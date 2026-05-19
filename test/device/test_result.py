@@ -295,8 +295,8 @@ def test_result_where_methods_return_narrowed_results():
         shot_filter=ShotFilter(task_ids=("task-1",), frame_type="DETECTED"),
     )
 
-    by_argument = result.where_arguments(lambda arguments: arguments["theta"] > 1.5)
-    by_metadata = result.where_metadata(lambda metadata: metadata["keep"])
+    by_argument = result.where_arguments(lambda arguments: arguments["theta"] > 1.5)  # type: ignore
+    by_metadata = result.where_metadata(lambda metadata: metadata["keep"])  # type: ignore
     by_subtask = result.where_subtasks(lambda subtask: subtask["num_shots"] == 3)
     by_shot = result.where_shots(lambda shot: bool(shot.bitstring.any()))
 
