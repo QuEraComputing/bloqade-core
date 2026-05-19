@@ -5,12 +5,13 @@ NOTE: requires bloqade-circuit[qasm2] to be installed.
 
 from dataclasses import dataclass, field
 
+from bloqade.qasm2.emit import QASM2
 from kirin.ir.method import Method as Method
 
 from bloqade import qasm2
-from bloqade.qasm2.emit import QASM2
-from bloqade.core.device import SQLiteStorage, Device, Future, Result
+from bloqade.core.device import Device, Future, Result, SQLiteStorage
 from bloqade.core.device.task import SingleKernelTask
+
 
 # NOTE: custom task that overrides serialization with QASM2 string emit
 @dataclass
@@ -21,7 +22,9 @@ class QASM2Task(SingleKernelTask):
 
 @dataclass
 class QASM2Device(Device):
-    single_kernel_task_cls: type[SingleKernelTask[Future[Result]]] = field(default=QASM2Task, init=False)
+    single_kernel_task_cls: type[SingleKernelTask[Future[Result]]] = field(
+        default=QASM2Task, init=False
+    )
 
 
 # 1. Create a simple kernel (simulator supports up to 10 qubits)

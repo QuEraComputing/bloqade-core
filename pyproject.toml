@@ -98,6 +98,8 @@ exclude_also = [
     '@_wraps'
 ]
 
+[tool.pyright]
+exclude = ["demo/qasm_single_task.py"]  # requires bloqade-circuit so pyright will always fail
 
 [tool.pytest.ini_options]
 testpaths = "test/"
