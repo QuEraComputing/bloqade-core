@@ -1,4 +1,7 @@
-"""Simple demo to submit a single task (using QASM for testing purposes)"""
+"""Simple demo to submit a single task (using QASM for testing purposes)
+
+NOTE: requires bloqade-circuit[qasm2] to be installed.
+"""
 
 from dataclasses import dataclass, field
 
@@ -13,7 +16,7 @@ from bloqade.core.device.task import SingleKernelTask
 @dataclass
 class QASM2Task(SingleKernelTask):
     def serialize_kernel(self, kernel: Method) -> str:
-        return QASM2(kernel.dialects).emit_str(kernel)
+        return QASM2().emit_str(kernel)
 
 
 @dataclass
@@ -45,6 +48,10 @@ task.run_async(dry_run=True, storage=persistent_storage)
 # 3b. Actually submit
 # NOTE: at this point, a browser window should open to authenticate
 future = task.run_async(dry_run=False, storage=persistent_storage)
+
+# NOTE: if you want to resume fetching results, just comment out the line above
+# and use the one below
+# future = Future.from_storage(storage=persistent_storage, context_name="testbed")
 
 # 4. Wait for completion and get all results
 result = future.result(timeout=80.0)
