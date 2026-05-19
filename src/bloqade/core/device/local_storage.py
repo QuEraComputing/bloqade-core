@@ -1,16 +1,16 @@
+import datetime
 import json
 import sqlite3
-import datetime
 from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
 from typing import Callable, Iterable
-from dataclasses import field, dataclass
 
 import numpy as np
 from qlam_core.plugins.tasks.api.tasks_models import (
     Program,
     Subtask,
-    TaskMetadata,
     TaskDefinition,
+    TaskMetadata,
 )
 
 
@@ -690,7 +690,8 @@ class SQLiteStorage(StorageBackend):
         """
         self.conn = sqlite3.connect(db_file)
         self.conn.row_factory = sqlite3.Row
-        self.conn.execute("""
+        self.conn.execute(
+            """
             CREATE TABLE IF NOT EXISTS results (
                 row_number INTEGER PRIMARY KEY AUTOINCREMENT,
                 task_id TEXT NOT NULL,
@@ -701,13 +702,16 @@ class SQLiteStorage(StorageBackend):
                 bitstring TEXT NOT NULL,
                 UNIQUE(task_id, shot_index, frame_type)
             )
-            """)
+            """
+        )
 
-        self.conn.execute("""
+        self.conn.execute(
+            """
             CREATE TABLE IF NOT EXISTS bloqade_schema (
                 version_number TEXT PRIMARY KEY
             )
-            """)
+            """
+        )
         self.conn.execute(
             """
             INSERT OR IGNORE INTO bloqade_schema (version_number) VALUES (?)
@@ -715,16 +719,19 @@ class SQLiteStorage(StorageBackend):
             (_BloqadeSchemaVersion.version,),
         )
 
-        self.conn.execute("""
+        self.conn.execute(
+            """
             CREATE TABLE IF NOT EXISTS programs (
                 task_id TEXT,
                 program_index INT,
                 content TEXT NOT NULL,
                 PRIMARY KEY (task_id, program_index)
             )
-            """)
+            """
+        )
 
-        self.conn.execute("""
+        self.conn.execute(
+            """
             CREATE TABLE IF NOT EXISTS subtasks (
                 task_id TEXT NOT NULL,
                 subtask_index INT NOT NULL,
@@ -735,15 +742,18 @@ class SQLiteStorage(StorageBackend):
                 completed_date TEXT,
                 PRIMARY KEY (task_id, subtask_index)
             )
-            """)
+            """
+        )
 
-        self.conn.execute("""
+        self.conn.execute(
+            """
             CREATE TABLE IF NOT EXISTS task_definitions (
                 task_id TEXT PRIMARY KEY,
                 program_language TEXT NOT NULL,
                 creation_time TEXT NOT NULL
             )
-            """)
+            """
+        )
 
         cur = self.conn.execute("SELECT version_number FROM bloqade_schema")
         (stored_version,) = cur.fetchone()

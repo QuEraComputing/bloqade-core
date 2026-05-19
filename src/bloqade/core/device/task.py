@@ -1,7 +1,7 @@
 import json
 from abc import ABC, abstractmethod
-from typing import Generic, Literal, overload
 from dataclasses import dataclass
+from typing import Generic, Literal, overload
 
 from kirin import ir
 from kirin.serialization import JSONSerializer
@@ -9,15 +9,15 @@ from qlam_core.plugins.tasks.api.client import TasksClient
 from qlam_core.plugins.tasks.api.tasks_models import (
     Program,
     Subtask,
-    TaskMetadata,
-    TaskDefinition,
     TaskCreationRequest,
+    TaskDefinition,
+    TaskMetadata,
 )
 
-from .future import Future, FutureType, ApiFetchOptions
-from .mixins import AuthMixin
-from .log_info import logger
+from .future import ApiFetchOptions, Future, FutureType
 from .local_storage import StorageBackend
+from .log_info import logger
+from .mixins import AuthMixin
 
 json_serializer = JSONSerializer()
 

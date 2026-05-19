@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from qlam_core.common import AppContext
 from qlam_core.auth.client import AuthClient
+from qlam_core.common import AppContext
 
 
 @dataclass(kw_only=True)

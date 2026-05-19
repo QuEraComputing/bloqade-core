@@ -1,11 +1,11 @@
+from dataclasses import dataclass, field
 from typing import Any, Generic, cast
-from dataclasses import field, dataclass
 
 from kirin import ir
 
-from .task import KernelBatchTask, SingleKernelTask, ParameterScanTask
 from .future import Future, FutureType
 from .mixins import AuthMixin
+from .task import KernelBatchTask, ParameterScanTask, SingleKernelTask
 
 
 @dataclass(kw_only=True)

@@ -1,10 +1,10 @@
-from typing import TypeVar, Callable
-from dataclasses import field, replace, dataclass
+from dataclasses import dataclass, field, replace
+from typing import Callable, TypeVar
 
 import numpy as np
 from typing_extensions import Self
 
-from .local_storage import ShotFilter, ShotResult, StorageFilter, StorageBackend
+from .local_storage import ShotFilter, ShotResult, StorageBackend, StorageFilter
 
 ResultType = TypeVar("ResultType", bound="Result")
 

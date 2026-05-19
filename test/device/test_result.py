@@ -6,14 +6,14 @@ import pytest
 from qlam_core.plugins.tasks.api.tasks_models import (
     Program,
     Subtask,
-    TaskMetadata,
     TaskDefinition,
+    TaskMetadata,
 )
 
 from bloqade.core.device.local_storage import (
+    DictStorage,
     ShotFilter,
     ShotResult,
-    DictStorage,
     StorageFilter,
 )
 from bloqade.core.device.result import Result

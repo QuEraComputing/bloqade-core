@@ -7,12 +7,12 @@ import pytest
 from qlam_core.plugins.tasks.api.tasks_models import (
     Program,
     Subtask,
-    TaskStatus,
     TaskDefinition,
+    TaskStatus,
 )
 
-from bloqade.core.device.future import Future, ApiFetchOptions
-from bloqade.core.device.local_storage import ShotFilter, ShotResult, DictStorage
+from bloqade.core.device.future import ApiFetchOptions, Future
+from bloqade.core.device.local_storage import DictStorage, ShotFilter, ShotResult
 from bloqade.core.device.result import Result
 
 future_mod = importlib.import_module("bloqade.core.device.future")

@@ -1,27 +1,27 @@
 import time
+from dataclasses import dataclass, field
 from typing import Any, Generic
 from warnings import warn
-from dataclasses import field, dataclass
 
 import numpy as np
-from typing_extensions import Self, TypeVar
 from qlam_core.plugins.compilations.api import CompilationsClient
-from qlam_core.plugins.tasks.api.client import TasksClient
-from qlam_core.plugins.results.api.client import ResultsClient
 from qlam_core.plugins.definitions.api.client import DefinitionsClient
+from qlam_core.plugins.results.api.client import ResultsClient
+from qlam_core.plugins.tasks.api.client import TasksClient
 from qlam_core.plugins.tasks.api.tasks_models import (
     Task,
     TaskStatus,
 )
+from typing_extensions import Self, TypeVar
 
-from .mixins import AuthMixin
-from .result import Result, ResultType
-from .log_info import logger
 from .local_storage import (
     ShotFilter,
     ShotResult,
     StorageBackend,
 )
+from .log_info import logger
+from .mixins import AuthMixin
+from .result import Result, ResultType
 
 
 @dataclass(frozen=True)
