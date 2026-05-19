@@ -259,7 +259,9 @@ class StorageBackend(ABC):
             subtasks=subtasks,
         )
 
-    def get_arguments(self, storage_filter: StorageFilter | None = None) -> list[dict]:
+    def get_arguments(
+        self, storage_filter: StorageFilter | None = None
+    ) -> list[dict | None]:
         """Return arguments from stored subtasks.
 
         Args:
@@ -267,7 +269,7 @@ class StorageBackend(ABC):
                 filter. Defaults to None.
 
         Returns:
-            list[dict]: Arguments from matching subtasks.
+            list[dict | None]: Arguments from matching subtasks.
         """
         subtasks = self.get_subtasks(storage_filter=storage_filter)
         return [subtask["arguments"] for subtask in subtasks]
