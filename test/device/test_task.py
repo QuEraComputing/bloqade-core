@@ -212,7 +212,7 @@ def test_submit_task_definition_stores_definition_and_returns_future(monkeypatch
         program_language="squin",
         kernel=main,
         num_shots=1,
-        future_cls=RecordingFuture,
+        future_cls=RecordingFuture,  # type: ignore
     )
     storage = DictStorage()
     fetch_options = ApiFetchOptions(subtasks_per_fetch=2)
