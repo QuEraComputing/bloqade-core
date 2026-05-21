@@ -15,6 +15,7 @@ from qlam_core.plugins.tasks.api.tasks_models import (
 from typing_extensions import Self, TypeVar
 
 from .local_storage import (
+    DictStorage,
     ShotFilter,
     ShotResult,
     StorageBackend,
@@ -58,12 +59,13 @@ class Future(AuthMixin, Generic[ResultType]):
     Attributes:
         task_id (str): Backend task ID.
         storage (StorageBackend): Storage backend used for fetched shots and
-            task metadata.
+            task metadata. Defaults to a fresh `DictStorage` (in-memory; not
+            persisted across processes).
         fetch_options (ApiFetchOptions): Pagination and polling options.
     """
 
     task_id: str
-    storage: StorageBackend
+    storage: StorageBackend = field(default_factory=DictStorage)
 
     # API polling behavior
     fetch_options: ApiFetchOptions = ApiFetchOptions()
@@ -379,7 +381,7 @@ class Future(AuthMixin, Generic[ResultType]):
         cls,
         *,
         task_id: str,
-        storage: StorageBackend,
+        storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
         context_name: str | None = None,
     ) -> Self:
@@ -391,8 +393,10 @@ class Future(AuthMixin, Generic[ResultType]):
 
         Args:
             task_id (str): Backend task ID.
-            storage (StorageBackend): Storage backend that will receive the task
-                definition and later fetched shots.
+            storage (StorageBackend | None): Storage backend that will receive
+                the task definition and later fetched shots. When None, a fresh
+                `DictStorage` is used (in-memory; not persisted across
+                processes). Defaults to None.
             fetch_options (ApiFetchOptions): Pagination and polling options.
                 Defaults to `ApiFetchOptions()`.
             context_name (str | None): Name of the qlam context used to fetch
@@ -406,6 +410,8 @@ class Future(AuthMixin, Generic[ResultType]):
             ValueError: If `context_name` is None and `cls` has no
                 class-level default.
         """
+        if storage is None:
+            storage = DictStorage()
 
         context_name = cls._resolve_context_name(context_name)
         auth = AuthMixin(context_name=context_name)

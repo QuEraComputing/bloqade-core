@@ -1,4 +1,4 @@
-"""Simple demo to submit a single task (using QASM for testing purposes) and persisting results
+"""Simple demo to submit a single task (using QASM for testing purposes)
 
 NOTE: requires bloqade-circuit[qasm2] to be installed.
 """
@@ -9,7 +9,7 @@ from bloqade.qasm2.emit import QASM2
 from kirin.ir.method import Method as Method
 
 from bloqade import qasm2
-from bloqade.core.device import Device, Future, Result
+from bloqade.core.device import Device, Future, Result, SQLiteStorage
 from bloqade.core.device.task import SingleKernelTask
 
 
@@ -42,19 +42,25 @@ task = device.task(
     kernel=bell, num_shots=2, metadata={"tag": "bell"}, program_language="qasm"
 )  # metadata is completely customizable
 
+# 3. Submit task -- requires specifying storage
+persistent_storage = SQLiteStorage("qasm_single_task.sql")
+
 # 3a. Dry run
-task.run_async(dry_run=True)
+task.run_async(dry_run=True, storage=persistent_storage)
 
 # 3b. Actually submit
 # NOTE: at this point, a browser window should open to authenticate
-future = task.run_async(dry_run=False)
+future = task.run_async(dry_run=False, storage=persistent_storage)
 
 # NOTE: if you want to resume fetching results, just comment out the line above
 # and use the one below
-# future = Future.from_task_id(task_id=f"{task_id}", context_name="testbed")
+# future = Future.from_storage(storage=persistent_storage, context_name="testbed")
 
 # 4. Wait for completion and get all results
 result = future.result(timeout=80.0)
 
 # 5. Print results -- no logical post-processing can be done here
 print(result.shot_results())
+
+# 6. Finally, close the SQL connection (not strictly necessary, GC will handle it too)
+persistent_storage.close()
