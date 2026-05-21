@@ -1,4 +1,8 @@
-"""Simple demo to submit a single task (using QASM for testing purposes) and persisting results
+"""Simple demo to submit a single task (using QASM for testing purposes) using
+in-memory storage only (results are not persisted across processes).
+
+For a persistence-enabled version of this demo, see
+qasm_single_task_persistent.py.
 
 NOTE: requires bloqade-circuit[qasm2] to be installed.
 """
