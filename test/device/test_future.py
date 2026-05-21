@@ -432,6 +432,70 @@ def test_fetch_subtask_page_parses_results_and_tracks_first_incomplete_page():
     np.testing.assert_array_equal(shots[1].bitstring, np.array([False, True, False]))
 
 
+def test_fetch_subtask_page_persists_subtask_completed_dates():
+    storage = DictStorage()
+    storage.add_task_definition(
+        "task-1",
+        TaskDefinition(
+            program_language="squin",
+            programs=[Program(content="program")],
+            subtasks=[
+                Subtask(program_index=0, num_shots=1),
+                Subtask(program_index=0, num_shots=1),
+                Subtask(program_index=0, num_shots=1),
+            ],
+        ),
+        CREATION_TIME,
+    )
+    future = Future(
+        task_id="task-1",
+        storage=storage,
+        context_name="ctx",
+        fetch_options=ApiFetchOptions(subtasks_per_fetch=10, shots_per_fetch=100),
+    )
+
+    completed_at_0 = datetime(2026, 5, 21, 10, 0, 0, tzinfo=timezone.utc)
+    completed_at_1_iso = "2026-05-21T11:00:00+00:00"
+
+    class FakeResultsClient:
+        def get(self, **kwargs):
+            return {
+                "elements": [
+                    {
+                        "subtasks": [
+                            {
+                                "subtask_index": 0,
+                                "status": "COMPLETED",
+                                "completed_date": completed_at_0,
+                                "shot_results": [],
+                            },
+                            {
+                                "subtask_index": 1,
+                                "status": "COMPLETED",
+                                "completed_date": completed_at_1_iso,
+                                "shot_results": [],
+                            },
+                            {
+                                "subtask_index": 2,
+                                "status": "SCHEDULED",
+                                "completed_date": None,
+                                "shot_results": [],
+                            },
+                        ]
+                    }
+                ]
+            }
+
+    future._fetch_subtask_page(client=FakeResultsClient(), subtask_page=0)  # type: ignore
+
+    subtasks = sorted(
+        storage.get_subtasks(), key=lambda subtask: subtask["subtask_index"]
+    )
+    assert subtasks[0]["completed_date"] == completed_at_0
+    assert subtasks[1]["completed_date"] == datetime.fromisoformat(completed_at_1_iso)
+    assert subtasks[2]["completed_date"] is None
+
+
 def test_cancel_warns_when_backend_cancel_raises(monkeypatch):
     future = Future(task_id="task-1", storage=DictStorage(), context_name="ctx")
     monkeypatch.setattr(future, "authenticate", lambda: None)

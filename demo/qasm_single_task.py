@@ -41,7 +41,7 @@ def bell():
 
 # 2. Create the task using the device -- optionally set some metadata
 # NOTE: context_name and program_language are set to qasm for testing
-device = QASM2Device(context_name="testbed")
+device = QASM2Device(context_name="gemini-qasm")
 task = device.task(
     kernel=bell, num_shots=2, metadata={"tag": "bell"}, program_language="qasm"
 )  # metadata is completely customizable

@@ -519,6 +519,11 @@ class Future(AuthMixin, Generic[ResultType]):
                     full_subtask_page
                     and len(subtasks) >= self.fetch_options.subtasks_per_fetch
                 )
+
+                self.storage.update_subtasks_completed_date(
+                    task_id=self.task_id, subtasks=subtasks
+                )
+
                 for subtask in subtasks:
                     subtask_status = subtask.get("status", "").upper()
                     if not found_incomplete and subtask_status != "COMPLETED":
