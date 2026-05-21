@@ -189,6 +189,57 @@ def test_from_task_id_fetches_definition_and_stores_it(monkeypatch):
     assert storage.get_task_creation_time("task-1") == CREATION_TIME
 
 
+def test_future_defaults_to_fresh_dict_storage_per_instance():
+    first = Future(task_id="task-1", context_name="ctx")
+    second = Future(task_id="task-2", context_name="ctx")
+
+    assert isinstance(first.storage, DictStorage)
+    assert isinstance(second.storage, DictStorage)
+    assert first.storage is not second.storage
+
+
+def test_from_task_id_defaults_to_fresh_dict_storage_when_storage_is_none(monkeypatch):
+    task_definition = make_task_definition("from-api")
+
+    class FakeTasksClient:
+        def __init__(self, app_context):
+            self.app_context = app_context
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, traceback):
+            return False
+
+        def get(self, id):
+            return SimpleNamespace(
+                definition="definition-1", created_date=CREATION_TIME
+            )
+
+    class FakeDefinitionsClient:
+        def __init__(self, app_context):
+            self.app_context = app_context
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, traceback):
+            return False
+
+        def get(self, id):
+            return task_definition
+
+    monkeypatch.setattr(future_mod.AuthMixin, "authenticate", lambda auth: None)
+    monkeypatch.setattr(future_mod, "TasksClient", FakeTasksClient)
+    monkeypatch.setattr(future_mod, "DefinitionsClient", FakeDefinitionsClient)
+
+    future = Future.from_task_id(task_id="task-1", context_name="ctx")
+
+    assert isinstance(future.storage, DictStorage)
+    assert future.storage.get_task_definition("task-1") == task_definition
+    assert future.storage.get_task_creation_time("task-1") == CREATION_TIME
+
+
 def test_status_done_and_cancelled_delegate_to_task_status(monkeypatch):
     future = Future(task_id="task-1", storage=DictStorage(), context_name="ctx")
     monkeypatch.setattr(
