@@ -114,6 +114,9 @@ storage.close()  # optional; GC will also close it
 In a later session, reattach to the same task without resubmitting:
 
 ```python
+from bloqade.core.device import Future
+from bloqade.core.device import SQLiteStorage
+
 storage = SQLiteStorage("results.sql")
 future = Future.from_storage(storage=storage, context_name="my-context")
 result = future.result(timeout=80.0)
