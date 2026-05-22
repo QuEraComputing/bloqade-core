@@ -17,6 +17,7 @@ nav:
   - API Reference:
     - Device:
       - Device: reference/bloqade/core/device/device.md
+      - Task: reference/bloqade/core/device/task.md
       - Future: reference/bloqade/core/device/future.md
       - Result: reference/bloqade/core/device/result.md
       - Local storage: reference/bloqade/core/device/local_storage.md
