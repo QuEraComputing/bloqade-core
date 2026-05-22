@@ -33,9 +33,11 @@ base class.
 **Future.** A handle to a submitted task. It polls task status against the
 backend, fetches available shot results into storage, and constructs a
 `Result` view. [`future.result(timeout=...)`](reference/bloqade/core/device/future.md)
-blocks until the task reaches a terminal status, then fetches all shots and
-returns a `Result`. A future can also be reattached to an existing task ID
-via [`Future.from_task_id`](reference/bloqade/core/device/future.md) or
+blocks until the task completes successfully, then fetches all shots and
+returns a `Result`. If the task is cancelled, fails, or hits a payload
+processing error, `result()` raises instead of returning. A future can also
+be reattached to an existing task ID via
+[`Future.from_task_id`](reference/bloqade/core/device/future.md) or
 [`Future.from_storage`](reference/bloqade/core/device/future.md), which is
 how you resume from a previous session.
 
@@ -50,6 +52,11 @@ view without copying data.
 In the example below, you can see how the intended flow looks when submitting
 a simple squin kernel to a machine.
 The `context_name` sets the context as specified in your `~/.qsh/config.json`.
+
+The kernel languages used on this page (`squin`, `qasm2`) ship with the
+`bloqade-circuit` package, not with `bloqade-core` itself. Install the
+relevant extras (for example `pip install bloqade-circuit[qasm2]` for the
+QASM2 specialization below) before running these snippets.
 
 ```python
 from bloqade import squin
@@ -114,8 +121,7 @@ storage.close()  # optional; GC will also close it
 In a later session, reattach to the same task without resubmitting:
 
 ```python
-from bloqade.core.device import Future
-from bloqade.core.device import SQLiteStorage
+from bloqade.core.device import Future, SQLiteStorage
 
 storage = SQLiteStorage("results.sql")
 future = Future.from_storage(storage=storage, context_name="my-context")
@@ -250,7 +256,7 @@ def bell():
     qasm2.h(q[0])
     qasm2.cx(q[0], q[1])
 
-device = QASM2Device(context_name="gemini-qasm")
+device = QASM2Device(context_name="my-qasm-context")
 task = device.task(            # returns a QASM2Task instance
     kernel=bell,
     num_shots=2,
@@ -263,7 +269,7 @@ result = future.result(timeout=80.0)
 
 Other common extension points on the task itself are
 [`program_language_version`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.program_language_version)
-(recorded alongside the program),
+(used by the default Kirin serializer when encoding the kernel),
 [`summary`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.summary)
 (text printed on dry-run), and
 [`create_task_definition`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.create_task_definition)
@@ -277,13 +283,15 @@ touching the task or device flow. `Future.result_cls` plays the same role
 for `Result`, so a specialized `Future` can surface a specialized result
 view through `future.result(...)`.
 
-Runnable versions of both flows live in the repository:
+Note that every snippet on this page uses a placeholder `context_name`;
+substitute one that matches your local qlam config. Runnable variants of
+this flow live in the repository:
 
 - [`demo/qasm_single_task.py`](https://github.com/QuEraComputing/bloqade-core/blob/main/demo/qasm_single_task.py)
-  — the snippet above, using the default in-memory storage.
+  — the QASM2 specialization with the default in-memory storage.
 - [`demo/qasm_single_task_persistent.py`](https://github.com/QuEraComputing/bloqade-core/blob/main/demo/qasm_single_task_persistent.py)
-  — the same task pinned to a `SQLiteStorage` file so results survive
-  across sessions.
+  — the same QASM2 specialization, but pinned to a `SQLiteStorage` file so
+  results survive across sessions.
 
 ## Logging
 
