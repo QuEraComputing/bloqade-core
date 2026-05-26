@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from types import SimpleNamespace
 
 import pytest
+from kirin.prelude import basic_no_opt
 
 from bloqade.core.device.future import ApiFetchOptions
 from bloqade.core.device.local_storage import DictStorage
@@ -16,6 +17,26 @@ from bloqade.core.device.task import (
 task_mod = importlib.import_module("bloqade.core.device.task")
 
 CREATION_TIME = datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
+
+
+@basic_no_opt
+def main():
+    return
+
+
+@basic_no_opt
+def scan():
+    return
+
+
+@basic_no_opt
+def first():
+    return
+
+
+@basic_no_opt
+def second():
+    return
 
 
 class FakeKernel:
