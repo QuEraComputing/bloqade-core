@@ -263,6 +263,59 @@ def test_submit_task_definition_stores_definition_and_returns_future(monkeypatch
     assert future.context_name == "ctx"
 
 
+def test_run_async_defaults_storage_to_fresh_dict_storage(monkeypatch):
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+    )
+    submitted = {}
+    sentinel = object()
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
+
+    assert task.run_async(dry_run=False) is sentinel
+    assert submitted["storage"] is None
+
+
+def test_submit_task_definition_defaults_to_fresh_dict_storage(monkeypatch):
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        future_cls=RecordingFuture,  # type: ignore
+    )
+    task_definition = task.create_task_definition()
+
+    class FakeTasksClient:
+        def __init__(self, app_context):
+            self.app_context = app_context
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, traceback):
+            return False
+
+        def create(self, body):
+            return SimpleNamespace(id="task-created", created_date=CREATION_TIME)
+
+    monkeypatch.setattr(task, "authenticate", lambda: None)
+    monkeypatch.setattr(task_mod, "TasksClient", FakeTasksClient)
+
+    future = task.submit_task_definition(task_definition=task_definition)
+
+    assert isinstance(future.storage, DictStorage)
+    assert future.storage.get_task_definition("task-created") == task_definition
+    assert future.storage.get_task_creation_time("task-created") == CREATION_TIME
+
+
 def test_submit_task_definition_rejects_missing_created_task_id(monkeypatch):
     task = SerializableSingleKernelTask(
         context_name="ctx",

@@ -419,7 +419,7 @@ class DictStorage(StorageBackend):
     _metadata: dict = field(init=False, default_factory=dict)
 
     def __repr__(self) -> str:
-        return repr(self._data)
+        return f"DictStorage(num_shots={len(self._data)}, task_ids={self.task_ids()})"
 
     def add_shots(self, shots: Iterable[ShotResult]) -> None:
         """Store shot result rows in memory.
