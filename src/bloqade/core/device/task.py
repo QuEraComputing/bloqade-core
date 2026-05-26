@@ -15,7 +15,7 @@ from qlam_core.plugins.tasks.api.tasks_models import (
 )
 
 from .future import ApiFetchOptions, Future, FutureType
-from .local_storage import StorageBackend
+from .local_storage import DictStorage, StorageBackend
 from .log_info import logger
 from .mixins import AuthMixin
 
@@ -219,7 +219,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         self,
         *,
         dry_run: Literal[True],
-        storage: StorageBackend,
+        storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> None: ...
 
@@ -228,7 +228,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         self,
         *,
         dry_run: Literal[False],
-        storage: StorageBackend,
+        storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> FutureType: ...
 
@@ -236,7 +236,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         self,
         *,
         dry_run: bool,
-        storage: StorageBackend,
+        storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> FutureType | None:
         """Validate the task and either dry-run or submit it.
@@ -244,8 +244,10 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         Keyword Args:
             dry_run (bool): When True, print a summary and return None.
                 When False, submit the task and return a future.
-            storage (StorageBackend): Storage backend that will receive the
-                task definition and later fetched shots.
+            storage (StorageBackend | None): Storage backend that will receive
+                the task definition and later fetched shots. When None, a fresh
+                `DictStorage` is used (in-memory; not persisted across
+                processes). Defaults to None.
             fetch_options (ApiFetchOptions): Pagination and polling options
                 attached to the returned future. Defaults to
                 `ApiFetchOptions()`.
@@ -276,15 +278,16 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         self,
         *,
         task_definition: TaskDefinition,
-        storage: StorageBackend,
+        storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> FutureType:
         """Submit a prepared task definition and return a future.
 
         Keyword Args:
             task_definition (TaskDefinition): Task definition to submit.
-            storage (StorageBackend): Storage backend that will receive the
-                task definition.
+            storage (StorageBackend | None): Storage backend that will receive
+                the task definition. When None, a fresh `DictStorage` is used
+                (in-memory; not persisted across processes). Defaults to None.
             fetch_options (ApiFetchOptions): Pagination and polling options
                 attached to the returned future. Defaults to
                 `ApiFetchOptions()`.
@@ -295,6 +298,8 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         Raises:
             ValueError: If the backend response is missing a task ID.
         """
+        if storage is None:
+            storage = DictStorage()
 
         self.authenticate()
 
