@@ -650,7 +650,7 @@ class DictStorage(StorageBackend):
             return
 
         for subtask in subtasks:
-            completed_date = subtask["completed_date"]
+            completed_date = subtask.get("completed_date")
             if completed_date is None:
                 continue
 
