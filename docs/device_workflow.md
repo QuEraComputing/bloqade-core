@@ -214,12 +214,15 @@ most use cases. When the backend expects a different program format, or when
 you want to attach extra fields to the submitted task, subclass the relevant
 task type and point the device at it.
 
-As an example, consider a backend that expects QASM2 source. The default
+As an example, consider a backend that expects QASM2 source tagged as
+version `2.0`. The default
 [`SingleKernelTask`](reference/bloqade/core/device/task.md#bloqade.core.device.task.SingleKernelTask)
 would encode the kernel as kirin JSON, which the backend cannot parse.
 Overriding [`serialize_kernel`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.serialize_kernel)
-on a subclass and pointing a `Device` subclass at it is enough to switch
-the wire format without changing anything downstream:
+switches the wire format, and overriding
+[`program_language_version`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.program_language_version)
+records the right version. Pointing a `Device` subclass at the new task is
+then enough to change everything downstream:
 
 ```python
 from dataclasses import dataclass, field
@@ -230,6 +233,10 @@ from bloqade.core.device.task import SingleKernelTask
 
 @dataclass
 class QASM2Task(SingleKernelTask):
+    @property
+    def program_language_version(self) -> str:
+        return "2.0"
+
     def serialize_kernel(self, kernel: Method) -> str:
         return QASM2().emit_str(kernel)
 
@@ -243,11 +250,13 @@ class QASM2Device(Device):
 A `Device` holds a class reference for each task shape it can build
 (`single_kernel_task_cls`, `kernel_batch_task_cls`, `parameter_scan_task_cls`).
 Override the ones you need; the device's `task`, `batch_task`, and
-`parameter_scan` methods will instantiate your subclass. The
-`program_language` and `language_version` arguments are recorded on the task
-definition combined as `<program_language>.v<language_version>` (here,
-`"qasm.v0.1.0"`); `language_version` must be a semantic version. Set them to
-whatever the backend expects:
+`parameter_scan` methods will instantiate your subclass. The task records its
+language on the definition as `<program_language>.v<program_language_version>`
+— here `"qasm.v2.0"`, since `QASM2Task` pins the version to `"2.0"`.
+`program_language_version` defaults to the `language_version` argument (which
+must be a semantic version); override the property, as above, when a subclass
+should fix or compute the version. Set `program_language` to whatever the
+backend expects:
 
 ```python
 from bloqade import qasm2
@@ -271,10 +280,9 @@ result = future.result(timeout=80.0)
 
 Other common extension points on the task itself are
 [`program_language_version`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.program_language_version)
-(the semantic version used by the default Kirin serializer when encoding the
-kernel — for a static version just pass `language_version=...` to
-`device.task(...)`; override this property only when the version needs
-additional logic),
+(the version recorded on the task definition and passed to the default Kirin
+serializer when encoding the kernel — override it as `QASM2Task` does above,
+or pass `language_version=...` to `device.task(...)` for a static version),
 [`summary`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.summary)
 (text printed on dry-run), and
 [`create_task_definition`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.create_task_definition)
