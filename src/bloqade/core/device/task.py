@@ -32,11 +32,17 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
     Attributes:
         program_language (str): Program language identifier stored on the
             task definition and used when serializing kernels.
+        language_version (str): Program language version stored on the task
+            definition and used when serializing kernels. Must be a semantic
+            version. Set this directly for a static version, or override the
+            `program_language_version` property if the version needs
+            additional logic. Defaults to "0.1.0".
         future_cls (type[FutureType]): Future class used to construct the
             return value of `submit_task_definition`. Defaults to `Future`.
     """
 
     program_language: str
+    language_version: str = "0.1.0"
 
     # NOTE: bound to subclasses of future, so need to ignore the typing issue here
     future_cls: type[FutureType] = Future  # type: ignore
@@ -45,12 +51,14 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
     def program_language_version(self) -> str:
         """Program language version recorded when serializing kernels.
 
+        Defaults to the `language_version` attribute. Override this property
+        in a subclass if the version needs to be computed with additional
+        logic. The value must be a semantic version.
+
         Returns:
-            str: Version string, or empty string when not set. Override in
-                subclasses to record a version.
+            str: Semantic version string.
         """
-        # NOTE: override this to set versions
-        return ""
+        return self.language_version
 
     def serialize_kernel(self, kernel: ir.Method) -> str:
         """Serialize a kernel into a string suitable for the backend.
@@ -208,8 +216,9 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
                 )
             )
 
+        program_language_with_version = f"{self.program_language}.v{self.program_language_version.removeprefix('v')}"
         return TaskDefinition(
-            program_language=self.program_language,
+            program_language=program_language_with_version,
             programs=programs,
             subtasks=subtasks,
         )
