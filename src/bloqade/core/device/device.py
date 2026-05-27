@@ -57,6 +57,8 @@ class Device(Generic[FutureType], AuthMixin):
                 task API. Defaults to None.
             program_language (str): Program language to store in the task
                 definition. Defaults to "squin".
+            language_version (str): Semantic version of the program language to
+                store in the task definition. Defaults to "0.1.0".
 
         Returns:
             SingleKernelTask[FutureType]: A task object ready for dry-run or submission.
@@ -94,6 +96,8 @@ class Device(Generic[FutureType], AuthMixin):
                 value to broadcast to every kernel. Defaults to 1.
             program_language (str): Program language to store in the task
                 definition. Defaults to "squin".
+            language_version (str): Semantic version of the program language to
+                store in the task definition. Defaults to "0.1.0".
 
         Returns:
             KernelBatchTask[FutureType]: A batch task object ready for dry-run or
@@ -131,6 +135,8 @@ class Device(Generic[FutureType], AuthMixin):
                 one value to broadcast to every subtask. Defaults to 1.
             program_language (str): Program language to store in the task
                 definition. Defaults to "squin".
+            language_version (str): Semantic version of the program language to
+                store in the task definition. Defaults to "0.1.0".
 
         Returns:
             ParameterScanTask[FutureType]: A parameter-scan task object ready for

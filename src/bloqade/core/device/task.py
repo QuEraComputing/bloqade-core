@@ -32,6 +32,11 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
     Attributes:
         program_language (str): Program language identifier stored on the
             task definition and used when serializing kernels.
+        language_version (str): Program language version stored on the task
+            definition and used when serializing kernels. Must be a semantic
+            version. Set this directly for a static version, or override the
+            `program_language_version` property if the version needs
+            additional logic. Defaults to "0.1.0".
         future_cls (type[FutureType]): Future class used to construct the
             return value of `submit_task_definition`. Defaults to `Future`.
     """
@@ -46,10 +51,13 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
     def program_language_version(self) -> str:
         """Program language version recorded when serializing kernels.
 
+        Defaults to the `language_version` attribute. Override this property
+        in a subclass if the version needs to be computed with additional
+        logic. The value must be a semantic version.
+
         Returns:
-            str: Version string. Override in subclasses.
+            str: Semantic version string.
         """
-        # NOTE: override this to set versions with additional logic
         return self.language_version
 
     def serialize_kernel(self, kernel: ir.Method) -> str:
