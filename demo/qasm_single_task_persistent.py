@@ -20,6 +20,7 @@ class QASM2Task(SingleKernelTask):
     @property
     def program_language_version(self) -> str:
         return "2.0.0"
+
     def serialize_kernel(self, kernel: Method) -> str:
         return QASM2().emit_str(kernel)
 
