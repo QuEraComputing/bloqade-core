@@ -244,8 +244,10 @@ A `Device` holds a class reference for each task shape it can build
 (`single_kernel_task_cls`, `kernel_batch_task_cls`, `parameter_scan_task_cls`).
 Override the ones you need; the device's `task`, `batch_task`, and
 `parameter_scan` methods will instantiate your subclass. The
-`program_language` argument is just a string recorded on the task
-definition, so set it to whatever the backend expects (here, `"qasm"`):
+`program_language` and `language_version` arguments are recorded on the task
+definition combined as `<program_language>.v<language_version>` (here,
+`"qasm.v0.1.0"`); `language_version` must be a semantic version. Set them to
+whatever the backend expects:
 
 ```python
 from bloqade import qasm2
@@ -269,7 +271,10 @@ result = future.result(timeout=80.0)
 
 Other common extension points on the task itself are
 [`program_language_version`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.program_language_version)
-(used by the default Kirin serializer when encoding the kernel),
+(the semantic version used by the default Kirin serializer when encoding the
+kernel — for a static version just pass `language_version=...` to
+`device.task(...)`; override this property only when the version needs
+additional logic),
 [`summary`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.summary)
 (text printed on dry-run), and
 [`create_task_definition`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.create_task_definition)
