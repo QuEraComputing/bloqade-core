@@ -215,7 +215,7 @@ you want to attach extra fields to the submitted task, subclass the relevant
 task type and point the device at it.
 
 As an example, consider a backend that expects QASM2 source tagged as
-version `2.0`. The default
+version `2.0.0`. The default
 [`SingleKernelTask`](reference/bloqade/core/device/task.md#bloqade.core.device.task.SingleKernelTask)
 would encode the kernel as kirin JSON, which the backend cannot parse.
 Overriding [`serialize_kernel`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.serialize_kernel)
@@ -232,11 +232,11 @@ from bloqade.core.device import Device, Future, Result
 from bloqade.core.device.task import SingleKernelTask
 
 @dataclass
+@dataclass
 class QASM2Task(SingleKernelTask):
     @property
     def program_language_version(self) -> str:
-        return "2.0"
-
+        return "2.0.0"
     def serialize_kernel(self, kernel: Method) -> str:
         return QASM2().emit_str(kernel)
 
@@ -252,7 +252,7 @@ A `Device` holds a class reference for each task shape it can build
 Override the ones you need; the device's `task`, `batch_task`, and
 `parameter_scan` methods will instantiate your subclass. The task records its
 language on the definition as `<program_language>.v<program_language_version>`
-— here `"qasm.v2.0"`, since `QASM2Task` pins the version to `"2.0"`.
+— here "qasm.v2.0.0", since `QASM2Task` pins the version to "2.0.0".
 `program_language_version` defaults to the `language_version` argument (which
 must be a semantic version); override the property, as above, when a subclass
 should fix or compute the version. Set `program_language` to whatever the
