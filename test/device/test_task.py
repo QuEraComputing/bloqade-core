@@ -48,7 +48,8 @@ class RecordingFuture:
 def test_single_kernel_task_creates_task_definition_with_arguments_and_metadata():
     task = SingleKernelTask(
         context_name="ctx",
-        program_language="flair.v1",
+        program_language="flair",
+        language_version="1",
         kernel=main,
         arguments={"theta": 1.5},
         metadata={"purpose": "unit-test"},

@@ -37,6 +37,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
     """
 
     program_language: str
+    language_version: str = "0.1.0"
 
     # NOTE: bound to subclasses of future, so need to ignore the typing issue here
     future_cls: type[FutureType] = Future  # type: ignore
@@ -46,11 +47,10 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         """Program language version recorded when serializing kernels.
 
         Returns:
-            str: Version string, or empty string when not set. Override in
-                subclasses to record a version.
+            str: Version string. Override in subclasses.
         """
-        # NOTE: override this to set versions
-        return ""
+        # NOTE: override this to set versions with additional logic
+        return self.language_version
 
     def serialize_kernel(self, kernel: ir.Method) -> str:
         """Serialize a kernel into a string suitable for the backend.
@@ -208,8 +208,9 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
                 )
             )
 
+        program_language_with_version = f"{self.program_language}.v{self.program_language_version.removeprefix('v')}"
         return TaskDefinition(
-            program_language=self.program_language,
+            program_language=program_language_with_version,
             programs=programs,
             subtasks=subtasks,
         )

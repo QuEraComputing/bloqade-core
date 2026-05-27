@@ -43,6 +43,7 @@ class Device(Generic[FutureType], AuthMixin):
         arguments: dict | None = None,
         metadata: dict | None = None,
         program_language: str = "squin",
+        language_version: str = "0.1.0",
     ) -> SingleKernelTask[FutureType]:
         """Create a task for one kernel.
 
@@ -68,6 +69,7 @@ class Device(Generic[FutureType], AuthMixin):
             arguments=arguments,
             metadata=metadata,
             program_language=program_language,
+            language_version=language_version,
             future_cls=self.future_cls,
         )
 
@@ -78,6 +80,7 @@ class Device(Generic[FutureType], AuthMixin):
         metadata: list[dict[str, Any]] | None = None,
         num_shots: list[int] | int = 1,
         program_language: str = "squin",
+        language_version: str = "0.1.0",
     ) -> KernelBatchTask[FutureType]:
         """Create a task containing one subtask per kernel.
 
@@ -104,6 +107,7 @@ class Device(Generic[FutureType], AuthMixin):
             num_shots=num_shots,
             metadata=metadata,
             program_language=program_language,
+            language_version=language_version,
             future_cls=self.future_cls,
         )
 
@@ -114,6 +118,7 @@ class Device(Generic[FutureType], AuthMixin):
         metadata: list[dict] | None = None,
         num_shots: list[int] | int = 1,
         program_language: str = "squin",
+        language_version: str = "0.1.0",
     ) -> ParameterScanTask[FutureType]:
         """Create a parameter-scan task for one kernel.
 
@@ -139,5 +144,6 @@ class Device(Generic[FutureType], AuthMixin):
             arguments=arguments,
             metadata=metadata,
             program_language=program_language,
+            language_version=language_version,
             future_cls=self.future_cls,
         )
