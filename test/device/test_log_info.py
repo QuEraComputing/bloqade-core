@@ -26,7 +26,7 @@ def _bloqade_emitter():
     to the bloqade namespace.
     """
     fake = types.ModuleType("bloqade.core.device._probe")
-    fake.logger = logger
+    fake.logger = logger  # type: ignore
     exec("def emit(msg):\n    logger.info(msg)", fake.__dict__)
     return fake.emit
 
