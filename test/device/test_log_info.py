@@ -10,9 +10,9 @@ log_info = importlib.import_module("bloqade.core.device.log_info")
 @pytest.fixture(autouse=True)
 def _reset_logging():
     """Remove any sinks a test installs and restore the opt-in default."""
-    before = set(logger._core.handlers)
+    before = set(logger._core.handlers)  # type: ignore
     yield
-    for handler_id in set(logger._core.handlers) - before:
+    for handler_id in set(logger._core.handlers) - before:  # type: ignore
         logger.remove(handler_id)
     logger.disable("bloqade")
 
