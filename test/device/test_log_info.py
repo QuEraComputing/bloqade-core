@@ -1,9 +1,11 @@
 import importlib
+import os
 import types
 
 import pytest
 from loguru import logger
 
+os.environ.pop("BLOQADE_LOGGING", None)
 log_info = importlib.import_module("bloqade.core.device.log_info")
 
 
