@@ -13,8 +13,10 @@ from bloqade.qasm2.emit import QASM2
 from kirin.ir.method import Method as Method
 
 from bloqade import qasm2
-from bloqade.core.device import Device, Future, Result
+from bloqade.core.device import Device, Future, Result, set_logging
 from bloqade.core.device.task import SingleKernelTask
+
+set_logging()
 
 
 # NOTE: custom task that overrides serialization with QASM2 string emit
