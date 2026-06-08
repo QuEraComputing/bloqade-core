@@ -308,12 +308,31 @@ this flow live in the repository:
 
 ## Logging
 
-Task submissions and status fetches are logged at `INFO` level via
+Logging is **opt-in** and off by default. When enabled, task submissions and
+status fetches are logged at `INFO` level via
 [`loguru`](https://github.com/Delgan/loguru) to a file called `bloqade.log`
-in the current working directory. To opt out, set the `BLOQADE_LOGGING`
-environment variable to anything other than `"1"` before importing
-`bloqade.core.device`:
+in the current working directory.
+
+Turn it on programmatically with `set_logging`. Call it once to opt in,
+optionally choosing the file and level:
+
+```python
+from bloqade.core.device import set_logging
+
+set_logging()                                  # bloqade.log, INFO level
+# or, with a custom file and level:
+set_logging(path="run.log", level="DEBUG")
+
+set_logging(enabled=False)                     # turn logging back off
+```
+
+Alternatively, set the `BLOQADE_LOGGING` environment variable to `"1"` before
+importing `bloqade.core.device` to enable the default file sink at import time:
 
 ```bash
-export BLOQADE_LOGGING=0
+export BLOQADE_LOGGING=1
 ```
+
+If the log file cannot be created (for example, the path is not writable),
+`set_logging` emits a `RuntimeWarning` and leaves logging disabled rather than
+raising.

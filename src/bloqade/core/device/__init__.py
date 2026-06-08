@@ -6,4 +6,5 @@ from .local_storage import (
     ShotResult as ShotResult,
     SQLiteStorage as SQLiteStorage,
 )
+from .log_info import set_logging as set_logging
 from .result import Result as Result
