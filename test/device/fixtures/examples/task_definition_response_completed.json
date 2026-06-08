@@ -1,0 +1,25 @@
+{
+  "id": "db25a08c-0318-4a0d-b161-2d1658d15fa9",
+  "program_language": "qasm.v2",
+  "programs": [
+    {
+      "content": "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[2];\nh q[0];\nCX q[0], q[1];\n",
+      "program_metadata": null
+    }
+  ],
+  "subtasks": [
+    {
+      "program_index": 0,
+      "num_shots": 2,
+      "arguments": {},
+      "subtask_metadata": {
+        "user_metadata": "{\"tag\": \"bell\"}",
+        "system_metadata": null
+      }
+    }
+  ],
+  "created_date": "2026-06-08T08:49:38.169438Z",
+  "created_by": "acbabea1-b48d-40c4-a7f6-d05bcf75cdd0",
+  "modified_date": null,
+  "modified_by": null
+}

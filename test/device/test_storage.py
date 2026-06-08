@@ -1,82 +1,53 @@
 from datetime import datetime, timezone
 
-import numpy as np
-import pytest
 from qlam_core.plugins.tasks.api.tasks_models import (
-    Program,
     Subtask,
     TaskDefinition,
     TaskMetadata,
 )
 
 from bloqade.core.device.local_storage import (
-    DictStorage,
     ShotFilter,
-    ShotResult,
     SQLiteStorage,
     StorageFilter,
 )
 
-CREATION_TIME = datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
+from .fixtures import local, remote
+
+CREATION_TIME = local.CREATION_TIME
+
+make_shot = local.make_shot
+assert_shots_equal = local.assert_shots_equal
 
 
-@pytest.fixture(params=["dict", "sqlite"])
-def storage(request, tmp_path):
-    if request.param == "dict":
-        yield DictStorage()
-        return
-
-    sqlite_storage = SQLiteStorage(str(tmp_path / "shots.sqlite"))
-    try:
-        yield sqlite_storage
-    finally:
-        sqlite_storage.close()
-
-
-def make_shot(
+def make_task_definition(
     *,
-    task_id: str = "task-1",
-    shot_index: int = 0,
-    subtask_index: int = 0,
-    subtask_shot_index: int = 0,
-    frame_type: str = "RAW",
-    bitstring: tuple[bool, ...] = (True, False),
-):
-    return ShotResult(
-        task_id=task_id,
-        shot_index=shot_index,
-        subtask_index=subtask_index,
-        subtask_shot_index=subtask_shot_index,
-        frame_type=frame_type,
-        bitstring=np.array(bitstring),
+    program_language: str | None = "flair.v1",
+    programs=None,
+    subtasks=None,
+) -> TaskDefinition:
+    return remote.make_task_definition(
+        program_language=program_language,
+        programs=programs or [remote.make_program(content="program-0")],
+        subtasks=subtasks or [remote.make_subtask(num_shots=10)],
     )
 
 
-def sort_key(shot: ShotResult):
-    return (shot.task_id, shot.shot_index, shot.frame_type)
-
-
-def assert_shot_equal(actual: ShotResult, expected: ShotResult):
-    assert actual.task_id == expected.task_id
-    assert actual.shot_index == expected.shot_index
-    assert actual.subtask_index == expected.subtask_index
-    assert actual.subtask_shot_index == expected.subtask_shot_index
-    assert actual.frame_type == expected.frame_type
-    np.testing.assert_array_equal(actual.bitstring, expected.bitstring)
-
-
-def assert_shots_equal(actual: list[ShotResult], expected: list[ShotResult]):
-    actual = sorted(actual, key=sort_key)
-    expected = sorted(expected, key=sort_key)
-    assert len(actual) == len(expected)
-    for actual_shot, expected_shot in zip(actual, expected):
-        assert_shot_equal(actual_shot, expected_shot)
+def add_task_definition(
+    storage,
+    task_id: str,
+    task_definition: TaskDefinition,
+    creation_time: datetime = CREATION_TIME,
+):
+    storage.add_task_definition(task_id, task_definition, creation_time)
 
 
 def test_storage_get_shots_without_filter_yields_stored_shots(storage):
     shots = [
-        make_shot(task_id="task-1", shot_index=0),
-        make_shot(task_id="task-1", shot_index=1, bitstring=(False, True)),
+        make_shot(task_id="task-1", shot_index=0, frame_type="RAW"),
+        make_shot(
+            task_id="task-1", shot_index=1, frame_type="RAW", bitstring=(False, True)
+        ),
     ]
 
     storage.add_shots(shots)
@@ -85,8 +56,10 @@ def test_storage_get_shots_without_filter_yields_stored_shots(storage):
 
 
 def test_storage_get_shots_with_task_filter_yields_matching_shots(storage):
-    matching_shot = make_shot(task_id="task-1", shot_index=0)
-    other_shot = make_shot(task_id="task-2", shot_index=0, bitstring=(False, True))
+    matching_shot = make_shot(task_id="task-1", shot_index=0, frame_type="RAW")
+    other_shot = make_shot(
+        task_id="task-2", shot_index=0, frame_type="RAW", bitstring=(False, True)
+    )
 
     storage.add_shots([matching_shot, other_shot])
 
@@ -97,9 +70,11 @@ def test_storage_get_shots_with_task_filter_yields_matching_shots(storage):
 
 
 def test_storage_get_shots_with_multiple_task_filter_yields_matching_shots(storage):
-    first_matching_shot = make_shot(task_id="task-1", shot_index=0)
-    other_shot = make_shot(task_id="task-2", shot_index=0, bitstring=(False, True))
-    second_matching_shot = make_shot(task_id="task-3", shot_index=0)
+    first_matching_shot = make_shot(task_id="task-1", shot_index=0, frame_type="RAW")
+    other_shot = make_shot(
+        task_id="task-2", shot_index=0, frame_type="RAW", bitstring=(False, True)
+    )
+    second_matching_shot = make_shot(task_id="task-3", shot_index=0, frame_type="RAW")
 
     storage.add_shots([first_matching_shot, other_shot, second_matching_shot])
 
@@ -111,14 +86,13 @@ def test_storage_get_shots_with_multiple_task_filter_yields_matching_shots(stora
 
 def test_storage_get_shots_with_subtask_filter_yields_matching_shots(storage):
     matching_shot = make_shot(
-        shot_index=0,
-        subtask_index=2,
-        subtask_shot_index=0,
+        shot_index=0, subtask_index=2, subtask_shot_index=0, frame_type="RAW"
     )
     other_shot = make_shot(
         shot_index=1,
         subtask_index=3,
         subtask_shot_index=0,
+        frame_type="RAW",
         bitstring=(False, True),
     )
 
@@ -147,9 +121,11 @@ def test_storage_get_shots_with_frame_type_filter_yields_matching_shots(storage)
 
 
 def test_storage_get_shots_with_multiple_subtask_indices(storage):
-    s0 = make_shot(shot_index=0, subtask_index=0)
-    s1 = make_shot(shot_index=1, subtask_index=1, bitstring=(False, True))
-    s2 = make_shot(shot_index=2, subtask_index=2)
+    s0 = make_shot(shot_index=0, subtask_index=0, frame_type="RAW")
+    s1 = make_shot(
+        shot_index=1, subtask_index=1, frame_type="RAW", bitstring=(False, True)
+    )
+    s2 = make_shot(shot_index=2, subtask_index=2, frame_type="RAW")
 
     storage.add_shots([s0, s1, s2])
 
@@ -194,7 +170,7 @@ def test_storage_get_shots_with_combined_filters(storage):
 
 
 def test_storage_get_shots_returns_empty_when_no_match(storage):
-    storage.add_shots([make_shot(task_id="task-1")])
+    storage.add_shots([make_shot(task_id="task-1", frame_type="RAW")])
 
     assert (
         list(storage.get_shots(shot_filter=ShotFilter(task_ids=("task-other",)))) == []
@@ -203,32 +179,6 @@ def test_storage_get_shots_returns_empty_when_no_match(storage):
 
 def test_storage_get_shots_returns_empty_when_storage_empty(storage):
     assert list(storage.get_shots(shot_filter=None)) == []
-
-
-def make_task_definition(
-    *,
-    program_language: str | None = "flair.v1",
-    programs: list[Program] | None = None,
-    subtasks: list[Subtask] | None = None,
-) -> TaskDefinition:
-    if programs is None:
-        programs = [Program(content="program-0")]
-    if subtasks is None:
-        subtasks = [Subtask(program_index=0, num_shots=10)]
-    return TaskDefinition(
-        program_language=program_language,
-        programs=programs,
-        subtasks=subtasks,
-    )
-
-
-def add_task_definition(
-    storage,
-    task_id: str,
-    task_definition: TaskDefinition,
-    creation_time: datetime = CREATION_TIME,
-):
-    storage.add_task_definition(task_id, task_definition, creation_time)
 
 
 def test_storage_task_ids_empty(storage):
@@ -250,12 +200,17 @@ def test_storage_get_programs_returns_program_records(storage):
     add_task_definition(
         storage,
         "task-1",
-        make_task_definition(programs=[Program(content="p1"), Program(content="p2")]),
+        make_task_definition(
+            programs=[
+                remote.make_program(content="p1"),
+                remote.make_program(content="p2"),
+            ]
+        ),
     )
     add_task_definition(
         storage,
         "task-2",
-        make_task_definition(programs=[Program(content="p3")]),
+        make_task_definition(programs=[remote.make_program(content="p3")]),
     )
 
     programs = storage.get_programs()
@@ -271,12 +226,12 @@ def test_storage_get_programs_with_task_filter(storage):
     add_task_definition(
         storage,
         "task-1",
-        make_task_definition(programs=[Program(content="p1")]),
+        make_task_definition(programs=[remote.make_program(content="p1")]),
     )
     add_task_definition(
         storage,
         "task-2",
-        make_task_definition(programs=[Program(content="p2")]),
+        make_task_definition(programs=[remote.make_program(content="p2")]),
     )
 
     programs = storage.get_programs(task_ids=("task-1",))
@@ -291,7 +246,7 @@ def test_storage_get_programs_returns_independent_copies(storage):
     add_task_definition(
         storage,
         "task-1",
-        make_task_definition(programs=[Program(content="p1")]),
+        make_task_definition(programs=[remote.make_program(content="p1")]),
     )
 
     programs = storage.get_programs()
@@ -323,13 +278,12 @@ def test_storage_get_subtasks_returns_added_subtasks_as_dicts(storage):
         "task-1",
         make_task_definition(
             subtasks=[
-                Subtask(
-                    program_index=0,
+                remote.make_subtask(
                     num_shots=10,
                     arguments={"a": 1.5, "b": 2.0},
                     subtask_metadata=TaskMetadata(user_metadata="hello"),
                 ),
-                Subtask(program_index=0, num_shots=5),
+                remote.make_subtask(num_shots=5),
             ],
         ),
     )
@@ -372,9 +326,9 @@ def test_storage_get_subtasks_filtered_by_subtask_indices(storage):
         "task-1",
         make_task_definition(
             subtasks=[
-                Subtask(program_index=0, num_shots=1),
-                Subtask(program_index=0, num_shots=2),
-                Subtask(program_index=0, num_shots=3),
+                remote.make_subtask(num_shots=1),
+                remote.make_subtask(num_shots=2),
+                remote.make_subtask(num_shots=3),
             ],
         ),
     )
@@ -392,8 +346,8 @@ def test_storage_get_subtasks_filtered_by_task_and_subtask(storage):
         "task-1",
         make_task_definition(
             subtasks=[
-                Subtask(program_index=0, num_shots=1),
-                Subtask(program_index=0, num_shots=2),
+                remote.make_subtask(num_shots=1),
+                remote.make_subtask(num_shots=2),
             ],
         ),
     )
@@ -402,8 +356,8 @@ def test_storage_get_subtasks_filtered_by_task_and_subtask(storage):
         "task-2",
         make_task_definition(
             subtasks=[
-                Subtask(program_index=0, num_shots=3),
-                Subtask(program_index=0, num_shots=4),
+                remote.make_subtask(num_shots=3),
+                remote.make_subtask(num_shots=4),
             ],
         ),
     )
@@ -418,17 +372,19 @@ def test_storage_get_subtasks_filtered_by_task_and_subtask(storage):
 
 
 def test_storage_get_task_definition_round_trip(storage):
-    task_def = TaskDefinition(
+    task_def = remote.make_task_definition(
         program_language="flair.v1",
-        programs=[Program(content="p0"), Program(content="p1")],
+        programs=[
+            remote.make_program(content="p0"),
+            remote.make_program(content="p1"),
+        ],
         subtasks=[
-            Subtask(
-                program_index=0,
+            remote.make_subtask(
                 num_shots=10,
                 arguments={"a": 1.5, "b": 2.0},
                 subtask_metadata=TaskMetadata(user_metadata="hello"),
             ),
-            Subtask(program_index=1, num_shots=5),
+            remote.make_subtask(program_index=1, num_shots=5),
         ],
     )
 
@@ -438,17 +394,20 @@ def test_storage_get_task_definition_round_trip(storage):
 
 
 def test_storage_get_task_definition_isolates_by_task_id(storage):
-    task_def_1 = TaskDefinition(
+    task_def_1 = remote.make_task_definition(
         program_language="flair.v1",
-        programs=[Program(content="p1")],
-        subtasks=[Subtask(program_index=0, num_shots=1)],
+        programs=[remote.make_program(content="p1")],
+        subtasks=[remote.make_subtask(num_shots=1)],
     )
-    task_def_2 = TaskDefinition(
+    task_def_2 = remote.make_task_definition(
         program_language="qasm",
-        programs=[Program(content="p2a"), Program(content="p2b")],
+        programs=[
+            remote.make_program(content="p2a"),
+            remote.make_program(content="p2b"),
+        ],
         subtasks=[
-            Subtask(program_index=0, num_shots=2),
-            Subtask(program_index=1, num_shots=3),
+            remote.make_subtask(num_shots=2),
+            remote.make_subtask(program_index=1, num_shots=3),
         ],
     )
 

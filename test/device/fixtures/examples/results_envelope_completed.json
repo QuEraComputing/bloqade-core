@@ -1,0 +1,122 @@
+{
+  "elements": [
+    {
+      "task_id": "799ea417-f001-41ae-b788-7cba56e8da27",
+      "status": "Completed",
+      "subtasks": [
+        {
+          "status": "Completed",
+          "num_shots": 2,
+          "completed_date": "2026-06-08T08:49:38.957Z",
+          "subtask_metadata": {
+            "user_metadata": "{\"tag\": \"bell\"}"
+          },
+          "shot_results": [
+            {
+              "shot_index": 0,
+              "subtask_shot_index": 0,
+              "subtask_index": 0,
+              "shot_start_time": "2026-06-08T08:49:38.791Z",
+              "measurement": {
+                "measurement_time": "2026-06-08T08:49:38.835Z",
+                "measurement_values": [
+                  1,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "frame_type": "Sorted",
+              "camera_id": "00000000-0000-0000-0000-000000000000",
+              "frame_index": 1,
+              "error_reasons": []
+            },
+            {
+              "shot_index": 0,
+              "subtask_shot_index": 0,
+              "subtask_index": 0,
+              "shot_start_time": "2026-06-08T08:49:38.791Z",
+              "measurement": {
+                "measurement_time": "2026-06-08T08:49:38.852Z",
+                "measurement_values": [
+                  1,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "frame_type": "Detected",
+              "camera_id": "00000000-0000-0000-0000-000000000000",
+              "frame_index": 2,
+              "error_reasons": []
+            },
+            {
+              "shot_index": 1,
+              "subtask_shot_index": 1,
+              "subtask_index": 0,
+              "shot_start_time": "2026-06-08T08:49:38.888Z",
+              "measurement": {
+                "measurement_time": "2026-06-08T08:49:38.923Z",
+                "measurement_values": [
+                  1,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "frame_type": "Sorted",
+              "camera_id": "00000000-0000-0000-0000-000000000000",
+              "frame_index": 1,
+              "error_reasons": []
+            },
+            {
+              "shot_index": 1,
+              "subtask_shot_index": 1,
+              "subtask_index": 0,
+              "shot_start_time": "2026-06-08T08:49:38.888Z",
+              "measurement": {
+                "measurement_time": "2026-06-08T08:49:38.94Z",
+                "measurement_values": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "frame_type": "Detected",
+              "camera_id": "00000000-0000-0000-0000-000000000000",
+              "frame_index": 2,
+              "error_reasons": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "page": 0,
+  "total": 1
+}

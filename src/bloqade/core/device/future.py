@@ -421,7 +421,7 @@ class Future(AuthMixin, Generic[ResultType]):
 
         # fetch subtasks for metadata
         with DefinitionsClient(auth.app_context) as client:
-            task_def = client.get(id=task.definition)  # type: ignore
+            task_def = client.get(id=task.definition_id)  # type: ignore
 
         storage.add_task_definition(
             task_id, task_definition=task_def, creation_time=task.created_date
