@@ -1,58 +1,35 @@
 import json
-from datetime import datetime, timezone
 
 import numpy as np
 import pytest
-from qlam_core.plugins.tasks.api.tasks_models import (
-    Program,
-    Subtask,
-    TaskDefinition,
-    TaskMetadata,
-)
+from qlam_core.plugins.tasks.api.tasks_models import Subtask, TaskDefinition
 
 from bloqade.core.device.local_storage import (
     DictStorage,
     ShotFilter,
-    ShotResult,
     StorageFilter,
 )
 from bloqade.core.device.result import Result
 
-CREATION_TIME = datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
+from .fixtures import local, remote
+
+CREATION_TIME = local.CREATION_TIME
 
 
 def make_task_definition(subtasks: list[Subtask]) -> TaskDefinition:
-    return TaskDefinition(
-        program_language="squin",
-        programs=[Program(content="program")],
-        subtasks=subtasks,
-    )
+    return remote.make_task_definition(subtasks=subtasks)
 
 
 def add_task(storage: DictStorage, task_id: str, subtasks: list[Subtask]):
     storage.add_task_definition(task_id, make_task_definition(subtasks), CREATION_TIME)
 
 
-def make_metadata(value: dict) -> TaskMetadata:
-    return TaskMetadata(user_metadata=json.dumps(value))
+def make_metadata(value: dict):
+    return remote.make_task_metadata(user_metadata=json.dumps(value))
 
 
-def make_shot(
-    *,
-    task_id: str,
-    shot_index: int,
-    subtask_index: int,
-    frame_type: str = "DETECTED",
-    bitstring: tuple[bool, ...] = (True, False),
-) -> ShotResult:
-    return ShotResult(
-        task_id=task_id,
-        shot_index=shot_index,
-        subtask_index=subtask_index,
-        subtask_shot_index=shot_index,
-        frame_type=frame_type,
-        bitstring=np.array(bitstring),
-    )
+def make_shot(*, frame_type: str = "DETECTED", **kwargs):
+    return local.make_shot(frame_type=frame_type, **kwargs)
 
 
 def add_compatible_tasks(storage: DictStorage):
@@ -60,26 +37,24 @@ def add_compatible_tasks(storage: DictStorage):
         storage,
         "task-1",
         [
-            Subtask(
-                program_index=0,
+            remote.make_subtask(
                 num_shots=2,
                 arguments={"theta": 1.0},
                 subtask_metadata=make_metadata({"task": 1}),
             ),
-            Subtask(program_index=0, num_shots=1),
+            remote.make_subtask(num_shots=1),
         ],
     )
     add_task(
         storage,
         "task-2",
         [
-            Subtask(
-                program_index=0,
+            remote.make_subtask(
                 num_shots=3,
                 arguments={"theta": 1.0},
                 subtask_metadata=make_metadata({"task": 2}),
             ),
-            Subtask(program_index=0, num_shots=4),
+            remote.make_subtask(num_shots=4),
         ],
     )
     storage.add_shots(
@@ -202,11 +177,11 @@ def test_result_shot_results_returns_bitstrings_grouped_by_subtask():
     ("second_subtask", "message"),
     [
         (
-            Subtask(program_index=1, num_shots=1, arguments={"theta": 1.0}),
+            remote.make_subtask(program_index=1, num_shots=1, arguments={"theta": 1.0}),
             "program_index",
         ),
         (
-            Subtask(program_index=0, num_shots=1, arguments={"theta": 2.0}),
+            remote.make_subtask(num_shots=1, arguments={"theta": 2.0}),
             "arguments",
         ),
     ],
@@ -216,7 +191,7 @@ def test_result_validate_rejects_incompatible_task_ids(second_subtask, message):
     add_task(
         storage,
         "task-1",
-        [Subtask(program_index=0, num_shots=1, arguments={"theta": 1.0})],
+        [remote.make_subtask(num_shots=1, arguments={"theta": 1.0})],
     )
     add_task(storage, "task-2", [second_subtask])
     result = Result(
@@ -230,8 +205,8 @@ def test_result_validate_rejects_incompatible_task_ids(second_subtask, message):
 
 def test_result_validate_treats_missing_and_empty_arguments_as_compatible():
     storage = DictStorage()
-    add_task(storage, "task-1", [Subtask(program_index=0, num_shots=1)])
-    add_task(storage, "task-2", [Subtask(program_index=0, num_shots=1, arguments={})])
+    add_task(storage, "task-1", [remote.make_subtask(num_shots=1)])
+    add_task(storage, "task-2", [remote.make_subtask(num_shots=1, arguments={})])
     result = Result(
         storage=storage,
         shot_filter=ShotFilter(task_ids=("task-1", "task-2")),
@@ -265,14 +240,12 @@ def test_result_where_methods_return_narrowed_results():
         storage,
         "task-1",
         [
-            Subtask(
-                program_index=0,
+            remote.make_subtask(
                 num_shots=2,
                 arguments={"theta": 1.0},
                 subtask_metadata=make_metadata({"keep": False}),
             ),
-            Subtask(
-                program_index=0,
+            remote.make_subtask(
                 num_shots=3,
                 arguments={"theta": 2.0},
                 subtask_metadata=make_metadata({"keep": True}),

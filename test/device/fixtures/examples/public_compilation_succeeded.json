@@ -1,0 +1,12 @@
+{
+  "id": "7cd3b1aa-b0d8-4839-b060-79c8d160883e",
+  "input_definition_id": "db25a08c-0318-4a0d-b161-2d1658d15fa9",
+  "status": "Succeeded",
+  "stack_trace": null,
+  "program_failures": null,
+  "created_date": "2026-06-08T08:49:38.287244Z",
+  "created_by": "acbabea1-b48d-40c4-a7f6-d05bcf75cdd0",
+  "modified_date": "2026-06-08T08:49:38.596718Z",
+  "modified_by": "acbabea1-b48d-40c4-a7f6-d05bcf75cdd0",
+  "compiled_definition_id": null
+}

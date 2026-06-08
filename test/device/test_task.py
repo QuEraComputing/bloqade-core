@@ -1,10 +1,9 @@
 import importlib
 import json
-from datetime import datetime, timezone
-from types import SimpleNamespace
 
 import pytest
 from kirin.prelude import basic_no_opt
+from qlam_core.plugins.tasks.api.tasks_models import TaskStatus
 
 from bloqade.core.device.future import ApiFetchOptions
 from bloqade.core.device.local_storage import DictStorage
@@ -14,9 +13,11 @@ from bloqade.core.device.task import (
     SingleKernelTask,
 )
 
+from .fixtures import local, remote
+
 task_mod = importlib.import_module("bloqade.core.device.task")
 
-CREATION_TIME = datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
+CREATION_TIME = local.CREATION_TIME
 
 
 @basic_no_opt
@@ -250,24 +251,16 @@ def test_submit_task_definition_stores_definition_and_returns_future(monkeypatch
     fetch_options = ApiFetchOptions(subtasks_per_fetch=2)
     task_definition = task.create_task_definition()
     calls = {"authenticated": False}
-    created_bodies = []
 
-    class FakeTasksClient:
-        def __init__(self, app_context):
-            self.app_context = app_context
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc, traceback):
-            return False
-
-        def create(self, body):
-            created_bodies.append(body)
-            return SimpleNamespace(id="task-created", created_date=CREATION_TIME)
+    created_task = remote.make_task(
+        id="task-created",
+        task_status=TaskStatus.CREATED,
+        created_date=CREATION_TIME,
+    )
+    client = remote.FakeTasksClient(create_return=created_task)
 
     monkeypatch.setattr(task, "authenticate", lambda: calls.update(authenticated=True))
-    monkeypatch.setattr(task_mod, "TasksClient", FakeTasksClient)
+    monkeypatch.setattr(task_mod, "TasksClient", lambda app_context: client)
 
     future = task.submit_task_definition(
         task_definition=task_definition,
@@ -276,7 +269,10 @@ def test_submit_task_definition_stores_definition_and_returns_future(monkeypatch
     )
 
     assert calls["authenticated"] is True
-    assert created_bodies[0].root == task_definition
+    assert len(client.calls) == 1
+    name, kwargs = client.calls[0]
+    assert name == "create"
+    assert kwargs["body"].root == task_definition
     assert storage.get_task_definition("task-created") == task_definition
     assert storage.get_task_creation_time("task-created") == CREATION_TIME
     assert future.task_id == "task-created"
@@ -315,21 +311,15 @@ def test_submit_task_definition_defaults_to_fresh_dict_storage(monkeypatch):
     )
     task_definition = task.create_task_definition()
 
-    class FakeTasksClient:
-        def __init__(self, app_context):
-            self.app_context = app_context
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc, traceback):
-            return False
-
-        def create(self, body):
-            return SimpleNamespace(id="task-created", created_date=CREATION_TIME)
+    created_task = remote.make_task(
+        id="task-created",
+        task_status=TaskStatus.CREATED,
+        created_date=CREATION_TIME,
+    )
+    client = remote.FakeTasksClient(create_return=created_task)
 
     monkeypatch.setattr(task, "authenticate", lambda: None)
-    monkeypatch.setattr(task_mod, "TasksClient", FakeTasksClient)
+    monkeypatch.setattr(task_mod, "TasksClient", lambda app_context: client)
 
     future = task.submit_task_definition(task_definition=task_definition)
 
@@ -346,21 +336,15 @@ def test_submit_task_definition_rejects_missing_created_task_id(monkeypatch):
         num_shots=1,
     )
 
-    class FakeTasksClient:
-        def __init__(self, app_context):
-            self.app_context = app_context
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc, traceback):
-            return False
-
-        def create(self, body):
-            return SimpleNamespace(id=None, created_date=CREATION_TIME)
+    created_task = remote.make_task(
+        id=None,
+        task_status=TaskStatus.CREATED,
+        created_date=CREATION_TIME,
+    )
+    client = remote.FakeTasksClient(create_return=created_task)
 
     monkeypatch.setattr(task, "authenticate", lambda: None)
-    monkeypatch.setattr(task_mod, "TasksClient", FakeTasksClient)
+    monkeypatch.setattr(task_mod, "TasksClient", lambda app_context: client)
 
     with pytest.raises(ValueError, match="Couldn't get id of created task"):
         task.submit_task_definition(
