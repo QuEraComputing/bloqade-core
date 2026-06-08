@@ -525,7 +525,7 @@
 
     <span class=c1># fetch subtasks for metadata</span>
     <span class=k>with</span> <span class=n>DefinitionsClient</span><span class=p>(</span><span class=n>auth</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>client</span><span class=p>:</span>
-        <span class=n>task_def</span> <span class=o>=</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=n>task</span><span class=o>.</span><span class=n>definition</span><span class=p>)</span>  <span class=c1># type: ignore</span>
+        <span class=n>task_def</span> <span class=o>=</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=n>task</span><span class=o>.</span><span class=n>definition_id</span><span class=p>)</span>  <span class=c1># type: ignore</span>
 
     <span class=n>storage</span><span class=o>.</span><span class=n>add_task_definition</span><span class=p>(</span>
         <span class=n>task_id</span><span class=p>,</span> <span class=n>task_definition</span><span class=o>=</span><span class=n>task_def</span><span class=p>,</span> <span class=n>creation_time</span><span class=o>=</span><span class=n>task</span><span class=o>.</span><span class=n>created_date</span>
