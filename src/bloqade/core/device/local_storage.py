@@ -212,8 +212,9 @@ class StorageBackend(ABC):
 
         Args:
             task_id (str): Backend task ID.
-            subtasks (list[dict]): Subtask dictionaries containing
-                `subtask_index` and `completed_date`.
+            subtasks (list[dict]): API subtask dictionaries containing
+                `completed_date` and `shot_results` whose entries carry the
+                `subtask_index`. The subtask object itself has no index.
         """
         ...
 
@@ -642,8 +643,9 @@ class DictStorage(StorageBackend):
 
         Args:
             task_id (str): Backend task ID.
-            subtasks (list[dict]): Subtask dictionaries containing
-                `subtask_index` and `completed_date`.
+            subtasks (list[dict]): API subtask dictionaries containing
+                `completed_date` and `shot_results` whose entries carry the
+                `subtask_index`. The subtask object itself has no index.
         """
         current_subtasks = self._metadata.get("subtasks")
         if current_subtasks is None:
@@ -654,7 +656,12 @@ class DictStorage(StorageBackend):
             if completed_date is None:
                 continue
 
-            idx = subtask["subtask_index"]
+            shot_results = subtask.get("shot_results", [])
+            if len(shot_results) == 0:
+                # completed but empty? should be unreachable, but who knows
+                continue
+
+            idx = shot_results[0]["subtask_index"]
             if (task_id, idx) not in current_subtasks:
                 continue
 
@@ -1030,17 +1037,28 @@ class SQLiteStorage(StorageBackend):
 
         Args:
             task_id (str): Backend task ID.
-            subtasks (list[dict]): Subtask dictionaries containing
-                `subtask_index` and `completed_date`.
+            subtasks (list[dict]): API subtask dictionaries containing
+                `completed_date` and `shot_results` whose entries carry the
+                `subtask_index`. The subtask object itself has no index.
         """
         values = []
         for subtask in subtasks:
             completed_date = subtask.get("completed_date")
+            if completed_date is None:
+                continue
+
+            shot_results = subtask.get("shot_results", [])
+            if len(shot_results) == 0:
+                # completed but empty? should be unreachable, but who knows
+                continue
+
+            idx = shot_results[0]["subtask_index"]
+
             if isinstance(completed_date, datetime.datetime):
                 completed_date_str = completed_date.isoformat()
             else:
                 completed_date_str = completed_date
-            values.append((completed_date_str, task_id, subtask["subtask_index"]))
+            values.append((completed_date_str, task_id, idx))
         self.conn.executemany(
             "UPDATE subtasks SET completed_date = (?) WHERE task_id = (?) AND subtask_index = (?)",
             values,
