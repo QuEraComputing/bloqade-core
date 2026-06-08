@@ -4,25 +4,20 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
-from qlam_core.plugins.tasks.api.tasks_models import (
-    Program,
-    Subtask,
-    TaskDefinition,
-    TaskStatus,
-)
+from qlam_core.plugins.tasks.api.tasks_models import TaskStatus
 
 from bloqade.core.device.future import ApiFetchOptions, Future
 from bloqade.core.device.local_storage import (
     DictStorage,
     ShotFilter,
-    ShotResult,
-    SQLiteStorage,
 )
 from bloqade.core.device.result import Result
 
+from .fixtures import local, remote
+
 future_mod = importlib.import_module("bloqade.core.device.future")
 
-CREATION_TIME = datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
+CREATION_TIME = local.CREATION_TIME
 
 
 class CustomResult(Result):
@@ -33,33 +28,12 @@ class DefaultContextFuture(Future):
     context_name = "class-context"
 
 
-def make_task_definition(content: str = "program") -> TaskDefinition:
-    return TaskDefinition(
-        program_language="squin",
-        programs=[Program(content=content)],
-        subtasks=[Subtask(program_index=0, num_shots=1)],
-    )
+def make_task_definition(content: str = "program"):
+    return remote.make_task_definition(programs=[remote.make_program(content=content)])
 
 
-def make_shot(task_id: str, shot_index: int) -> ShotResult:
-    return ShotResult(
-        task_id=task_id,
-        shot_index=shot_index,
-        subtask_index=0,
-        subtask_shot_index=shot_index,
-        frame_type="DETECTED",
-        bitstring=np.array([True, False]),
-    )
-
-
-def assert_shots_equal(actual: list[ShotResult], expected: list[ShotResult]):
-    assert len(actual) == len(expected)
-    for actual_shot, expected_shot in zip(actual, expected):
-        assert actual_shot.task_id == expected_shot.task_id
-        assert actual_shot.shot_index == expected_shot.shot_index
-        assert actual_shot.subtask_index == expected_shot.subtask_index
-        assert actual_shot.frame_type == expected_shot.frame_type
-        np.testing.assert_array_equal(actual_shot.bitstring, expected_shot.bitstring)
+make_shot = local.make_shot
+assert_shots_equal = local.assert_shots_equal
 
 
 def test_resolve_context_name_uses_explicit_or_class_default():
@@ -141,45 +115,27 @@ def test_from_storage_rejects_missing_explicit_task_id():
 
 def test_from_task_id_fetches_definition_and_stores_it(monkeypatch):
     storage = DictStorage()
-    task_definition = make_task_definition("from-api")
+    task_definition_response = remote.make_task_definition_response(
+        id="11111111-1111-1111-1111-111111111111",
+    )
+    task = remote.make_task(
+        id="task-1",
+        definition_id="11111111-1111-1111-1111-111111111111",
+        task_status=TaskStatus.CREATED,
+        created_date=CREATION_TIME,
+    )
+    tasks_client = remote.FakeTasksClient(get_return=task)
+    defs_client = remote.FakeDefinitionsClient(get_return=task_definition_response)
     auth_context_names = []
-
-    class FakeTasksClient:
-        def __init__(self, app_context):
-            self.app_context = app_context
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc, traceback):
-            return False
-
-        def get(self, id):
-            assert id == "task-1"
-            return SimpleNamespace(
-                definition="definition-1", created_date=CREATION_TIME
-            )
-
-    class FakeDefinitionsClient:
-        def __init__(self, app_context):
-            self.app_context = app_context
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc, traceback):
-            return False
-
-        def get(self, id):
-            assert id == "definition-1"
-            return task_definition
 
     def authenticate(auth):
         auth_context_names.append(auth.context_name)
 
     monkeypatch.setattr(future_mod.AuthMixin, "authenticate", authenticate)
-    monkeypatch.setattr(future_mod, "TasksClient", FakeTasksClient)
-    monkeypatch.setattr(future_mod, "DefinitionsClient", FakeDefinitionsClient)
+    monkeypatch.setattr(future_mod, "TasksClient", lambda app_context: tasks_client)
+    monkeypatch.setattr(
+        future_mod, "DefinitionsClient", lambda app_context: defs_client
+    )
 
     future = Future.from_task_id(
         task_id="task-1",
@@ -190,7 +146,15 @@ def test_from_task_id_fetches_definition_and_stores_it(monkeypatch):
     assert auth_context_names == ["ctx"]
     assert future.task_id == "task-1"
     assert future.storage is storage
-    assert storage.get_task_definition("task-1") == task_definition
+    assert tasks_client.calls == [("get", {"id": "task-1"})]
+    assert defs_client.calls == [
+        ("get", {"id": "11111111-1111-1111-1111-111111111111"})
+    ]
+    stored_def = storage.get_task_definition("task-1")
+    assert stored_def.program_language == task_definition_response.program_language
+    assert [p.content for p in stored_def.programs] == [
+        p.content for p in task_definition_response.programs
+    ]
     assert storage.get_task_creation_time("task-1") == CREATION_TIME
 
 
@@ -204,44 +168,29 @@ def test_future_defaults_to_fresh_dict_storage_per_instance():
 
 
 def test_from_task_id_defaults_to_fresh_dict_storage_when_storage_is_none(monkeypatch):
-    task_definition = make_task_definition("from-api")
-
-    class FakeTasksClient:
-        def __init__(self, app_context):
-            self.app_context = app_context
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc, traceback):
-            return False
-
-        def get(self, id):
-            return SimpleNamespace(
-                definition="definition-1", created_date=CREATION_TIME
-            )
-
-    class FakeDefinitionsClient:
-        def __init__(self, app_context):
-            self.app_context = app_context
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc, traceback):
-            return False
-
-        def get(self, id):
-            return task_definition
+    task_definition_response = remote.make_task_definition_response(
+        id="22222222-2222-2222-2222-222222222222",
+    )
+    task = remote.make_task(
+        id="task-1",
+        definition_id="22222222-2222-2222-2222-222222222222",
+        task_status=TaskStatus.CREATED,
+        created_date=CREATION_TIME,
+    )
+    tasks_client = remote.FakeTasksClient(get_return=task)
+    defs_client = remote.FakeDefinitionsClient(get_return=task_definition_response)
 
     monkeypatch.setattr(future_mod.AuthMixin, "authenticate", lambda auth: None)
-    monkeypatch.setattr(future_mod, "TasksClient", FakeTasksClient)
-    monkeypatch.setattr(future_mod, "DefinitionsClient", FakeDefinitionsClient)
+    monkeypatch.setattr(future_mod, "TasksClient", lambda app_context: tasks_client)
+    monkeypatch.setattr(
+        future_mod, "DefinitionsClient", lambda app_context: defs_client
+    )
 
     future = Future.from_task_id(task_id="task-1", context_name="ctx")
 
     assert isinstance(future.storage, DictStorage)
-    assert future.storage.get_task_definition("task-1") == task_definition
+    stored_def = future.storage.get_task_definition("task-1")
+    assert stored_def.program_language == task_definition_response.program_language
     assert future.storage.get_task_creation_time("task-1") == CREATION_TIME
 
 
@@ -250,7 +199,7 @@ def test_status_done_and_cancelled_delegate_to_task_status(monkeypatch):
     monkeypatch.setattr(
         future,
         "get_task",
-        lambda: SimpleNamespace(task_status=TaskStatus.CANCELLED),
+        lambda: remote.make_task(task_status=TaskStatus.CANCELLED),
     )
 
     assert future.status() == TaskStatus.CANCELLED
@@ -276,7 +225,10 @@ def test_wait_for_completion_rejects_cancelled_and_failed_tasks(monkeypatch):
     monkeypatch.setattr(
         future,
         "get_task",
-        lambda: SimpleNamespace(error_reasons=["hardware unavailable"]),
+        lambda: remote.make_task(
+            task_status=TaskStatus.FAILED,
+            error_reasons=["hardware unavailable"],
+        ),
     )
 
     with pytest.raises(ValueError, match="hardware unavailable"):
@@ -325,8 +277,11 @@ def test_export_to_copies_filtered_shots_and_task_definitions():
     task_definition = make_task_definition()
     source.add_task_definition("task-1", task_definition, CREATION_TIME)
     source.add_task_definition("task-2", make_task_definition("other"), CREATION_TIME)
-    kept_shots = [make_shot("task-1", 0), make_shot("task-1", 1)]
-    other_shot = make_shot("task-2", 0)
+    kept_shots = [
+        make_shot(task_id="task-1", shot_index=0),
+        make_shot(task_id="task-1", shot_index=1),
+    ]
+    other_shot = make_shot(task_id="task-2", shot_index=0)
     source.add_shots([*kept_shots, other_shot])
     future = Future(task_id="task-1", storage=source, context_name="ctx")
 
@@ -346,7 +301,7 @@ def test_fetch_and_export_to_fetches_before_exporting(monkeypatch):
     destination = DictStorage()
     task_definition = make_task_definition()
     source.add_task_definition("task-1", task_definition, CREATION_TIME)
-    shot = make_shot("task-1", 0)
+    shot = make_shot(task_id="task-1", shot_index=0)
     future = Future(task_id="task-1", storage=source, context_name="ctx")
 
     def fetch():
@@ -372,64 +327,66 @@ def test_fetch_subtask_page_parses_results_and_tracks_first_incomplete_page():
         ),
     )
 
-    class FakeResultsClient:
-        def __init__(self):
-            self.calls = []
-
-        def get(self, **kwargs):
-            self.calls.append(kwargs)
-            return {
-                "elements": [
-                    {
-                        "subtasks": [
-                            {
-                                "status": "COMPLETED",
-                                "shot_results": [
-                                    {
-                                        "shot_index": 0,
-                                        "subtask_shot_index": 0,
-                                        "subtask_index": 0,
-                                        "frame_type": "detected",
-                                        "measurement": {
-                                            "measurement_values": [1, 0, 1]
-                                        },
-                                    }
-                                ],
-                            },
-                            {
-                                "status": "SCHEDULED",
-                                "shot_results": [
-                                    {
-                                        "shot_index": 1,
-                                        "subtask_shot_index": 0,
-                                        "subtask_index": 1,
-                                        "frame_type": "raw",
-                                        "measurement": {
-                                            "measurement_values": [0, 1, 0]
-                                        },
-                                    }
-                                ],
-                            },
-                        ]
-                    }
+    # Note: the real API returns title-case "Completed"/"Detected" — the
+    # production code uppercases on ingest, so either case works. We mix one
+    # title-case ("Completed") + one upper-case ("SCHEDULED") here to make the
+    # case-normalization seam explicit.
+    envelope = remote.make_result_envelope(
+        total=1,
+        elements=[
+            remote.make_result_element(
+                subtasks=[
+                    remote.make_result_subtask(
+                        status="Completed",
+                        completed_date=None,
+                        user_metadata=None,
+                        shot_results=[
+                            remote.make_shot_result_dict(
+                                shot_index=0,
+                                subtask_shot_index=0,
+                                subtask_index=0,
+                                frame_type="detected",
+                                measurement_values=[1, 0, 1],
+                            )
+                        ],
+                    ),
+                    remote.make_result_subtask(
+                        status="SCHEDULED",
+                        completed_date=None,
+                        user_metadata=None,
+                        shot_results=[
+                            remote.make_shot_result_dict(
+                                shot_index=1,
+                                subtask_shot_index=0,
+                                subtask_index=1,
+                                frame_type="raw",
+                                measurement_values=[0, 1, 0],
+                            )
+                        ],
+                    ),
                 ]
-            }
+            )
+        ],
+    )
 
-    client = FakeResultsClient()
+    client = remote.FakeResultsClient(envelope_return=envelope)
 
     done = future._fetch_subtask_page(client=client, subtask_page=3)  # type: ignore
 
     assert done is True
     assert future._first_incomplete_subtask_page == 3
     assert client.calls == [
-        {
-            "id": "task-1",
-            "page": 3,
-            "size": 10,
-            "sort": "completed_date,asc",
-            "shots_page": 0,
-            "shots_size": 100,
-        }
+        (
+            "get",
+            {
+                "id": "task-1",
+                "page": 3,
+                "size": 10,
+                "sort": "completed_date,asc",
+                "shots_page": 0,
+                "shots_size": 100,
+            },
+        )
     ]
     shots = sorted(storage.get_shots(), key=lambda shot: shot.shot_index)
     assert [shot.frame_type for shot in shots] == ["DETECTED", "RAW"]
@@ -437,34 +394,18 @@ def test_fetch_subtask_page_parses_results_and_tracks_first_incomplete_page():
     np.testing.assert_array_equal(shots[1].bitstring, np.array([False, True, False]))
 
 
-@pytest.fixture(params=["dict", "sqlite"])
-def storage(request, tmp_path):
-    if request.param == "dict":
-        yield DictStorage()
-        return
-
-    sqlite_storage = SQLiteStorage(str(tmp_path / "shots.sqlite"))
-    try:
-        yield sqlite_storage
-    finally:
-        sqlite_storage.close()
-
-
 def test_fetch_subtask_page_persists_completed_dates_from_api_schema(storage):
     # NOTE: the real results API subtask object carries NO subtask identifier
     # (no `subtask_index`, no `subtask_id`); the `subtask_index` is present only
-    # on each `shot_results` entry. Verified by recording a live response. This
-    # mirrors test_fetch_subtask_page_persists_subtask_completed_dates but uses
-    # the actual response schema.
+    # on each `shot_results` entry. Verified by recording a live response.
     storage.add_task_definition(
         "task-1",
-        TaskDefinition(
-            program_language="squin",
-            programs=[Program(content="program")],
+        remote.make_task_definition(
+            programs=[remote.make_program(content="program")],
             subtasks=[
-                Subtask(program_index=0, num_shots=1),
-                Subtask(program_index=0, num_shots=1),
-                Subtask(program_index=0, num_shots=1),
+                remote.make_subtask(num_shots=1),
+                remote.make_subtask(num_shots=1),
+                remote.make_subtask(num_shots=1),
             ],
         ),
         CREATION_TIME,
@@ -479,52 +420,35 @@ def test_fetch_subtask_page_persists_completed_dates_from_api_schema(storage):
     completed_at_0 = datetime(2026, 5, 21, 10, 0, 0, tzinfo=timezone.utc)
     completed_at_1_iso = "2026-05-21T11:00:00+00:00"
 
-    class FakeResultsClient:
-        def get(self, **kwargs):
-            return {
-                "elements": [
-                    {
-                        "subtasks": [
-                            {
-                                "status": "Completed",
-                                "completed_date": completed_at_0,
-                                "subtask_metadata": {"user_metadata": "{}"},
-                                "shot_results": [
-                                    {
-                                        "shot_index": 0,
-                                        "subtask_shot_index": 0,
-                                        "subtask_index": 0,
-                                        "frame_type": "Detected",
-                                        "measurement": {"measurement_values": [1, 0]},
-                                    }
-                                ],
-                            },
-                            {
-                                "status": "Completed",
-                                "completed_date": completed_at_1_iso,
-                                "subtask_metadata": {"user_metadata": "{}"},
-                                "shot_results": [
-                                    {
-                                        "shot_index": 1,
-                                        "subtask_shot_index": 0,
-                                        "subtask_index": 1,
-                                        "frame_type": "Detected",
-                                        "measurement": {"measurement_values": [0, 1]},
-                                    }
-                                ],
-                            },
-                            {
-                                "status": "Scheduled",
-                                "completed_date": None,
-                                "subtask_metadata": {"user_metadata": "{}"},
-                                "shot_results": [],
-                            },
-                        ]
-                    }
+    envelope = remote.make_result_envelope(
+        total=1,
+        elements=[
+            remote.make_result_element(
+                subtasks=[
+                    remote.make_result_subtask(
+                        completed_date=completed_at_0,
+                        shot_results=[
+                            remote.make_shot_result_dict(shot_index=0, subtask_index=0)
+                        ],
+                    ),
+                    remote.make_result_subtask(
+                        completed_date=completed_at_1_iso,
+                        shot_results=[
+                            remote.make_shot_result_dict(shot_index=1, subtask_index=1)
+                        ],
+                    ),
+                    remote.make_result_subtask(
+                        status="Scheduled",
+                        completed_date=None,
+                        shot_results=[],
+                    ),
                 ]
-            }
+            )
+        ],
+    )
 
-    future._fetch_subtask_page(client=FakeResultsClient(), subtask_page=0)  # type: ignore
+    client = remote.FakeResultsClient(envelope_return=envelope)
+    future._fetch_subtask_page(client=client, subtask_page=0)  # type: ignore
 
     subtasks = sorted(
         storage.get_subtasks(), key=lambda subtask: subtask["subtask_index"]
@@ -538,19 +462,18 @@ def test_fetch_subtask_page_updates_completed_dates_only_on_first_shot_page():
     # completed_date never changes across shot pages, and on later shot pages a
     # subtask can come back with empty shot_results (so its index can't be
     # derived). Only run the update on the first shot page.
-    storage = DictStorage()
-    storage.add_task_definition(
+    dict_storage = DictStorage()
+    dict_storage.add_task_definition(
         "task-1",
-        TaskDefinition(
-            program_language="squin",
-            programs=[Program(content="program")],
-            subtasks=[Subtask(program_index=0, num_shots=2)],
+        remote.make_task_definition(
+            programs=[remote.make_program(content="program")],
+            subtasks=[remote.make_subtask(num_shots=2)],
         ),
         CREATION_TIME,
     )
     future = Future(
         task_id="task-1",
-        storage=storage,
+        storage=dict_storage,
         context_name="ctx",
         fetch_options=ApiFetchOptions(subtasks_per_fetch=10, shots_per_fetch=2),
     )
@@ -558,131 +481,89 @@ def test_fetch_subtask_page_updates_completed_dates_only_on_first_shot_page():
     completed_at = datetime(2026, 5, 21, 10, 0, 0, tzinfo=timezone.utc)
 
     update_calls = []
-    original_update = storage.update_subtasks_completed_date
+    original_update = dict_storage.update_subtasks_completed_date
 
     def spy(task_id, subtasks):
         update_calls.append(subtasks)
         return original_update(task_id=task_id, subtasks=subtasks)
 
-    storage.update_subtasks_completed_date = spy
+    dict_storage.update_subtasks_completed_date = spy
 
-    def shot(shot_index):
-        return {
-            "shot_index": shot_index,
-            "subtask_shot_index": shot_index,
-            "subtask_index": 0,
-            "frame_type": "Detected",
-            "measurement": {"measurement_values": [1, 0]},
-        }
+    def envelope_fn(**kwargs):
+        # A full first shot page (2 == shots_per_fetch) forces a second fetch;
+        # that second page returns the subtask with no shots left.
+        if kwargs["shots_page"] == 0:
+            shot_results = [
+                remote.make_shot_result_dict(shot_index=0, subtask_index=0),
+                remote.make_shot_result_dict(shot_index=1, subtask_index=0),
+            ]
+        else:
+            shot_results = []
+        return remote.make_result_envelope(
+            total=1,
+            elements=[
+                remote.make_result_element(
+                    subtasks=[
+                        remote.make_result_subtask(
+                            completed_date=completed_at,
+                            shot_results=shot_results,
+                        )
+                    ]
+                )
+            ],
+        )
 
-    class FakeResultsClient:
-        def __init__(self):
-            self.calls = []
-
-        def get(self, **kwargs):
-            self.calls.append(kwargs)
-            # A full first shot page (2 == shots_per_fetch) forces a second
-            # fetch; that second page returns the subtask with no shots left.
-            shot_results = [shot(0), shot(1)] if kwargs["shots_page"] == 0 else []
-            return {
-                "elements": [
-                    {
-                        "subtasks": [
-                            {
-                                "status": "Completed",
-                                "completed_date": completed_at,
-                                "subtask_metadata": {"user_metadata": "{}"},
-                                "shot_results": shot_results,
-                            }
-                        ]
-                    }
-                ]
-            }
-
-    client = FakeResultsClient()
+    client = remote.FakeResultsClient(envelope_fn=envelope_fn)
     future._fetch_subtask_page(client=client, subtask_page=0)  # type: ignore
 
     # Two shot pages were fetched, but the completed-date update ran only once.
-    assert [c["shots_page"] for c in client.calls] == [0, 1]
+    assert [c[1]["shots_page"] for c in client.calls] == [0, 1]
     assert len(update_calls) == 1
-    assert storage.get_subtasks()[0]["completed_date"] == completed_at
+    assert dict_storage.get_subtasks()[0]["completed_date"] == completed_at
 
 
 def test_cancel_warns_when_backend_cancel_raises(monkeypatch):
     future = Future(task_id="task-1", storage=DictStorage(), context_name="ctx")
     monkeypatch.setattr(future, "authenticate", lambda: None)
 
-    class FakeTasksClient:
-        def __init__(self, app_context):
-            self.app_context = app_context
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc, traceback):
-            return False
-
-        def cancel(self, id):
-            raise RuntimeError(f"cannot cancel {id}")
-
-    monkeypatch.setattr(future_mod, "TasksClient", FakeTasksClient)
+    client = remote.FakeTasksClient(
+        cancel_raises=RuntimeError("cannot cancel task-1"),
+    )
+    monkeypatch.setattr(future_mod, "TasksClient", lambda app_context: client)
 
     with pytest.warns(UserWarning, match="cannot cancel task-1"):
         assert future.cancel() is None
 
 
 def test_get_task_authenticates_and_returns_backend_task(monkeypatch):
-    returned_task = SimpleNamespace(task_status=TaskStatus.CREATED)
+    returned_task = remote.make_task(task_status=TaskStatus.CREATED)
     future = Future(task_id="task-1", storage=DictStorage(), context_name="ctx")
     authenticated = []
 
-    class FakeTasksClient:
-        def __init__(self, app_context):
-            self.app_context = app_context
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc, traceback):
-            return False
-
-        def get(self, id):
-            assert id == "task-1"
-            return returned_task
+    client = remote.FakeTasksClient(get_return=returned_task)
 
     monkeypatch.setattr(future, "authenticate", lambda: authenticated.append(True))
-    monkeypatch.setattr(future_mod, "TasksClient", FakeTasksClient)
+    monkeypatch.setattr(future_mod, "TasksClient", lambda app_context: client)
 
     assert future.get_task() is returned_task
     assert authenticated == [True]
 
 
 def test_get_compilation_uses_task_compilation_id_when_omitted(monkeypatch):
-    returned_compilation = SimpleNamespace(id="compilation-1")
+    returned_compilation = remote.make_public_compilation()
     future = Future(task_id="task-1", storage=DictStorage(), context_name="ctx")
     authenticated = []
 
-    class FakeCompilationsClient:
-        def __init__(self, app_context):
-            self.app_context = app_context
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, exc_type, exc, traceback):
-            return False
-
-        def get(self, id):
-            assert id == "compilation-1"
-            return returned_compilation
+    client = remote.FakeCompilationsClient(get_return=returned_compilation)
 
     monkeypatch.setattr(future, "authenticate", lambda: authenticated.append(True))
     monkeypatch.setattr(
         future,
         "get_task",
-        lambda: SimpleNamespace(compilation_id="compilation-1"),
+        lambda: SimpleNamespace(compilation_id=str(returned_compilation.id)),
     )
-    monkeypatch.setattr(future_mod, "CompilationsClient", FakeCompilationsClient)
+    monkeypatch.setattr(future_mod, "CompilationsClient", lambda app_context: client)
 
     assert future.get_compilation() is returned_compilation
     assert authenticated == [True]
+    assert client.calls == [("get", {"id": str(returned_compilation.id)})]
