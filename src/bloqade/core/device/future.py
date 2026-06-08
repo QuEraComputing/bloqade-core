@@ -520,9 +520,13 @@ class Future(AuthMixin, Generic[ResultType]):
                     and len(subtasks) >= self.fetch_options.subtasks_per_fetch
                 )
 
-                self.storage.update_subtasks_completed_date(
-                    task_id=self.task_id, subtasks=subtasks
-                )
+                # completed_date is stable across shot pages, and later shot
+                # pages can return a subtask with no shots (so its index can't
+                # be derived). Update only on the first shot page.
+                if shots_page == 0:
+                    self.storage.update_subtasks_completed_date(
+                        task_id=self.task_id, subtasks=subtasks
+                    )
 
                 for subtask in subtasks:
                     subtask_status = subtask.get("status", "").upper()

@@ -12,7 +12,12 @@ from qlam_core.plugins.tasks.api.tasks_models import (
 )
 
 from bloqade.core.device.future import ApiFetchOptions, Future
-from bloqade.core.device.local_storage import DictStorage, ShotFilter, ShotResult
+from bloqade.core.device.local_storage import (
+    DictStorage,
+    ShotFilter,
+    ShotResult,
+    SQLiteStorage,
+)
 from bloqade.core.device.result import Result
 
 future_mod = importlib.import_module("bloqade.core.device.future")
@@ -432,8 +437,25 @@ def test_fetch_subtask_page_parses_results_and_tracks_first_incomplete_page():
     np.testing.assert_array_equal(shots[1].bitstring, np.array([False, True, False]))
 
 
-def test_fetch_subtask_page_persists_subtask_completed_dates():
-    storage = DictStorage()
+@pytest.fixture(params=["dict", "sqlite"])
+def storage(request, tmp_path):
+    if request.param == "dict":
+        yield DictStorage()
+        return
+
+    sqlite_storage = SQLiteStorage(str(tmp_path / "shots.sqlite"))
+    try:
+        yield sqlite_storage
+    finally:
+        sqlite_storage.close()
+
+
+def test_fetch_subtask_page_persists_completed_dates_from_api_schema(storage):
+    # NOTE: the real results API subtask object carries NO subtask identifier
+    # (no `subtask_index`, no `subtask_id`); the `subtask_index` is present only
+    # on each `shot_results` entry. Verified by recording a live response. This
+    # mirrors test_fetch_subtask_page_persists_subtask_completed_dates but uses
+    # the actual response schema.
     storage.add_task_definition(
         "task-1",
         TaskDefinition(
@@ -464,21 +486,37 @@ def test_fetch_subtask_page_persists_subtask_completed_dates():
                     {
                         "subtasks": [
                             {
-                                "subtask_index": 0,
-                                "status": "COMPLETED",
+                                "status": "Completed",
                                 "completed_date": completed_at_0,
-                                "shot_results": [],
+                                "subtask_metadata": {"user_metadata": "{}"},
+                                "shot_results": [
+                                    {
+                                        "shot_index": 0,
+                                        "subtask_shot_index": 0,
+                                        "subtask_index": 0,
+                                        "frame_type": "Detected",
+                                        "measurement": {"measurement_values": [1, 0]},
+                                    }
+                                ],
                             },
                             {
-                                "subtask_index": 1,
-                                "status": "COMPLETED",
+                                "status": "Completed",
                                 "completed_date": completed_at_1_iso,
-                                "shot_results": [],
+                                "subtask_metadata": {"user_metadata": "{}"},
+                                "shot_results": [
+                                    {
+                                        "shot_index": 1,
+                                        "subtask_shot_index": 0,
+                                        "subtask_index": 1,
+                                        "frame_type": "Detected",
+                                        "measurement": {"measurement_values": [0, 1]},
+                                    }
+                                ],
                             },
                             {
-                                "subtask_index": 2,
-                                "status": "SCHEDULED",
+                                "status": "Scheduled",
                                 "completed_date": None,
+                                "subtask_metadata": {"user_metadata": "{}"},
                                 "shot_results": [],
                             },
                         ]
@@ -494,6 +532,80 @@ def test_fetch_subtask_page_persists_subtask_completed_dates():
     assert subtasks[0]["completed_date"] == completed_at_0
     assert subtasks[1]["completed_date"] == datetime.fromisoformat(completed_at_1_iso)
     assert subtasks[2]["completed_date"] is None
+
+
+def test_fetch_subtask_page_updates_completed_dates_only_on_first_shot_page():
+    # completed_date never changes across shot pages, and on later shot pages a
+    # subtask can come back with empty shot_results (so its index can't be
+    # derived). Only run the update on the first shot page.
+    storage = DictStorage()
+    storage.add_task_definition(
+        "task-1",
+        TaskDefinition(
+            program_language="squin",
+            programs=[Program(content="program")],
+            subtasks=[Subtask(program_index=0, num_shots=2)],
+        ),
+        CREATION_TIME,
+    )
+    future = Future(
+        task_id="task-1",
+        storage=storage,
+        context_name="ctx",
+        fetch_options=ApiFetchOptions(subtasks_per_fetch=10, shots_per_fetch=2),
+    )
+
+    completed_at = datetime(2026, 5, 21, 10, 0, 0, tzinfo=timezone.utc)
+
+    update_calls = []
+    original_update = storage.update_subtasks_completed_date
+
+    def spy(task_id, subtasks):
+        update_calls.append(subtasks)
+        return original_update(task_id=task_id, subtasks=subtasks)
+
+    storage.update_subtasks_completed_date = spy
+
+    def shot(shot_index):
+        return {
+            "shot_index": shot_index,
+            "subtask_shot_index": shot_index,
+            "subtask_index": 0,
+            "frame_type": "Detected",
+            "measurement": {"measurement_values": [1, 0]},
+        }
+
+    class FakeResultsClient:
+        def __init__(self):
+            self.calls = []
+
+        def get(self, **kwargs):
+            self.calls.append(kwargs)
+            # A full first shot page (2 == shots_per_fetch) forces a second
+            # fetch; that second page returns the subtask with no shots left.
+            shot_results = [shot(0), shot(1)] if kwargs["shots_page"] == 0 else []
+            return {
+                "elements": [
+                    {
+                        "subtasks": [
+                            {
+                                "status": "Completed",
+                                "completed_date": completed_at,
+                                "subtask_metadata": {"user_metadata": "{}"},
+                                "shot_results": shot_results,
+                            }
+                        ]
+                    }
+                ]
+            }
+
+    client = FakeResultsClient()
+    future._fetch_subtask_page(client=client, subtask_page=0)  # type: ignore
+
+    # Two shot pages were fetched, but the completed-date update ran only once.
+    assert [c["shots_page"] for c in client.calls] == [0, 1]
+    assert len(update_calls) == 1
+    assert storage.get_subtasks()[0]["completed_date"] == completed_at
 
 
 def test_cancel_warns_when_backend_cancel_raises(monkeypatch):

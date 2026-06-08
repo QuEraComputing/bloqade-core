@@ -491,11 +491,19 @@ def test_storage_update_subtasks_completed_date_round_trip(storage):
         ),
     )
 
+    # The API subtask object carries no index; the subtask_index is read from
+    # its shot_results entries.
     storage.update_subtasks_completed_date(
         "task-1",
         [
-            {"subtask_index": 0, "completed_date": first_completed_date},
-            {"subtask_index": 1, "completed_date": second_completed_date.isoformat()},
+            {
+                "completed_date": first_completed_date,
+                "shot_results": [{"subtask_index": 0}],
+            },
+            {
+                "completed_date": second_completed_date.isoformat(),
+                "shot_results": [{"subtask_index": 1}],
+            },
         ],
     )
 
