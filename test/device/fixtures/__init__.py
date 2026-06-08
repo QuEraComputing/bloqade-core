@@ -13,6 +13,10 @@ A new test should pick one namespace per call site and stick with it; mixing
 remote pydantic types and local dicts in the same fixture is the drift this
 module exists to prevent. Sample JSON dumps captured from the live API live
 under `examples/` for reference.
+
+The remote builders and the `examples/` dumps were verified against
+qlam-core v0.2.0. If you bump that pin, re-capture the examples and re-check
+the builders against the new wire shapes.
 """
 
 from . import local, remote

@@ -14,6 +14,9 @@ Two layers live here:
 Defaults follow the live API casing (`"Completed"`, `"Detected"`) so anything
 testing the production normalization paths (`.upper()` in future.py) exercises
 realistic input. The bloqade local dict schema lives in `local.py`.
+
+These builders and the `examples/` dumps they mirror were verified against
+qlam-core v0.2.0 (the `>=0.2.0` pin in pyproject.toml).
 """
 
 from __future__ import annotations
