@@ -571,26 +571,6 @@ def test_get_compilation_uses_task_compilation_id_when_omitted(monkeypatch):
     assert client.calls == [("get", {"id": str(returned_compilation.id)})]
 
 
-def test_cancel_warns_when_403_persists_after_refresh(monkeypatch, recwarn):
-    future = Future(task_id="task-1", storage=DictStorage(), context_name="ctx")
-
-    def cancel_call(id):  # noqa: A002
-        raise APIError(message="permission denied", status_code=403)
-
-    tasks_client = remote.FakeTasksClient()
-    monkeypatch.setattr(tasks_client, "cancel", cancel_call)
-    auth_client = remote.FakeAuthClient(refresh_result={"qlam": False})
-
-    monkeypatch.setattr(future_mod.AuthMixin, "authenticate", lambda auth: None)
-    monkeypatch.setattr(future_mod, "TasksClient", lambda app_context: tasks_client)
-    monkeypatch.setattr(mixins_mod, "AuthClient", lambda app_context: auth_client)
-
-    assert future.cancel() is None
-    messages = [str(w.message) for w in recwarn.list]
-    assert any("permission denied (403)" in m for m in messages)
-    assert [name for name, _ in auth_client.calls] == ["refresh_credentials"]
-
-
 def test_fetch_retries_only_the_failing_page_on_403(monkeypatch):
     future = Future(task_id="task-1", storage=DictStorage(), context_name="ctx")
 

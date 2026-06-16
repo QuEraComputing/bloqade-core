@@ -4,7 +4,6 @@ from typing import Any, Generic
 from warnings import warn
 
 import numpy as np
-from qlam_core.errors import APIError
 from qlam_core.plugins.compilations.api import CompilationsClient
 from qlam_core.plugins.definitions.api.client import DefinitionsClient
 from qlam_core.plugins.results.api.client import ResultsClient
@@ -178,15 +177,6 @@ class Future(AuthMixin, Generic[ResultType]):
                 # NOTE: typing issue because client is seen as BaseClient instead of TaskClient
                 return self.call_with_auth_refresh(
                     lambda: client.cancel(id=self.task_id)  # type: ignore
-                )
-            except APIError as e:
-                if e.status_code == 403:
-                    warn(
-                        f"Could not cancel task with ID {self.task_id}: permission denied (403) and credential refresh did not restore access."
-                    )
-                    return
-                warn(
-                    f"API error encountered when trying to cancel task with ID {self.task_id}: {str(repr(e))}"
                 )
             except Exception as e:
                 warn(
