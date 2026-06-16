@@ -4,6 +4,7 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
+from qlam_core.errors import APIError
 from qlam_core.plugins.tasks.api.tasks_models import TaskStatus
 
 from bloqade.core.device.future import ApiFetchOptions, Future
@@ -16,6 +17,7 @@ from bloqade.core.device.result import Result
 from .fixtures import local, remote
 
 future_mod = importlib.import_module("bloqade.core.device.future")
+mixins_mod = importlib.import_module("bloqade.core.device.mixins")
 
 CREATION_TIME = local.CREATION_TIME
 
@@ -567,3 +569,56 @@ def test_get_compilation_uses_task_compilation_id_when_omitted(monkeypatch):
     assert future.get_compilation() is returned_compilation
     assert authenticated == [True]
     assert client.calls == [("get", {"id": str(returned_compilation.id)})]
+
+
+def test_cancel_warns_when_403_persists_after_refresh(monkeypatch, recwarn):
+    future = Future(task_id="task-1", storage=DictStorage(), context_name="ctx")
+
+    def cancel_call(id):  # noqa: A002
+        raise APIError(message="permission denied", status_code=403)
+
+    tasks_client = remote.FakeTasksClient()
+    monkeypatch.setattr(tasks_client, "cancel", cancel_call)
+    auth_client = remote.FakeAuthClient(refresh_result={"qlam": False})
+
+    monkeypatch.setattr(future_mod.AuthMixin, "authenticate", lambda auth: None)
+    monkeypatch.setattr(future_mod, "TasksClient", lambda app_context: tasks_client)
+    monkeypatch.setattr(mixins_mod, "AuthClient", lambda app_context: auth_client)
+
+    assert future.cancel() is None
+    messages = [str(w.message) for w in recwarn.list]
+    assert any("permission denied (403)" in m for m in messages)
+    assert [name for name, _ in auth_client.calls] == ["refresh_credentials"]
+
+
+def test_fetch_retries_only_the_failing_page_on_403(monkeypatch):
+    future = Future(task_id="task-1", storage=DictStorage(), context_name="ctx")
+
+    class _DummyResultsClient:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    attempts = []
+
+    def fake_fetch_subtask_page(self, *, client, subtask_page):
+        attempts.append(subtask_page)
+        if subtask_page == 1 and attempts.count(1) == 1:
+            raise APIError(message="permission denied", status_code=403)
+        return subtask_page >= 2
+
+    auth_client = remote.FakeAuthClient(refresh_result={"qlam": True})
+
+    monkeypatch.setattr(future_mod.AuthMixin, "authenticate", lambda auth: None)
+    monkeypatch.setattr(
+        future_mod, "ResultsClient", lambda app_context: _DummyResultsClient()
+    )
+    monkeypatch.setattr(Future, "_fetch_subtask_page", fake_fetch_subtask_page)
+    monkeypatch.setattr(mixins_mod, "AuthClient", lambda app_context: auth_client)
+
+    future.fetch()
+
+    assert attempts == [0, 1, 1, 2]
+    assert [name for name, _ in auth_client.calls] == ["refresh_credentials"]

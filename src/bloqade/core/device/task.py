@@ -314,7 +314,9 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
 
         task_request = TaskCreationRequest(root=task_definition)
         with TasksClient(self.app_context) as tasks_client:
-            created_task = tasks_client.create(body=task_request)  # type: ignore
+            created_task = self.call_with_auth_refresh(
+                lambda: tasks_client.create(body=task_request)  # type: ignore
+            )
 
         task_id = created_task.id
 

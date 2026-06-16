@@ -1,7 +1,11 @@
 from dataclasses import dataclass
+from typing import Callable, TypeVar
 
 from qlam_core.auth.client import AuthClient
 from qlam_core.common import AppContext
+from qlam_core.errors import APIError
+
+T = TypeVar("T")
 
 
 @dataclass(kw_only=True)
@@ -37,3 +41,37 @@ class AuthMixin:
                 return
 
             return client.login()
+
+    def call_with_auth_refresh(self, fn: Callable[[], T]) -> T:
+        """Run a qlam API call, refreshing credentials once on a 403.
+
+        If `fn` raises an `APIError` with status 403, a best-effort
+        non-interactive credential refresh is attempted via `AuthClient`.
+        When the refresh updates at least one provider's credentials, `fn`
+        is invoked again. Any other error, or a refresh that produces no
+        fresh credentials, propagates the original exception.
+
+        Only one retry is attempted; a second 403 is re-raised.
+
+        Args:
+            fn (Callable[[], T]): Zero-argument callable that performs the
+                qlam API call.
+
+        Returns:
+            T: The value returned by `fn`.
+
+        Raises:
+            APIError: When `fn` raises an `APIError` whose status is not 403,
+                when refresh produces no fresh credentials, or when the retry
+                also fails.
+        """
+        try:
+            return fn()
+        except APIError as e:
+            if e.status_code != 403:
+                raise
+            with AuthClient(self.app_context) as client:
+                refresh_results = client.refresh_credentials()
+            if not any(refresh_results.values()):
+                raise
+            return fn()
