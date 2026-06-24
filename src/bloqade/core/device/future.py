@@ -94,7 +94,9 @@ class Future(AuthMixin, Generic[ResultType]):
         with TasksClient(self.app_context) as client:
             # NOTE: typing issue in qlam-core
             # every client is BaseRestApi, which doesn't have get, but it actually does
-            task = client.get(id=self.task_id)  # type: ignore
+            task = self.call_with_auth_refresh(
+                lambda: client.get(id=self.task_id)  # type: ignore
+            )
             logger.info(
                 f"Fetched task with id {self.task_id}. Current status: {task.task_status}"
             )
@@ -117,7 +119,9 @@ class Future(AuthMixin, Generic[ResultType]):
             compilation_id = self.get_task().compilation_id
 
         with CompilationsClient(self.app_context) as client:
-            return client.get(id=compilation_id)  # type: ignore
+            return self.call_with_auth_refresh(
+                lambda: client.get(id=compilation_id)  # type: ignore
+            )
 
     def fetch(self) -> None:
         """Fetch currently available shot results into this future's storage.
@@ -133,9 +137,11 @@ class Future(AuthMixin, Generic[ResultType]):
 
         with ResultsClient(self.app_context) as client:
             while not done:
-                done = self._fetch_subtask_page(
-                    client=client,  # type: ignore
-                    subtask_page=subtask_page,
+                done = self.call_with_auth_refresh(
+                    lambda page=subtask_page: self._fetch_subtask_page(
+                        client=client,  # type: ignore
+                        subtask_page=page,
+                    )
                 )
 
                 subtask_page += 1
@@ -169,7 +175,9 @@ class Future(AuthMixin, Generic[ResultType]):
         with TasksClient(self.app_context) as client:
             try:
                 # NOTE: typing issue because client is seen as BaseClient instead of TaskClient
-                return client.cancel(id=self.task_id)  # type: ignore
+                return self.call_with_auth_refresh(
+                    lambda: client.cancel(id=self.task_id)  # type: ignore
+                )
             except Exception as e:
                 warn(
                     f"Exception encountered when trying to cancel task with ID {self.task_id}: {str(repr(e))}"
@@ -417,11 +425,15 @@ class Future(AuthMixin, Generic[ResultType]):
         auth = AuthMixin(context_name=context_name)
         auth.authenticate()
         with TasksClient(auth.app_context) as client:
-            task = client.get(id=task_id)  # type: ignore
+            task = auth.call_with_auth_refresh(
+                lambda: client.get(id=task_id)  # type: ignore
+            )
 
         # fetch subtasks for metadata
         with DefinitionsClient(auth.app_context) as client:
-            task_def = client.get(id=task.definition_id)  # type: ignore
+            task_def = auth.call_with_auth_refresh(
+                lambda: client.get(id=task.definition_id)  # type: ignore
+            )
 
         storage.add_task_definition(
             task_id, task_definition=task_def, creation_time=task.created_date

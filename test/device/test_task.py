@@ -3,6 +3,7 @@ import json
 
 import pytest
 from kirin.prelude import basic_no_opt
+from qlam_core.errors import APIError
 from qlam_core.plugins.tasks.api.tasks_models import TaskStatus
 
 from bloqade.core.device.future import ApiFetchOptions
@@ -16,6 +17,7 @@ from bloqade.core.device.task import (
 from .fixtures import local, remote
 
 task_mod = importlib.import_module("bloqade.core.device.task")
+mixins_mod = importlib.import_module("bloqade.core.device.mixins")
 
 CREATION_TIME = local.CREATION_TIME
 
@@ -320,3 +322,44 @@ def test_submit_task_definition_rejects_missing_created_task_id(monkeypatch):
             task_definition=task.create_task_definition(),
             storage=DictStorage(),
         )
+
+
+def test_submit_task_definition_retries_on_403_after_refresh(monkeypatch):
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        future_cls=RecordingFuture,  # type: ignore
+    )
+    task_definition = task.create_task_definition()
+    created_task = remote.make_task(
+        id="task-x",
+        task_status=TaskStatus.CREATED,
+        created_date=CREATION_TIME,
+    )
+
+    invocations = []
+
+    def create_return(body):
+        invocations.append(body)
+        if len(invocations) == 1:
+            raise APIError(message="permission denied", status_code=403)
+        return created_task
+
+    client = remote.FakeTasksClient(create_return=create_return)
+    auth_client = remote.FakeAuthClient(refresh_result={"qlam": True})
+
+    monkeypatch.setattr(task, "authenticate", lambda: None)
+    monkeypatch.setattr(task_mod, "TasksClient", lambda app_context: client)
+    monkeypatch.setattr(mixins_mod, "AuthClient", lambda app_context: auth_client)
+
+    future = task.submit_task_definition(
+        task_definition=task_definition,
+        storage=DictStorage(),
+    )
+
+    assert future.task_id == "task-x"
+    assert len(invocations) == 2
+    assert [name for name, _ in client.calls] == ["create", "create"]
+    assert [name for name, _ in auth_client.calls] == ["refresh_credentials"]
