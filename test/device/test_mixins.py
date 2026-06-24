@@ -53,6 +53,23 @@ def test_call_with_auth_refresh_retries_after_successful_refresh(monkeypatch):
     assert [name for name, _ in fake.calls] == ["refresh_credentials"]
 
 
+def test_call_with_auth_refresh_retries_after_successful_refresh_on_401(monkeypatch):
+    auth = AuthMixin(context_name="ctx")
+    fake = remote.FakeAuthClient(refresh_result={"qlam": True})
+    monkeypatch.setattr(mixins_mod, "AuthClient", lambda app_context: fake)
+    invocations = []
+
+    def fn():
+        invocations.append(None)
+        if len(invocations) == 1:
+            raise APIError(message="token expired", status_code=401)
+        return "refreshed"
+
+    assert auth.call_with_auth_refresh(fn) == "refreshed"
+    assert len(invocations) == 2
+    assert [name for name, _ in fake.calls] == ["refresh_credentials"]
+
+
 def test_call_with_auth_refresh_reraises_when_refresh_yields_no_credentials(
     monkeypatch,
 ):
