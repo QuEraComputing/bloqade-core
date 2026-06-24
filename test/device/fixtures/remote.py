@@ -454,6 +454,32 @@ class FakeCompilationsClient(_RecordingContextManager):
         return self.get_return
 
 
+class FakeAuthClient(_RecordingContextManager):
+    """Replaces `qlam_core.auth.client.AuthClient` in tests.
+
+    Records each `refresh_credentials` call and returns the configured
+    mapping. The default `refresh_result={"qlam": True}` simulates a
+    successful refresh; pass `{"qlam": False}` (or an empty dict) to
+    simulate a refresh that produced no fresh credentials.
+    """
+
+    def __init__(
+        self,
+        app_context: Any = None,
+        *,
+        refresh_result: dict[str, bool] | None = None,
+    ) -> None:
+        _RecordingContextManager.__init__(self)
+        self.app_context = app_context
+        self.refresh_result = (
+            {"qlam": True} if refresh_result is None else refresh_result
+        )
+
+    def refresh_credentials(self, provider: str | None = None, *, force: bool = False):
+        self._record("refresh_credentials", provider=provider, force=force)
+        return self.refresh_result
+
+
 class FakeResultsClient(_RecordingContextManager):
     """Replaces `qlam_core.plugins.results.api.client.ResultsClient`.
 
