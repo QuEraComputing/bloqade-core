@@ -1,7 +1,8 @@
+import base64
 import json
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import Generic, Literal, overload
+from dataclasses import dataclass, field
+from typing import Any, Generic, Literal, overload
 
 from kirin import ir
 from kirin.serialization import JSONSerializer
@@ -19,8 +20,6 @@ from .local_storage import DictStorage, StorageBackend
 from .log_info import logger
 from .mixins import AuthMixin
 
-json_serializer = JSONSerializer()
-
 
 @dataclass(kw_only=True)
 class TaskABC(Generic[FutureType], AuthMixin, ABC):
@@ -37,12 +36,20 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             version. Set this directly for a static version, or override the
             `program_language_version` property if the version needs
             additional logic. Defaults to "0.1.0".
+        kernel_serializer (Any): Serializer used by the default
+            `serialize_kernel` implementation. It must provide an `encode`
+            method compatible with the value returned by
+            `kernel.dialects.encode(...)`. If `encode` returns bytes, the
+            bytes are base64-encoded before being stored in `Program.content`;
+            any other return value is passed through unchanged. Defaults to
+            `kirin.serialization.JSONSerializer`.
         future_cls (type[FutureType]): Future class used to construct the
             return value of `submit_task_definition`. Defaults to `Future`.
     """
 
     program_language: str
     language_version: str = "0.1.0"
+    kernel_serializer: Any = field(default_factory=JSONSerializer)
 
     # NOTE: bound to subclasses of future, so need to ignore the typing issue here
     future_cls: type[FutureType] = Future  # type: ignore
@@ -61,19 +68,31 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         return self.language_version
 
     def serialize_kernel(self, kernel: ir.Method) -> str:
-        """Serialize a kernel into a string suitable for the backend.
+        """Serialize a kernel into content suitable for the backend.
+
+        The default implementation first converts the kernel to a Kirin
+        serialization module using `program_language_version`, then passes
+        that module to `kernel_serializer.encode`. Binary serializer output is
+        base64-encoded so it can travel through the API's string-valued
+        `Program.content` field. Non-binary serializer output is returned as
+        produced by the serializer.
 
         Args:
             kernel (ir.Method): Kernel to serialize.
 
         Returns:
-            str: Serialized kernel content.
+            str: Serialized kernel content for the submitted `Program`.
         """
 
         encoded_module = kernel.dialects.encode(
             kernel, version=self.program_language_version
         )
-        return json_serializer.encode(encoded_module)
+        payload = self.kernel_serializer.encode(encoded_module)
+
+        if isinstance(payload, bytes):
+            return base64.b64encode(payload).decode("ascii")
+
+        return payload
 
     @property
     @abstractmethod
