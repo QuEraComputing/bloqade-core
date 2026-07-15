@@ -2,7 +2,7 @@ import base64
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Generic, Literal, overload
+from typing import Any, Generic, Literal, Protocol, overload
 
 from kirin import ir
 from kirin.serialization import JSONSerializer
@@ -21,6 +21,14 @@ from .log_info import logger
 from .mixins import AuthMixin
 
 
+class KernelSerializer(Protocol):
+    """Structural interface for kernel serializers."""
+
+    def encode(self, encoded_module: Any, /) -> str | bytes:
+        """Encode a Kirin serialization module for `Program.content`."""
+        ...
+
+
 @dataclass(kw_only=True)
 class TaskABC(Generic[FutureType], AuthMixin, ABC):
     """Abstract base class for kernel tasks.
@@ -36,12 +44,12 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             version. Set this directly for a static version, or override the
             `program_language_version` property if the version needs
             additional logic. Defaults to "0.1.0".
-        kernel_serializer (Any): Serializer used by the default
+        kernel_serializer (KernelSerializer): Serializer used by the default
             `serialize_kernel` implementation. It must provide an `encode`
             method compatible with the value returned by
             `kernel.dialects.encode(...)`. If `encode` returns bytes, the
             bytes are base64-encoded before being stored in `Program.content`;
-            any other return value is passed through unchanged. Defaults to
+            if it returns str, the value is used unchanged. Defaults to
             `kirin.serialization.JSONSerializer`.
         future_cls (type[FutureType]): Future class used to construct the
             return value of `submit_task_definition`. Defaults to `Future`.
@@ -49,7 +57,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
 
     program_language: str
     language_version: str = "0.1.0"
-    kernel_serializer: Any = field(default_factory=JSONSerializer)
+    kernel_serializer: KernelSerializer = field(default_factory=JSONSerializer)
 
     # NOTE: bound to subclasses of future, so need to ignore the typing issue here
     future_cls: type[FutureType] = Future  # type: ignore
@@ -74,7 +82,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         serialization module using `program_language_version`, then passes
         that module to `kernel_serializer.encode`. Binary serializer output is
         base64-encoded so it can travel through the API's string-valued
-        `Program.content` field. Non-binary serializer output is returned as
+        `Program.content` field. String serializer output is returned as
         produced by the serializer.
 
         Args:
@@ -92,7 +100,13 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         if isinstance(payload, bytes):
             return base64.b64encode(payload).decode("ascii")
 
-        return payload
+        if isinstance(payload, str):
+            return payload
+
+        raise TypeError(
+            "kernel_serializer.encode must return str or bytes, "
+            f"got {type(payload).__name__}"
+        )
 
     @property
     @abstractmethod

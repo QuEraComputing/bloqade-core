@@ -1,6 +1,7 @@
 import base64
 import importlib
 import json
+from typing import cast
 
 import pytest
 from kirin.prelude import basic_no_opt
@@ -13,6 +14,7 @@ from bloqade.core.device.future import ApiFetchOptions
 from bloqade.core.device.local_storage import DictStorage
 from bloqade.core.device.task import (
     KernelBatchTask,
+    KernelSerializer,
     ParameterScanTask,
     SingleKernelTask,
 )
@@ -123,6 +125,23 @@ def test_single_kernel_task_base64_encodes_binary_serializer_output():
     restored_main = main.dialects.decode(decoded_module)
 
     assert restored_main.code.is_structurally_equal(main.code)
+
+
+def test_single_kernel_task_rejects_non_string_serializer_output():
+    class DictSerializer:
+        def encode(self, _encoded_module):
+            return {"content": "not valid"}
+
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        kernel_serializer=cast(KernelSerializer, DictSerializer()),
+    )
+
+    with pytest.raises(TypeError, match="kernel_serializer.encode must return"):
+        task.serialize_kernel(main)
 
 
 def test_parameter_scan_reuses_one_program_for_all_argument_sets():

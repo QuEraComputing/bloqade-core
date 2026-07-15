@@ -6,7 +6,12 @@ from kirin.serialization import JSONSerializer
 
 from .future import Future, FutureType
 from .mixins import AuthMixin
-from .task import KernelBatchTask, ParameterScanTask, SingleKernelTask
+from .task import (
+    KernelBatchTask,
+    KernelSerializer,
+    ParameterScanTask,
+    SingleKernelTask,
+)
 
 
 @dataclass(kw_only=True)
@@ -19,9 +24,10 @@ class Device(Generic[FutureType], AuthMixin):
     Attributes:
         future_cls (type[FutureType]): Future class used by tasks created from
             this device. Defaults to `Future`.
-        kernel_serializer (Any): Default serializer passed to created tasks.
-            The serializer is used by `TaskABC.serialize_kernel`; it should
-            provide an `encode` method for Kirin serialization modules.
+        kernel_serializer (KernelSerializer): Default serializer passed to
+            created tasks. The serializer is used by
+            `TaskABC.serialize_kernel`; it should provide an `encode` method
+            for Kirin serialization modules.
             Defaults to `kirin.serialization.JSONSerializer`.
     """
 
@@ -29,7 +35,7 @@ class Device(Generic[FutureType], AuthMixin):
     # in order to keep the typing correct, we use cast and set a default on the
     # FutureType TypeVar
     future_cls: type[FutureType] = cast(type[FutureType], Future)
-    kernel_serializer: Any = field(default_factory=JSONSerializer)
+    kernel_serializer: KernelSerializer = field(default_factory=JSONSerializer)
 
     # NOTE: we also need to cast these, otherwise the return type annotations
     # give type errors in the task creating methods below
@@ -46,7 +52,9 @@ class Device(Generic[FutureType], AuthMixin):
         init=False,
     )
 
-    def _resolve_kernel_serializer(self, kernel_serializer: Any) -> Any:
+    def _resolve_kernel_serializer(
+        self, kernel_serializer: KernelSerializer | None
+    ) -> KernelSerializer:
         if kernel_serializer is None:
             return self.kernel_serializer
 
@@ -60,7 +68,7 @@ class Device(Generic[FutureType], AuthMixin):
         metadata: dict | None = None,
         program_language: str = "squin",
         language_version: str = "0.1.0",
-        kernel_serializer: Any | None = None,
+        kernel_serializer: KernelSerializer | None = None,
     ) -> SingleKernelTask[FutureType]:
         """Create a task for one kernel.
 
@@ -76,9 +84,9 @@ class Device(Generic[FutureType], AuthMixin):
                 definition. Defaults to "squin".
             language_version (str): Semantic version of the program language to
                 store in the task definition. Defaults to "0.1.0".
-            kernel_serializer (Any | None): Serializer for this task's kernel.
-                When None, the device's `kernel_serializer` is used. Defaults
-                to None.
+            kernel_serializer (KernelSerializer | None): Serializer for this
+                task's kernel. When None, the device's `kernel_serializer` is
+                used. Defaults to None.
 
         Returns:
             SingleKernelTask[FutureType]: A task object ready for dry-run or submission.
@@ -104,7 +112,7 @@ class Device(Generic[FutureType], AuthMixin):
         num_shots: list[int] | int = 1,
         program_language: str = "squin",
         language_version: str = "0.1.0",
-        kernel_serializer: Any | None = None,
+        kernel_serializer: KernelSerializer | None = None,
     ) -> KernelBatchTask[FutureType]:
         """Create a task containing one subtask per kernel.
 
@@ -120,9 +128,9 @@ class Device(Generic[FutureType], AuthMixin):
                 definition. Defaults to "squin".
             language_version (str): Semantic version of the program language to
                 store in the task definition. Defaults to "0.1.0".
-            kernel_serializer (Any | None): Serializer for this task's kernels.
-                When None, the device's `kernel_serializer` is used. Defaults
-                to None.
+            kernel_serializer (KernelSerializer | None): Serializer for this
+                task's kernels. When None, the device's `kernel_serializer` is
+                used. Defaults to None.
 
         Returns:
             KernelBatchTask[FutureType]: A batch task object ready for dry-run or
@@ -149,7 +157,7 @@ class Device(Generic[FutureType], AuthMixin):
         num_shots: list[int] | int = 1,
         program_language: str = "squin",
         language_version: str = "0.1.0",
-        kernel_serializer: Any | None = None,
+        kernel_serializer: KernelSerializer | None = None,
     ) -> ParameterScanTask[FutureType]:
         """Create a parameter-scan task for one kernel.
 
@@ -164,9 +172,9 @@ class Device(Generic[FutureType], AuthMixin):
                 definition. Defaults to "squin".
             language_version (str): Semantic version of the program language to
                 store in the task definition. Defaults to "0.1.0".
-            kernel_serializer (Any | None): Serializer for the scanned kernel.
-                When None, the device's `kernel_serializer` is used. Defaults
-                to None.
+            kernel_serializer (KernelSerializer | None): Serializer for the
+                scanned kernel. When None, the device's `kernel_serializer` is
+                used. Defaults to None.
 
         Returns:
             ParameterScanTask[FutureType]: A parameter-scan task object ready for
