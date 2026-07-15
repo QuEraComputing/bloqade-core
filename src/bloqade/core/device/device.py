@@ -22,6 +22,9 @@ class Device(Generic[FutureType], AuthMixin):
     that can be dry-run or submitted asynchronously.
 
     Attributes:
+        qpu_mode (str | None): Explicit qlam QPU mode used by tasks created
+            from this device. When None, qlam-core resolves it from
+            configuration.
         future_cls (type[FutureType]): Future class used by tasks created from
             this device. Defaults to `Future`.
         kernel_serializer (KernelSerializer): Default serializer passed to
@@ -94,6 +97,7 @@ class Device(Generic[FutureType], AuthMixin):
 
         return self.single_kernel_task_cls(
             context_name=self.context_name,
+            qpu_mode=self.qpu_mode,
             kernel=kernel,
             num_shots=num_shots,
             arguments=arguments,
@@ -139,6 +143,7 @@ class Device(Generic[FutureType], AuthMixin):
 
         return self.kernel_batch_task_cls(
             context_name=self.context_name,
+            qpu_mode=self.qpu_mode,
             kernels=kernels,
             arguments=arguments,
             num_shots=num_shots,
@@ -183,6 +188,7 @@ class Device(Generic[FutureType], AuthMixin):
 
         return self.parameter_scan_task_cls(
             context_name=self.context_name,
+            qpu_mode=self.qpu_mode,
             kernel=kernel,
             num_shots=num_shots,
             arguments=arguments,

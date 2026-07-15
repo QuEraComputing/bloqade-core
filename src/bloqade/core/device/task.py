@@ -37,6 +37,8 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
     `TaskDefinition` that can be dry-run or submitted to the backend.
 
     Attributes:
+        qpu_mode (str | None): Explicit qlam QPU mode used for task
+            submission. When None, qlam-core resolves it from configuration.
         program_language (str): Program language identifier stored on the
             task definition and used when serializing kernels.
         language_version (str): Program language version stored on the task
@@ -348,7 +350,10 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         task_request = TaskCreationRequest(root=task_definition)
         with TasksClient(self.app_context) as tasks_client:
             created_task = self.call_with_auth_refresh(
-                lambda: tasks_client.create(body=task_request)  # type: ignore
+                lambda: tasks_client.create(  # type: ignore
+                    qpu_mode=self.qpu_mode,
+                    body=task_request,
+                )
             )
 
         task_id = created_task.id
@@ -367,6 +372,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             fetch_options=fetch_options,
             storage=storage,
             context_name=self.context_name,
+            qpu_mode=self.qpu_mode,
         )
 
 

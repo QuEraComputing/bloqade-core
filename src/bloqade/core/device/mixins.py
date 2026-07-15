@@ -17,9 +17,12 @@ class AuthMixin:
 
     Attributes:
         context_name (str): Name of the qlam context to use.
+        qpu_mode (str | None): Explicit qlam QPU mode to use for API calls.
+            When None, qlam-core resolves it from configuration.
     """
 
     context_name: str
+    qpu_mode: str | None = None
 
     @property
     def app_context(self) -> AppContext:

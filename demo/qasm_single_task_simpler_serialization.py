@@ -36,7 +36,7 @@ def bell():
 
 # 2. Create the task using the device -- optionally set some metadata.
 # NOTE: context_name and program_language are set to qasm for testing.
-device = Device(context_name="gemini-qasm")
+device = Device(context_name="gemini-qasm", qpu_mode="qasm-10q")
 task = device.task(
     kernel=bell,
     num_shots=2,

@@ -149,3 +149,22 @@ def test_device_kernel_serializer_override_wins_over_device_default():
         ).kernel_serializer
         is override_serializer
     )
+
+
+def test_device_passes_qpu_mode_to_all_task_shapes():
+    @basic_no_opt
+    def first():
+        return
+
+    @basic_no_opt
+    def second():
+        return
+
+    device = Device(context_name="ctx", qpu_mode="squin-256q")
+
+    assert device.task(first).qpu_mode == "squin-256q"
+    assert device.batch_task([first, second]).qpu_mode == "squin-256q"
+    assert (
+        device.parameter_scan(first, arguments=[{"theta": 0.5}]).qpu_mode
+        == "squin-256q"
+    )
