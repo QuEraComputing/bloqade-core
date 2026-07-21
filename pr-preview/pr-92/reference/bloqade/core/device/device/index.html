@@ -22,17 +22,26 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.mixins.AuthMixin</code>)' href=../mixins/#bloqade.core.device.mixins.AuthMixin id=mermaid-link-bloqade.core.device.mixins.AuthMixin></a> </div> <pre class=mermaid><code id=mermaid-diagram-bloqade.core.device.device.Device>
+  </span> (<code>bloqade.core.device.mixins.AuthMixin</code>)' href=../mixins/#bloqade.core.device.mixins.AuthMixin id=mermaid-link-bloqade.core.device.mixins.AuthMixin></a> <a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ConfigMixin</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.mixins.ConfigMixin</code>)' href=../mixins/#bloqade.core.device.mixins.ConfigMixin id=mermaid-link-bloqade.core.device.mixins.ConfigMixin></a> </div> <pre class=mermaid><code id=mermaid-diagram-bloqade.core.device.device.Device>
               flowchart TD
               bloqade.core.device.device.Device[Device]
               bloqade.core.device.mixins.AuthMixin[AuthMixin]
+              bloqade.core.device.mixins.ConfigMixin[ConfigMixin]
 
                               bloqade.core.device.mixins.AuthMixin --> bloqade.core.device.device.Device
+                                bloqade.core.device.mixins.ConfigMixin --> bloqade.core.device.mixins.AuthMixin
                 
+
 
 
               click bloqade.core.device.device.Device href "" "bloqade.core.device.device.Device"
               click bloqade.core.device.mixins.AuthMixin href "" "bloqade.core.device.mixins.AuthMixin"
+              click bloqade.core.device.mixins.ConfigMixin href "" "bloqade.core.device.mixins.ConfigMixin"
             </code></pre> <script>
               var diagram = document.getElementById('mermaid-diagram-bloqade.core.device.device.Device');
               diagram.innerHTML = diagram.innerHTML.replace(/click ([\w.]+) href "" "\1"/g, function(match, nodeID, offset) {
