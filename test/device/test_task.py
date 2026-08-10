@@ -240,6 +240,7 @@ def test_run_async_dry_run_summary_uses_shot_override(monkeypatch, capsys):
         context_name="ctx",
         program_language="squin",
         kernel=main,
+        arguments={"theta": 1.5},
         num_shots=1,
     )
 
@@ -251,7 +252,55 @@ def test_run_async_dry_run_summary_uses_shot_override(monkeypatch, capsys):
 
     assert task.run_async(dry_run=True, shots=17) is None
 
-    assert "17 shots" in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert "theta=1.5" in output
+    assert "17 shots" in output
+    assert "1 shots" in task.summary()
+
+
+def test_parameter_scan_dry_run_uses_default_summary_for_task_definition(
+    monkeypatch, capsys
+):
+    task = ParameterScanTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=scan,
+        arguments=[{"x": 1.0}, {"x": 2.0}],
+        num_shots=[3, 5],
+    )
+
+    monkeypatch.setattr(
+        task,
+        "submit_task_definition",
+        lambda **kwargs: pytest.fail("dry runs should not submit"),
+    )
+
+    assert task.run_async(dry_run=True, shots=[17, 19]) is None
+
+    assert "parameter sets" in capsys.readouterr().out
+
+
+def test_batch_task_dry_run_summary_uses_per_subtask_shot_override(monkeypatch, capsys):
+    task = KernelBatchTask(
+        context_name="ctx",
+        program_language="squin",
+        kernels=[first, second],
+        arguments=[{"theta": 1.5}, {"phi": 0.5}],
+        num_shots=1,
+    )
+
+    monkeypatch.setattr(
+        task,
+        "submit_task_definition",
+        lambda **kwargs: pytest.fail("dry runs should not submit"),
+    )
+
+    assert task.run_async(dry_run=True, shots=[17, 19]) is None
+
+    output = capsys.readouterr().out
+    assert "17 shots" in output
+    assert "19 shots" in output
+    assert "1 shots" in task.summary()
 
 
 def test_run_async_submits_created_task_definition(monkeypatch):
