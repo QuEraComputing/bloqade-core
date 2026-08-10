@@ -18,8 +18,9 @@ anything itself; it builds task objects via [`Device.task`](reference/bloqade/co
 [`Device.batch_task`](reference/bloqade/core/device/device.md#bloqade.core.device.device.Device.batch_task),
 and [`Device.parameter_scan`](reference/bloqade/core/device/device.md#bloqade.core.device.device.Device.parameter_scan).
 
-**Task.** Bundles one or more kernels with per-subtask metadata, arguments,
-and shot counts. A task is what actually gets sent to the backend. Calling
+**Task.** Bundles one or more kernels with per-subtask metadata and arguments.
+Set the shot count when submitting it. A task is what actually gets sent to
+the backend. Calling
 [`run_async(dry_run=True)`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.run_async)
 validates the task and prints a summary without submitting;
 `run_async(dry_run=False)` serializes the kernels, submits them, and returns
@@ -73,16 +74,15 @@ def bell():
 device = Device(context_name="my-context")
 task = device.task(
     kernel=bell,
-    num_shots=2,
     metadata={"tag": "bell"},      # metadata is arbitrary user JSON
     program_language="squin",
 )
 
 # 3a. Dry-run first to see what would be submitted.
-task.run_async(dry_run=True)
+task.run_async(dry_run=True, num_shots=2)
 
 # 3b. Submit. The first call triggers browser-based authentication.
-future = task.run_async(dry_run=False)
+future = task.run_async(dry_run=False, num_shots=2)
 
 # 4. Wait for completion and read shot bitstrings.
 result = future.result(timeout=80.0)
@@ -270,11 +270,10 @@ def bell():
 device = QASM2Device(context_name="my-qasm-context")
 task = device.task(            # returns a QASM2Task instance
     kernel=bell,
-    num_shots=2,
     metadata={"tag": "bell"},
     program_language="qasm",
 )
-future = task.run_async(dry_run=False)
+future = task.run_async(dry_run=False, num_shots=2)
 result = future.result(timeout=80.0)
 ```
 

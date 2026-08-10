@@ -122,8 +122,11 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         """
         return f"Would now submit {self.num_subtasks} subtasks"
 
-    def validate_arguments(self) -> None:
-        """Validate that argument and metadata lengths match subtask count.
+    def validate_arguments(self, num_shots: int | list[int] | None = None) -> None:
+        """Validate that task field lengths match the subtask count.
+
+        ``num_shots`` is normally supplied at submission time. When omitted,
+        a shot count already recorded on the task is used, if present.
 
         Raises:
             ValueError: If arguments or metadata length differs from
@@ -141,11 +144,15 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
                 f"Length mismatch: got {len(metadata)} sets of metadata for {self.num_subtasks} subtasks!"
             )
 
-        num_shots = self.get_num_shots()
-        if len(num_shots) != self.num_subtasks:
-            raise ValueError(
-                f"Length mismatch: got {len(num_shots)} shot counts for {self.num_subtasks} subtasks!"
-            )
+        effective_num_shots = num_shots
+        if effective_num_shots is None:
+            effective_num_shots = getattr(self, "num_shots", None)
+        if effective_num_shots is not None:
+            shot_counts = self.get_num_shots(effective_num_shots)
+            if len(shot_counts) != self.num_subtasks:
+                raise ValueError(
+                    f"Length mismatch: got {len(shot_counts)} shot counts for {self.num_subtasks} subtasks!"
+                )
 
     @abstractmethod
     def get_kernels(self) -> list[ir.Method]:
@@ -177,8 +184,8 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         ...
 
     @abstractmethod
-    def get_num_shots(self) -> list[int]:
-        """Return the per-subtask shot counts.
+    def get_num_shots(self, num_shots: int | list[int]) -> list[int]:
+        """Expand a shot count into one value per subtask.
 
         Returns:
             list[int]: Shot count for each subtask, in subtask order.
@@ -212,24 +219,28 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         """
         return i
 
-    def create_task_definition(self) -> TaskDefinition:
+    def create_task_definition(self, *, num_shots: int | list[int]) -> TaskDefinition:
         """Build a `TaskDefinition` from this task's kernels and subtasks.
 
         Override this method directly if your use-case doesn't fit the API
-        contract.
+        contract. QLAM requires every subtask to have a shot count, so this
+        method requires one explicitly.
+
+        Keyword Args:
+            num_shots (int | list[int]): Shot count for each subtask, or one
+                value broadcast to every subtask.
 
         Returns:
             TaskDefinition: Definition ready to be submitted.
         """
         programs = self.programs()
 
-        num_shots = self.get_num_shots()
+        shot_counts = self.get_num_shots(num_shots)
 
         subtasks = []
         arguments = self.get_arguments()
         metadata = self.get_metadata()
         for i in range(self.num_subtasks):
-
             if arguments is not None:
                 args = arguments[i]
             else:
@@ -243,7 +254,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             subtasks.append(
                 Subtask(
                     program_index=self.program_index_for_subtask(i),
-                    num_shots=num_shots[i],
+                    num_shots=shot_counts[i],
                     arguments=args,
                     subtask_metadata=subtask_metadata,
                 )
@@ -261,6 +272,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         self,
         *,
         dry_run: Literal[True],
+        num_shots: int | list[int] | None = None,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> None: ...
@@ -270,6 +282,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         self,
         *,
         dry_run: Literal[False],
+        num_shots: int | list[int] | None = None,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> FutureType: ...
@@ -278,6 +291,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         self,
         *,
         dry_run: bool,
+        num_shots: int | list[int] | None = None,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> FutureType | None:
@@ -286,6 +300,10 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         Keyword Args:
             dry_run (bool): When True, print a summary and return None.
                 When False, submit the task and return a future.
+            num_shots (int | list[int] | None): Shot count for each subtask,
+                or one value broadcast to every subtask. This must be given
+                when submitting a task unless the task was created with a
+                legacy ``num_shots`` value. Defaults to None.
             storage (StorageBackend | None): Storage backend that will receive
                 the task definition and later fetched shots. When None, a fresh
                 `DictStorage` is used (in-memory; not persisted across
@@ -299,16 +317,27 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
                 `dry_run` is False; otherwise None.
 
         Raises:
-            ValueError: If argument or metadata lengths do not match
-                `num_subtasks`.
+            ValueError: If argument, metadata, or shot-count lengths do not
+                match `num_subtasks`, or a submission has no shot count.
         """
-        self.validate_arguments()
+        if num_shots is not None:
+            # Keep the task object in sync with the value that will be used to
+            # create QLAM subtasks, including for dry-run summaries.
+            setattr(self, "num_shots", num_shots)
 
-        task_def = self.create_task_definition()
+        self.validate_arguments()
 
         if dry_run:
             print(self.summary())
             return
+
+        if num_shots is None:
+            num_shots = getattr(self, "num_shots", None)
+        if num_shots is None:
+            raise ValueError("num_shots is required when submitting a task")
+
+        self.validate_arguments(num_shots)
+        task_def = self.create_task_definition(num_shots=num_shots)
 
         return self.submit_task_definition(
             task_definition=task_def,
@@ -388,7 +417,7 @@ class ParameterScanTask(TaskABC[FutureType]):
 
     kernel: ir.Method
     arguments: list[dict]
-    num_shots: int | list[int]
+    num_shots: int | list[int] | None = None
     metadata: list[dict] | None = None
 
     @property
@@ -402,10 +431,10 @@ class ParameterScanTask(TaskABC[FutureType]):
     def get_arguments(self) -> list[dict]:
         return self.arguments
 
-    def get_num_shots(self) -> list[int]:
-        if isinstance(self.num_shots, int):
-            return [self.num_shots] * self.num_subtasks
-        return self.num_shots
+    def get_num_shots(self, num_shots: int | list[int]) -> list[int]:
+        if isinstance(num_shots, int):
+            return [num_shots] * self.num_subtasks
+        return num_shots
 
     def get_metadata(self) -> list[dict] | None:
         return self.metadata
@@ -438,7 +467,7 @@ class SingleKernelTask(TaskABC[FutureType]):
 
     kernel: ir.Method
     arguments: dict | None = None
-    num_shots: int
+    num_shots: int | None = None
     metadata: dict | None = None
 
     @property
@@ -452,8 +481,10 @@ class SingleKernelTask(TaskABC[FutureType]):
         if self.arguments is not None:
             return [self.arguments]
 
-    def get_num_shots(self) -> list[int]:
-        return [self.num_shots]
+    def get_num_shots(self, num_shots: int | list[int]) -> list[int]:
+        if isinstance(num_shots, int):
+            return [num_shots]
+        return num_shots
 
     def get_metadata(self) -> list[dict] | None:
         if self.metadata is not None:
@@ -470,7 +501,7 @@ class SingleKernelTask(TaskABC[FutureType]):
         else:
             formatted_arguments = ""
         kernel_print = f"{self.kernel.sym_name}({formatted_arguments})"
-        shots = self.num_shots if isinstance(self.num_shots, int) else self.num_shots[0]
+        shots = self.num_shots if self.num_shots is not None else "unspecified"
         msg += f"  * {kernel_print} - {shots} shots\n"
         msg += "Set dry_run=False to actually execute this kernel.\n"
         msg += "=" * 60
@@ -493,7 +524,7 @@ class KernelBatchTask(TaskABC[FutureType]):
 
     kernels: list[ir.Method]
     arguments: list[dict] | None = None
-    num_shots: int | list[int]
+    num_shots: int | list[int] | None = None
     metadata: list[dict] | None = None
 
     @property
@@ -506,10 +537,10 @@ class KernelBatchTask(TaskABC[FutureType]):
     def get_arguments(self) -> list[dict] | None:
         return self.arguments
 
-    def get_num_shots(self) -> list[int]:
-        if isinstance(self.num_shots, int):
-            return [self.num_shots] * self.num_subtasks
-        return self.num_shots
+    def get_num_shots(self, num_shots: int | list[int]) -> list[int]:
+        if isinstance(num_shots, int):
+            return [num_shots] * self.num_subtasks
+        return num_shots
 
     def get_metadata(self) -> list[dict] | None:
         return self.metadata
@@ -524,9 +555,12 @@ class KernelBatchTask(TaskABC[FutureType]):
                 for arg in self.arguments[i]:
                     kernel_print += f"{arg}, "
             kernel_print += ")"
-            shots = (
-                self.num_shots if isinstance(self.num_shots, int) else self.num_shots[i]
-            )
+            if self.num_shots is None:
+                shots = "unspecified"
+            elif isinstance(self.num_shots, int):
+                shots = self.num_shots
+            else:
+                shots = self.num_shots[i]
             msg += f"  * {kernel_print} - {shots} shots\n"
         msg += "Set dry_run=False to actually execute the programs.\n"
         msg += "=" * 60 + "\n"

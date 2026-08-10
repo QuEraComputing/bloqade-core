@@ -45,6 +45,16 @@ def test_device_task_builds_single_kernel_task_with_device_defaults():
     assert task.kernel_serializer is device.kernel_serializer
 
 
+def test_device_task_does_not_require_a_shot_count():
+    @basic_no_opt
+    def main():
+        return
+
+    task = Device(context_name="ctx").task(main)
+
+    assert task.num_shots is None
+
+
 def test_device_batch_task_builds_kernel_batch_task():
     @basic_no_opt
     def first():

@@ -49,15 +49,15 @@ def bell():
 # NOTE: context_name and program_language are set to qasm for testing
 device = QASM2Device(context_name="gemini-qasm")
 task = device.task(
-    kernel=bell, num_shots=2, metadata={"tag": "bell"}, program_language="qasm"
+    kernel=bell, metadata={"tag": "bell"}, program_language="qasm"
 )  # metadata is completely customizable
 
 # 3a. Dry run
-task.run_async(dry_run=True)
+task.run_async(dry_run=True, num_shots=2)
 
 # 3b. Actually submit
 # NOTE: at this point, a browser window should open to authenticate
-future = task.run_async(dry_run=False)
+future = task.run_async(dry_run=False, num_shots=2)
 
 # NOTE: if you want to resume fetching results, just comment out the line above
 # and use the one below

@@ -63,7 +63,7 @@ class Device(Generic[FutureType], AuthMixin):
     def task(
         self,
         kernel: ir.Method,
-        num_shots: int = 1,
+        num_shots: int | None = None,
         arguments: dict | None = None,
         metadata: dict | None = None,
         program_language: str = "squin",
@@ -74,7 +74,8 @@ class Device(Generic[FutureType], AuthMixin):
 
         Args:
             kernel (ir.Method): The kernel to execute.
-            num_shots (int): Number of shots to run for the kernel. Defaults to 1.
+            num_shots (int | None): Legacy shot count for the kernel. Prefer
+                passing this to ``run_async`` when submitting. Defaults to None.
             arguments (dict | None): Argument dictionary for the kernel.
                 Defaults to None.
             metadata (dict | None): Metadata for the single subtask. When
