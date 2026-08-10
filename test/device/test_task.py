@@ -235,6 +235,25 @@ def test_run_async_dry_run_prints_summary_and_does_not_submit(monkeypatch, capsy
     assert "main(" in output
 
 
+def test_run_async_dry_run_summary_uses_shot_override(monkeypatch, capsys):
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+    )
+
+    monkeypatch.setattr(
+        task,
+        "submit_task_definition",
+        lambda **kwargs: pytest.fail("dry runs should not submit"),
+    )
+
+    assert task.run_async(dry_run=True, shots=17) is None
+
+    assert "17 shots" in capsys.readouterr().out
+
+
 def test_run_async_submits_created_task_definition(monkeypatch):
     task = SingleKernelTask(
         context_name="ctx",
@@ -263,6 +282,138 @@ def test_run_async_submits_created_task_definition(monkeypatch):
     )
     assert submitted["storage"] is storage
     assert submitted["fetch_options"] is fetch_options
+
+
+def test_run_async_overrides_every_subtask_shot_count(monkeypatch):
+    task = KernelBatchTask(
+        context_name="ctx",
+        program_language="squin",
+        kernels=[first, second],
+        num_shots=[3, 5],
+    )
+    submitted = {}
+    sentinel = object()
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
+
+    assert task.run_async(dry_run=False, shots=17) is sentinel
+    assert [subtask.num_shots for subtask in submitted["task_definition"].subtasks] == [
+        17,
+        17,
+    ]
+    assert task.num_shots == [3, 5]
+
+
+def test_run_async_supports_legacy_create_task_definition_override(monkeypatch):
+    class CustomSingleKernelTask(SingleKernelTask):
+        def create_task_definition(self):
+            return super().create_task_definition()
+
+    task = CustomSingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=3,
+    )
+    submitted = {}
+    sentinel = object()
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
+
+    assert task.run_async(dry_run=False, shots=17) is sentinel
+    assert submitted["task_definition"].subtasks[0].num_shots == 17
+
+
+def test_run_async_accepts_per_subtask_shot_counts(monkeypatch):
+    task = KernelBatchTask(
+        context_name="ctx",
+        program_language="squin",
+        kernels=[first, second],
+        num_shots=1,
+    )
+    submitted = {}
+    sentinel = object()
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
+
+    assert task.run_async(dry_run=False, shots=[17, 19]) is sentinel
+    assert [subtask.num_shots for subtask in submitted["task_definition"].subtasks] == [
+        17,
+        19,
+    ]
+
+
+def test_run_async_defaults_to_stored_shot_count(monkeypatch):
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=23,
+    )
+    submitted = {}
+    sentinel = object()
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
+
+    assert task.run_async(dry_run=False) is sentinel
+    assert submitted["task_definition"].subtasks[0].num_shots == 23
+
+
+def test_run_async_with_none_uses_stored_shot_counts(monkeypatch):
+    task = KernelBatchTask(
+        context_name="ctx",
+        program_language="squin",
+        kernels=[first, second],
+        num_shots=[3, 5],
+    )
+    submitted = {}
+    sentinel = object()
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
+
+    assert task.run_async(dry_run=False, shots=None) is sentinel
+    assert [subtask.num_shots for subtask in submitted["task_definition"].subtasks] == [
+        3,
+        5,
+    ]
+
+
+def test_run_async_rejects_shot_override_length_mismatch(monkeypatch):
+    task = KernelBatchTask(
+        context_name="ctx",
+        program_language="squin",
+        kernels=[first, second],
+        num_shots=[3, 5],
+    )
+
+    monkeypatch.setattr(
+        task,
+        "submit_task_definition",
+        lambda **kwargs: pytest.fail("invalid overrides should not submit"),
+    )
+
+    with pytest.raises(ValueError, match="1 shot counts for 2 subtasks"):
+        task.run_async(dry_run=False, shots=[17])
 
 
 def test_submit_task_definition_stores_definition_and_returns_future(monkeypatch):

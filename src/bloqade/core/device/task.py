@@ -122,8 +122,17 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         """
         return f"Would now submit {self.num_subtasks} subtasks"
 
+    def summary_for_task_definition(self, task_definition: TaskDefinition) -> str:
+        """Return the dry-run summary for a prepared task definition.
+
+        Subclasses whose summary includes shot counts can override this method
+        to read the effective values from ``task_definition``. The default
+        preserves the existing ``summary`` extension point.
+        """
+        return self.summary()
+
     def validate_arguments(self) -> None:
-        """Validate that argument and metadata lengths match subtask count.
+        """Validate that task field lengths match the subtask count.
 
         Raises:
             ValueError: If arguments or metadata length differs from
@@ -229,7 +238,6 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         arguments = self.get_arguments()
         metadata = self.get_metadata()
         for i in range(self.num_subtasks):
-
             if arguments is not None:
                 args = arguments[i]
             else:
@@ -261,6 +269,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         self,
         *,
         dry_run: Literal[True],
+        shots: int | list[int] | None = None,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> None: ...
@@ -270,6 +279,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         self,
         *,
         dry_run: Literal[False],
+        shots: int | list[int] | None = None,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> FutureType: ...
@@ -278,6 +288,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         self,
         *,
         dry_run: bool,
+        shots: int | list[int] | None = None,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> FutureType | None:
@@ -286,6 +297,10 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         Keyword Args:
             dry_run (bool): When True, print a summary and return None.
                 When False, submit the task and return a future.
+            shots (int | list[int] | None): Shot count applied to every
+                subtask, or one count per subtask, in the submitted QLAM task
+                definition. Pass None to preserve the shot counts configured
+                on the task. Defaults to None.
             storage (StorageBackend | None): Storage backend that will receive
                 the task definition and later fetched shots. When None, a fresh
                 `DictStorage` is used (in-memory; not persisted across
@@ -303,11 +318,24 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
                 `num_subtasks`.
         """
         self.validate_arguments()
-
         task_def = self.create_task_definition()
 
+        if shots is not None:
+            if isinstance(shots, int):
+                shot_counts = [shots] * len(task_def.subtasks)
+            else:
+                shot_counts = shots
+
+            if len(shot_counts) != len(task_def.subtasks):
+                raise ValueError(
+                    f"Length mismatch: got {len(shot_counts)} shot counts for {len(task_def.subtasks)} subtasks!"
+                )
+
+            for subtask, shot_count in zip(task_def.subtasks, shot_counts):
+                subtask.num_shots = shot_count
+
         if dry_run:
-            print(self.summary())
+            print(self.summary_for_task_definition(task_def))
             return
 
         return self.submit_task_definition(
@@ -459,7 +487,7 @@ class SingleKernelTask(TaskABC[FutureType]):
         if self.metadata is not None:
             return [self.metadata]
 
-    def summary(self) -> str:
+    def _summary(self, shots: int) -> str:
         msg = "=" * 60 + "\n"
         msg += "DRY RUN -- NO PROGRAM WAS ACTUALLY SUBMITTED FOR EXECUTION\n"
         msg += "Would now submit a task containing a single subtask for the kernel:\n"
@@ -470,11 +498,16 @@ class SingleKernelTask(TaskABC[FutureType]):
         else:
             formatted_arguments = ""
         kernel_print = f"{self.kernel.sym_name}({formatted_arguments})"
-        shots = self.num_shots if isinstance(self.num_shots, int) else self.num_shots[0]
         msg += f"  * {kernel_print} - {shots} shots\n"
         msg += "Set dry_run=False to actually execute this kernel.\n"
         msg += "=" * 60
         return msg
+
+    def summary(self) -> str:
+        return self._summary(self.num_shots)
+
+    def summary_for_task_definition(self, task_definition: TaskDefinition) -> str:
+        return self._summary(task_definition.subtasks[0].num_shots)
 
 
 @dataclass(kw_only=True)
@@ -514,7 +547,7 @@ class KernelBatchTask(TaskABC[FutureType]):
     def get_metadata(self) -> list[dict] | None:
         return self.metadata
 
-    def summary(self) -> str:
+    def _summary(self, shot_counts: list[int]) -> str:
         msg = "=" * 60 + "\n"
         msg += "DRY RUN -- NO PROGRAM WAS ACTUALLY SUBMITTED FOR EXECUTION\n"
         msg += f"Would now submit a task containing {len(self.kernels)} programs:\n"
@@ -524,10 +557,15 @@ class KernelBatchTask(TaskABC[FutureType]):
                 for arg in self.arguments[i]:
                     kernel_print += f"{arg}, "
             kernel_print += ")"
-            shots = (
-                self.num_shots if isinstance(self.num_shots, int) else self.num_shots[i]
-            )
-            msg += f"  * {kernel_print} - {shots} shots\n"
+            msg += f"  * {kernel_print} - {shot_counts[i]} shots\n"
         msg += "Set dry_run=False to actually execute the programs.\n"
         msg += "=" * 60 + "\n"
         return msg
+
+    def summary(self) -> str:
+        return self._summary(self.get_num_shots())
+
+    def summary_for_task_definition(self, task_definition: TaskDefinition) -> str:
+        return self._summary(
+            [subtask.num_shots for subtask in task_definition.subtasks]
+        )
