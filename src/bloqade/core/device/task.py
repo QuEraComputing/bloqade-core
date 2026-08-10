@@ -135,7 +135,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         """Validate that task field lengths match the subtask count.
 
         Raises:
-            ValueError: If arguments or metadata length differs from
+            ValueError: If argument or metadata length differs from
                 `num_subtasks`.
         """
         arguments = self.get_arguments()
@@ -148,12 +148,6 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         if metadata is not None and len(metadata) != self.num_subtasks:
             raise ValueError(
                 f"Length mismatch: got {len(metadata)} sets of metadata for {self.num_subtasks} subtasks!"
-            )
-
-        num_shots = self.get_num_shots()
-        if len(num_shots) != self.num_subtasks:
-            raise ValueError(
-                f"Length mismatch: got {len(num_shots)} shot counts for {self.num_subtasks} subtasks!"
             )
 
     @abstractmethod
@@ -185,15 +179,6 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         """
         ...
 
-    @abstractmethod
-    def get_num_shots(self) -> list[int]:
-        """Return the per-subtask shot counts.
-
-        Returns:
-            list[int]: Shot count for each subtask, in subtask order.
-        """
-        ...
-
     def programs(self) -> list[Program]:
         """Build the program list for the task definition.
 
@@ -221,18 +206,31 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         """
         return i
 
-    def create_task_definition(self) -> TaskDefinition:
+    def create_task_definition(self, *, num_shots: int | list[int]) -> TaskDefinition:
         """Build a `TaskDefinition` from this task's kernels and subtasks.
 
-        Override this method directly if your use-case doesn't fit the API
-        contract.
+        Every QLAM subtask requires a concrete shot count, so callers must
+        provide one value to broadcast or one value per subtask. Override this
+        method directly if your use-case doesn't fit the API contract.
+
+        Keyword Args:
+            num_shots (int | list[int]): Shot count for every subtask, or one
+                count per subtask.
 
         Returns:
             TaskDefinition: Definition ready to be submitted.
         """
         programs = self.programs()
 
-        num_shots = self.get_num_shots()
+        if isinstance(num_shots, int):
+            shot_counts = [num_shots] * self.num_subtasks
+        else:
+            shot_counts = num_shots
+
+        if len(shot_counts) != self.num_subtasks:
+            raise ValueError(
+                f"Length mismatch: got {len(shot_counts)} shot counts for {self.num_subtasks} subtasks!"
+            )
 
         subtasks = []
         arguments = self.get_arguments()
@@ -251,7 +249,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             subtasks.append(
                 Subtask(
                     program_index=self.program_index_for_subtask(i),
-                    num_shots=num_shots[i],
+                    num_shots=shot_counts[i],
                     arguments=args,
                     subtask_metadata=subtask_metadata,
                 )
@@ -268,8 +266,8 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
     def run_async(
         self,
         *,
-        dry_run: Literal[True],
-        shots: int | list[int] | None = None,
+        dry_run: Literal[True] = True,
+        shots: int | list[int] = 1,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> None: ...
@@ -279,7 +277,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         self,
         *,
         dry_run: Literal[False],
-        shots: int | list[int] | None = None,
+        shots: int | list[int] = 1,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> FutureType: ...
@@ -287,8 +285,8 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
     def run_async(
         self,
         *,
-        dry_run: bool,
-        shots: int | list[int] | None = None,
+        dry_run: bool = True,
+        shots: int | list[int] = 1,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = ApiFetchOptions(),
     ) -> FutureType | None:
@@ -296,11 +294,11 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
 
         Keyword Args:
             dry_run (bool): When True, print a summary and return None.
-                When False, submit the task and return a future.
-            shots (int | list[int] | None): Shot count applied to every
+                Defaults to True. When False, submit the task and return a
+                future.
+            shots (int | list[int]): Shot count applied to every
                 subtask, or one count per subtask, in the submitted QLAM task
-                definition. Pass None to preserve the shot counts configured
-                on the task. Defaults to None.
+                definition. Defaults to 1.
             storage (StorageBackend | None): Storage backend that will receive
                 the task definition and later fetched shots. When None, a fresh
                 `DictStorage` is used (in-memory; not persisted across
@@ -314,25 +312,11 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
                 `dry_run` is False; otherwise None.
 
         Raises:
-            ValueError: If argument or metadata lengths do not match
-                `num_subtasks`.
+            ValueError: If argument, metadata, or shot-count lengths do not
+                match `num_subtasks`.
         """
         self.validate_arguments()
-        task_def = self.create_task_definition()
-
-        if shots is not None:
-            if isinstance(shots, int):
-                shot_counts = [shots] * len(task_def.subtasks)
-            else:
-                shot_counts = shots
-
-            if len(shot_counts) != len(task_def.subtasks):
-                raise ValueError(
-                    f"Length mismatch: got {len(shot_counts)} shot counts for {len(task_def.subtasks)} subtasks!"
-                )
-
-            for subtask, shot_count in zip(task_def.subtasks, shot_counts):
-                subtask.num_shots = shot_count
+        task_def = self.create_task_definition(num_shots=shots)
 
         if dry_run:
             print(self.summary_for_task_definition(task_def))
@@ -408,15 +392,12 @@ class ParameterScanTask(TaskABC[FutureType]):
     Attributes:
         kernel (ir.Method): Kernel executed for each parameter set.
         arguments (list[dict]): Argument dictionaries, one per subtask.
-        num_shots (int | list[int]): Shot count per subtask, or one value
-            broadcast to every subtask.
         metadata (list[dict] | None): Per-subtask metadata. Defaults to
             None.
     """
 
     kernel: ir.Method
     arguments: list[dict]
-    num_shots: int | list[int]
     metadata: list[dict] | None = None
 
     @property
@@ -429,11 +410,6 @@ class ParameterScanTask(TaskABC[FutureType]):
 
     def get_arguments(self) -> list[dict]:
         return self.arguments
-
-    def get_num_shots(self) -> list[int]:
-        if isinstance(self.num_shots, int):
-            return [self.num_shots] * self.num_subtasks
-        return self.num_shots
 
     def get_metadata(self) -> list[dict] | None:
         return self.metadata
@@ -459,14 +435,12 @@ class SingleKernelTask(TaskABC[FutureType]):
         kernel (ir.Method): Kernel to execute.
         arguments (dict | None): Arguments for the kernel. Defaults to
             None.
-        num_shots (int): Shot count for the kernel.
         metadata (dict | None): Metadata for the single subtask. Defaults
             to None.
     """
 
     kernel: ir.Method
     arguments: dict | None = None
-    num_shots: int
     metadata: dict | None = None
 
     @property
@@ -480,14 +454,11 @@ class SingleKernelTask(TaskABC[FutureType]):
         if self.arguments is not None:
             return [self.arguments]
 
-    def get_num_shots(self) -> list[int]:
-        return [self.num_shots]
-
     def get_metadata(self) -> list[dict] | None:
         if self.metadata is not None:
             return [self.metadata]
 
-    def _summary(self, shots: int) -> str:
+    def _summary(self, shots: int | str) -> str:
         msg = "=" * 60 + "\n"
         msg += "DRY RUN -- NO PROGRAM WAS ACTUALLY SUBMITTED FOR EXECUTION\n"
         msg += "Would now submit a task containing a single subtask for the kernel:\n"
@@ -504,7 +475,7 @@ class SingleKernelTask(TaskABC[FutureType]):
         return msg
 
     def summary(self) -> str:
-        return self._summary(self.num_shots)
+        return self._summary(1)
 
     def summary_for_task_definition(self, task_definition: TaskDefinition) -> str:
         return self._summary(task_definition.subtasks[0].num_shots)
@@ -518,15 +489,12 @@ class KernelBatchTask(TaskABC[FutureType]):
         kernels (list[ir.Method]): Kernels to execute.
         arguments (list[dict] | None): Per-kernel argument dictionaries.
             Defaults to None.
-        num_shots (int | list[int]): Shot count per kernel, or one value
-            broadcast to every kernel.
         metadata (list[dict] | None): Per-kernel metadata. Defaults to
             None.
     """
 
     kernels: list[ir.Method]
     arguments: list[dict] | None = None
-    num_shots: int | list[int]
     metadata: list[dict] | None = None
 
     @property
@@ -539,15 +507,10 @@ class KernelBatchTask(TaskABC[FutureType]):
     def get_arguments(self) -> list[dict] | None:
         return self.arguments
 
-    def get_num_shots(self) -> list[int]:
-        if isinstance(self.num_shots, int):
-            return [self.num_shots] * self.num_subtasks
-        return self.num_shots
-
     def get_metadata(self) -> list[dict] | None:
         return self.metadata
 
-    def _summary(self, shot_counts: list[int]) -> str:
+    def _summary(self, shot_counts: list[int] | None) -> str:
         msg = "=" * 60 + "\n"
         msg += "DRY RUN -- NO PROGRAM WAS ACTUALLY SUBMITTED FOR EXECUTION\n"
         msg += f"Would now submit a task containing {len(self.kernels)} programs:\n"
@@ -557,13 +520,14 @@ class KernelBatchTask(TaskABC[FutureType]):
                 for arg in self.arguments[i]:
                     kernel_print += f"{arg}, "
             kernel_print += ")"
-            msg += f"  * {kernel_print} - {shot_counts[i]} shots\n"
+            shots = shot_counts[i] if shot_counts is not None else "unspecified"
+            msg += f"  * {kernel_print} - {shots} shots\n"
         msg += "Set dry_run=False to actually execute the programs.\n"
         msg += "=" * 60 + "\n"
         return msg
 
     def summary(self) -> str:
-        return self._summary(self.get_num_shots())
+        return self._summary([1] * self.num_subtasks)
 
     def summary_for_task_definition(self, task_definition: TaskDefinition) -> str:
         return self._summary(

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Generic, cast
+from typing import Generic, cast
 
 from kirin import ir
 from kirin.serialization import JSONSerializer
@@ -63,7 +63,6 @@ class Device(Generic[FutureType], AuthMixin):
     def task(
         self,
         kernel: ir.Method,
-        num_shots: int = 1,
         arguments: dict | None = None,
         metadata: dict | None = None,
         program_language: str = "squin",
@@ -74,7 +73,6 @@ class Device(Generic[FutureType], AuthMixin):
 
         Args:
             kernel (ir.Method): The kernel to execute.
-            num_shots (int): Number of shots to run for the kernel. Defaults to 1.
             arguments (dict | None): Argument dictionary for the kernel.
                 Defaults to None.
             metadata (dict | None): Metadata for the single subtask. When
@@ -95,7 +93,6 @@ class Device(Generic[FutureType], AuthMixin):
         return self.single_kernel_task_cls(
             context_name=self.context_name,
             kernel=kernel,
-            num_shots=num_shots,
             arguments=arguments,
             metadata=metadata,
             program_language=program_language,
@@ -108,8 +105,7 @@ class Device(Generic[FutureType], AuthMixin):
         self,
         kernels: list[ir.Method],
         arguments: list[dict] | None = None,
-        metadata: list[dict[str, Any]] | None = None,
-        num_shots: list[int] | int = 1,
+        metadata: list[dict] | None = None,
         program_language: str = "squin",
         language_version: str = "0.1.0",
         kernel_serializer: KernelSerializer | None = None,
@@ -120,10 +116,8 @@ class Device(Generic[FutureType], AuthMixin):
             kernels (list[ir.Method]): Kernels to execute.
             arguments (list[dict] | None): Per-kernel argument dictionaries.
                 Defaults to None.
-            metadata (list[dict[str, Any]] | None): Per-kernel metadata
+            metadata (list[dict] | None): Per-kernel metadata
                 dictionaries. Defaults to None.
-            num_shots (list[int] | int): Shot count for each kernel, or one
-                value to broadcast to every kernel. Defaults to 1.
             program_language (str): Program language to store in the task
                 definition. Defaults to "squin".
             language_version (str): Semantic version of the program language to
@@ -141,7 +135,6 @@ class Device(Generic[FutureType], AuthMixin):
             context_name=self.context_name,
             kernels=kernels,
             arguments=arguments,
-            num_shots=num_shots,
             metadata=metadata,
             program_language=program_language,
             language_version=language_version,
@@ -154,7 +147,6 @@ class Device(Generic[FutureType], AuthMixin):
         kernel: ir.Method,
         arguments: list[dict],
         metadata: list[dict] | None = None,
-        num_shots: list[int] | int = 1,
         program_language: str = "squin",
         language_version: str = "0.1.0",
         kernel_serializer: KernelSerializer | None = None,
@@ -166,8 +158,6 @@ class Device(Generic[FutureType], AuthMixin):
             arguments (list[dict]): Argument dictionaries, one per subtask.
             metadata (list[dict] | None): Metadata dictionaries, one per
                 subtask. Defaults to None.
-            num_shots (list[int] | int): Shot count for each parameter set, or
-                one value to broadcast to every subtask. Defaults to 1.
             program_language (str): Program language to store in the task
                 definition. Defaults to "squin".
             language_version (str): Semantic version of the program language to
@@ -184,7 +174,6 @@ class Device(Generic[FutureType], AuthMixin):
         return self.parameter_scan_task_cls(
             context_name=self.context_name,
             kernel=kernel,
-            num_shots=num_shots,
             arguments=arguments,
             metadata=metadata,
             program_language=program_language,
