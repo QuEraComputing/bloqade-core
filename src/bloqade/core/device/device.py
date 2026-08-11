@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Generic, cast
+from typing import Any, Generic, cast
 
 from kirin import ir
 from kirin.serialization import JSONSerializer
@@ -105,7 +105,7 @@ class Device(Generic[FutureType], AuthMixin):
         self,
         kernels: list[ir.Method],
         arguments: list[dict] | None = None,
-        metadata: list[dict] | None = None,
+        metadata: list[dict[str, Any]] | None = None,
         program_language: str = "squin",
         language_version: str = "0.1.0",
         kernel_serializer: KernelSerializer | None = None,
@@ -116,7 +116,7 @@ class Device(Generic[FutureType], AuthMixin):
             kernels (list[ir.Method]): Kernels to execute.
             arguments (list[dict] | None): Per-kernel argument dictionaries.
                 Defaults to None.
-            metadata (list[dict] | None): Per-kernel metadata
+            metadata (list[dict[str, Any]] | None): Per-kernel metadata
                 dictionaries. Defaults to None.
             program_language (str): Program language to store in the task
                 definition. Defaults to "squin".
