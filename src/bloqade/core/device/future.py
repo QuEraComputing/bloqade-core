@@ -450,7 +450,12 @@ class Future(AuthMixin, Generic[ResultType]):
 
         storage.add_task_definition(
             task_id,
-            task_definition=cast(TaskDefinition, task_def),
+            task_definition=TaskDefinition.model_validate(
+                {
+                    **task_def.model_dump(),
+                    "group_id": task_def.group.id,
+                }
+            ),
             creation_time=task.created_date,
         )
 

@@ -35,6 +35,7 @@ from qlam_core.plugins.definitions.api.definitions_models import (
     GroupSummary as DefinitionGroupSummary,
     TaskDefinitionResponse,
 )
+from qlam_core.plugins.groups.api.groups_models import GroupResponse
 from qlam_core.plugins.tasks.api.tasks_models import (
     GroupSummary as TaskGroupSummary,
     Program,
@@ -102,6 +103,7 @@ def make_task_definition(
     program_language: str | None = "squin.v0.1.0",
     programs: list[Program] | None = None,
     subtasks: list[Subtask] | None = None,
+    group_id: UUID | None = None,
 ) -> TaskDefinition:
     if programs is None:
         programs = [make_program()]
@@ -111,6 +113,31 @@ def make_task_definition(
         program_language=program_language,
         programs=programs,
         subtasks=subtasks,
+        group_id=group_id,
+    )
+
+
+def make_group(
+    *,
+    id: UUID = DEFAULT_GROUP_ID,  # noqa: A002 — mirrors qlam field name
+    name: str = "default-group",
+    description: str = "test group",
+    is_shared: bool = False,
+    created_date: datetime = DEFAULT_CREATED_DATE,
+    created_by: UUID = DEFAULT_USER_ID,
+    modified_date: datetime = DEFAULT_CREATED_DATE,
+    modified_by: UUID = DEFAULT_USER_ID,
+) -> GroupResponse:
+    """Build a real QLAM `GroupResponse` model."""
+    return GroupResponse(
+        id=id,
+        name=name,
+        description=description,
+        is_shared=is_shared,
+        created_date=created_date,
+        created_by=created_by,
+        modified_date=modified_date,
+        modified_by=modified_by,
     )
 
 
@@ -439,6 +466,32 @@ class FakeDefinitionsClient(_RecordingContextManager):
             raise AssertionError(
                 "FakeDefinitionsClient.get called but no get_return set"
             )
+        return self.get_return
+
+
+class FakeGroupsClient(_RecordingContextManager):
+    """Replaces `qlam_core.plugins.groups.api.client.GroupsClient` in tests."""
+
+    def __init__(
+        self,
+        app_context: Any = None,
+        *,
+        list_all_return: list[GroupResponse] | None = None,
+        get_return: GroupResponse | None = None,
+    ) -> None:
+        _RecordingContextManager.__init__(self)
+        self.app_context = app_context
+        self.list_all_return = [] if list_all_return is None else list_all_return
+        self.get_return = get_return
+
+    def list_all(self):
+        self._record("list_all")
+        return self.list_all_return
+
+    def get(self, id):  # noqa: A002
+        self._record("get", id=id)
+        if self.get_return is None:
+            raise AssertionError("FakeGroupsClient.get called but no get_return set")
         return self.get_return
 
 

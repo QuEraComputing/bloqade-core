@@ -99,6 +99,34 @@ that runs multiple independent kernels in one task, or
 that runs one kernel against several argument sets. The downstream steps
 (`run_async`, `future.result`) are identical.
 
+## Groups
+
+QLAM groups organize task definitions and control who can access them. Set a
+device-level default when a workflow normally uses one group, and optionally
+override it for a single task. If neither value is set, QLAM selects the
+backend default group.
+
+```python
+from uuid import UUID
+
+device = Device(
+    context_name="my-context",
+    group_id=UUID("11111111-1111-1111-1111-111111111111"),
+)
+
+task = device.task(bell)  # inherits the device group
+other_task = device.task(
+    bell,
+    group_id=UUID("22222222-2222-2222-2222-222222222222"),
+)
+
+groups = device.list_groups()
+group = device.get_group(groups[0].id)
+```
+
+`group_id` is recorded on task definitions, including definitions stored in
+`DictStorage` and `SQLiteStorage`.
+
 ## Persisting results
 
 `run_async` accepts a `storage` argument that controls where the task

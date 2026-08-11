@@ -3,6 +3,7 @@ import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Generic, Literal, Protocol, cast, overload
+from uuid import UUID
 
 from kirin import ir
 from kirin.serialization import JSONSerializer
@@ -54,11 +55,14 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             `kirin.serialization.JSONSerializer`.
         future_cls (type[FutureType]): Future class used to construct the
             return value of `submit_task_definition`. Defaults to `Future`.
+        group_id (UUID | None): QLAM group for the task definition. Defaults
+            to None, allowing QLAM to select the backend default group.
     """
 
     program_language: str
     language_version: str = "0.1.0"
     kernel_serializer: KernelSerializer = field(default_factory=JSONSerializer)
+    group_id: UUID | None = None
 
     # NOTE: bound to subclasses of future, so need to ignore the typing issue here
     future_cls: type[FutureType] = Future  # type: ignore
@@ -230,7 +234,6 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         arguments = self.get_arguments()
         metadata = self.get_metadata()
         for i in range(self.num_subtasks):
-
             if arguments is not None:
                 args = arguments[i]
             else:
@@ -255,6 +258,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             program_language=program_language_with_version,
             programs=programs,
             subtasks=subtasks,
+            group_id=self.group_id,
         )
 
     @overload

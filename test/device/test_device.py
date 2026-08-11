@@ -1,5 +1,8 @@
+from uuid import UUID
+
 from kirin.prelude import basic_no_opt
 
+import bloqade.core.device.device as device_mod
 from bloqade.core.device.device import Device
 from bloqade.core.device.future import Future
 from bloqade.core.device.task import (
@@ -7,6 +10,8 @@ from bloqade.core.device.task import (
     ParameterScanTask,
     SingleKernelTask,
 )
+
+from .fixtures import remote
 
 
 class CustomFuture(Future):
@@ -149,3 +154,47 @@ def test_device_kernel_serializer_override_wins_over_device_default():
         ).kernel_serializer
         is override_serializer
     )
+
+
+def test_device_group_id_is_inherited_and_task_override_wins():
+    @basic_no_opt
+    def first():
+        return
+
+    @basic_no_opt
+    def second():
+        return
+
+    default_group_id = UUID("11111111-1111-1111-1111-111111111111")
+    override_group_id = UUID("22222222-2222-2222-2222-222222222222")
+    device = Device(context_name="ctx", group_id=default_group_id)
+
+    assert device.task(first).group_id == default_group_id
+    assert device.batch_task([first, second]).group_id == default_group_id
+    assert device.parameter_scan(first, arguments=[{}]).group_id == default_group_id
+
+    task = device.task(first, group_id=override_group_id)
+    assert task.group_id == override_group_id
+    assert task.create_task_definition().group_id == override_group_id
+
+
+def test_device_lists_and_gets_groups(monkeypatch):
+    first_group = remote.make_group()
+    second_group = remote.make_group(
+        id=UUID("11111111-1111-1111-1111-111111111111"),
+        name="second-group",
+    )
+    groups_client = remote.FakeGroupsClient(
+        list_all_return=[first_group, second_group], get_return=second_group
+    )
+    device = Device(context_name="ctx")
+
+    monkeypatch.setattr(device_mod.AuthMixin, "authenticate", lambda self: None)
+    monkeypatch.setattr(device_mod, "GroupsClient", lambda app_context: groups_client)
+
+    assert device.list_groups() == [first_group, second_group]
+    assert device.get_group(second_group.id) == second_group
+    assert groups_client.calls == [
+        ("list_all", {}),
+        ("get", {"id": second_group.id}),
+    ]
