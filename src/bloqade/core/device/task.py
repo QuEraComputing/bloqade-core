@@ -2,7 +2,7 @@ import base64
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Generic, Literal, Protocol, overload
+from typing import Any, Generic, Literal, Protocol, cast, overload
 
 from kirin import ir
 from kirin.serialization import JSONSerializer
@@ -10,6 +10,7 @@ from qlam_core.plugins.tasks.api.client import TasksClient
 from qlam_core.plugins.tasks.api.tasks_models import (
     Program,
     Subtask,
+    Task,
     TaskCreationRequest,
     TaskDefinition,
     TaskMetadata,
@@ -347,8 +348,11 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
 
         task_request = TaskCreationRequest(root=task_definition)
         with TasksClient(self.app_context) as tasks_client:
-            created_task = self.call_with_auth_refresh(
-                lambda: tasks_client.create(body=task_request)  # type: ignore
+            created_task = cast(
+                Task,
+                self.call_with_auth_refresh(
+                    lambda: tasks_client.create(body=task_request)  # type: ignore
+                ),
             )
 
         task_id = created_task.id

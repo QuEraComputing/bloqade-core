@@ -217,7 +217,7 @@ doc = [
 requires-dist = [
     { name = "kirin-toolchain", specifier = "~=0.22.11" },
     { name = "loguru", specifier = ">=0.7.3" },
-    { name = "qlam-core", specifier = ">=0.2.0" },
+    { name = "qlam-core", specifier = "~=0.5.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -676,6 +676,19 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/8c/8b/57666417c0f90f08bcafa776861060426765fdb422eb10212086fb811d26/dnspython-2.8.0.tar.gz", hash = "sha256:181d3c6996452cb1189c4046c61599b84a5a86e099562ffde77d26984ff26d0f", size = 368251, upload-time = "2025-09-07T18:58:00.022Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ba/5a/18ad964b0086c6e62e2e7500f7edc89e3faa45033c71c1893d34eed2b2de/dnspython-2.8.0-py3-none-any.whl", hash = "sha256:01d9bbc4a2d76bf0db7c1f729812ded6d912bd318d3b1cf81d30c0f845dbf3af", size = 331094, upload-time = "2025-09-07T18:57:58.071Z" },
+]
+
+[[package]]
+name = "email-validator"
+version = "2.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dnspython" },
+    { name = "idna" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f5/22/900cb125c76b7aaa450ce02fd727f452243f2e91a61af068b40adba60ea9/email_validator-2.3.0.tar.gz", hash = "sha256:9fc05c37f2f6cf439ff414f8fc46d917929974a82244c20eb10231ba60c54426", size = 51238, upload-time = "2025-08-26T13:09:06.831Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/de/15/545e2b6cf2e3be84bc1ed85613edd75b8aea69807a71c26f4ca6a9258e82/email_validator-2.3.0-py3-none-any.whl", hash = "sha256:80f13f623413e6b197ae73bb10bf4eb0908faf509ad8362c5edeb0be7fd450b4", size = 35604, upload-time = "2025-08-26T13:09:05.858Z" },
 ]
 
 [[package]]
@@ -2245,16 +2258,17 @@ wheels = [
 
 [[package]]
 name = "qlam-core"
-version = "0.2.0"
+version = "0.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "email-validator" },
     { name = "httpx" },
     { name = "pydantic" },
     { name = "requests-oauth2client" },
     { name = "segno" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ac/7f/a64ffc6dfd7616c8c34004334d32c938749024901e11d57e7e6ad299ae22/qlam_core-0.2.0-py3-none-any.whl", hash = "sha256:45a7faa1d041e80c3835b73b4052842f109268c67e848c0c2b6fa0e91b6a55fd", size = 131923, upload-time = "2026-04-10T01:07:47.42Z" },
+    { url = "https://files.pythonhosted.org/packages/6e/bb/26f769fd0eaedb9ed3ecc6d981050dec0ddb69aa76e281d4498e965f622e/qlam_core-0.5.0-py3-none-any.whl", hash = "sha256:bdaedaddc2cdf2dab3328670db419e3209acc804e0ecc9143bc7fab17202c6a9", size = 159011, upload-time = "2026-08-10T17:18:02.193Z" },
 ]
 
 [[package]]

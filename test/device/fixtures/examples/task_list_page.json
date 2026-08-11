@@ -11,7 +11,9 @@
       "modified_by": "acbabea1-b48d-40c4-a7f6-d05bcf75cdd0",
       "error_reasons": [],
       "scheduled_date": "2026-06-08T08:49:38.743484Z",
-      "group_id": "00000000-0000-0000-0000-000000000000"
+      "group": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      }
     },
     {
       "id": "4dc1529b-4440-45a6-a718-8f4cdcc8a2ed",
@@ -24,7 +26,9 @@
       "modified_by": "acbabea1-b48d-40c4-a7f6-d05bcf75cdd0",
       "error_reasons": [],
       "scheduled_date": "2026-06-08T08:48:59.781533Z",
-      "group_id": "00000000-0000-0000-0000-000000000000"
+      "group": {
+        "id": "00000000-0000-0000-0000-000000000000"
+      }
     }
   ],
   "page_number": 0,

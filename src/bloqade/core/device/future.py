@@ -1,15 +1,19 @@
 import time
 from dataclasses import dataclass, field
-from typing import Any, Generic
+from typing import Any, Generic, cast
 from warnings import warn
 
 import numpy as np
 from qlam_core.plugins.compilations.api import CompilationsClient
 from qlam_core.plugins.definitions.api.client import DefinitionsClient
+from qlam_core.plugins.definitions.api.definitions_models import (
+    TaskDefinitionResponse,
+)
 from qlam_core.plugins.results.api.client import ResultsClient
 from qlam_core.plugins.tasks.api.client import TasksClient
 from qlam_core.plugins.tasks.api.tasks_models import (
     Task,
+    TaskDefinition,
     TaskStatus,
 )
 from typing_extensions import Self, TypeVar
@@ -94,8 +98,11 @@ class Future(AuthMixin, Generic[ResultType]):
         with TasksClient(self.app_context) as client:
             # NOTE: typing issue in qlam-core
             # every client is BaseRestApi, which doesn't have get, but it actually does
-            task = self.call_with_auth_refresh(
-                lambda: client.get(id=self.task_id)  # type: ignore
+            task = cast(
+                Task,
+                self.call_with_auth_refresh(
+                    lambda: client.get(id=self.task_id)  # type: ignore
+                ),
             )
             logger.info(
                 f"Fetched task with id {self.task_id}. Current status: {task.task_status}"
@@ -425,18 +432,26 @@ class Future(AuthMixin, Generic[ResultType]):
         auth = AuthMixin(context_name=context_name)
         auth.authenticate()
         with TasksClient(auth.app_context) as client:
-            task = auth.call_with_auth_refresh(
-                lambda: client.get(id=task_id)  # type: ignore
+            task = cast(
+                Task,
+                auth.call_with_auth_refresh(
+                    lambda: client.get(id=task_id)  # type: ignore
+                ),
             )
 
         # fetch subtasks for metadata
         with DefinitionsClient(auth.app_context) as client:
-            task_def = auth.call_with_auth_refresh(
-                lambda: client.get(id=task.definition_id)  # type: ignore
+            task_def = cast(
+                TaskDefinitionResponse,
+                auth.call_with_auth_refresh(
+                    lambda: client.get(id=task.definition_id)  # type: ignore
+                ),
             )
 
         storage.add_task_definition(
-            task_id, task_definition=task_def, creation_time=task.created_date
+            task_id,
+            task_definition=cast(TaskDefinition, task_def),
+            creation_time=task.created_date,
         )
 
         return cls(
