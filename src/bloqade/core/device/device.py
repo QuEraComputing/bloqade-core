@@ -6,6 +6,8 @@ from kirin import ir
 from kirin.serialization import JSONSerializer
 from qlam_core.plugins.groups.api.client import GroupsClient
 from qlam_core.plugins.groups.api.groups_models import GroupResponse
+from qlam_core.plugins.user_tenant.api.user_tenant_models import GroupAssignment
+from qlam_core.plugins.users.api.client import UsersClient
 
 from .future import Future, FutureType
 from .mixins import AuthMixin
@@ -34,7 +36,10 @@ class Device(Generic[FutureType], AuthMixin):
             Defaults to `kirin.serialization.JSONSerializer`.
         group_id (UUID | None): Default QLAM group applied to task definitions
             created by this device. A task-specific value takes precedence.
-            Defaults to None.
+            When neither is set, the `~/.qsh` config group
+            (`plugins.tasks.group`, then `defaults.group`) is applied at
+            submission time; when that is also unset, QLAM selects the backend
+            default group. Defaults to None.
     """
 
     # NOTE: for python 3.10, we need the future_cls to be Future, not Future[Result]
@@ -74,11 +79,22 @@ class Device(Generic[FutureType], AuthMixin):
 
         return group_id
 
-    def list_groups(self) -> list[GroupResponse]:
-        """Return groups visible to the authenticated user."""
+    def list_user_groups(self, user_id: UUID | str) -> list[GroupAssignment]:
+        """Return a user's group assignments.
+
+        Regular users can query their own assignments; listing other users'
+        assignments requires an administrative role. Each assignment scopes a
+        list of group UUIDs to one tenant and API audience; use `get_group` to
+        resolve a UUID to the full group record.
+
+        Args:
+            user_id (UUID | str): UUID of the user whose group assignments to
+                retrieve. A user's UUID is reported as `created_by` on their
+                submitted tasks.
+        """
         self.authenticate()
-        with GroupsClient(self.app_context) as client:
-            return self.call_with_auth_refresh(client.list_all)
+        with UsersClient(self.app_context) as client:
+            return self.call_with_auth_refresh(lambda: client.get_groups(id=user_id))
 
     def get_group(self, group_id: UUID | str) -> GroupResponse:
         """Return one group visible to the authenticated user.

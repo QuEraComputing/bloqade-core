@@ -7,6 +7,7 @@ from uuid import UUID
 
 from kirin import ir
 from kirin.serialization import JSONSerializer
+from qlam_core.plugins.groups.api.client import GroupsClient
 from qlam_core.plugins.tasks.api.client import TasksClient
 from qlam_core.plugins.tasks.api.tasks_models import (
     Program,
@@ -55,8 +56,10 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             `kirin.serialization.JSONSerializer`.
         future_cls (type[FutureType]): Future class used to construct the
             return value of `submit_task_definition`. Defaults to `Future`.
-        group_id (UUID | None): QLAM group for the task definition. Defaults
-            to None, allowing QLAM to select the backend default group.
+        group_id (UUID | None): QLAM group for the task definition. When None,
+            the `~/.qsh` config group (`plugins.tasks.group`, then
+            `defaults.group`) is applied at submission time; when that is also
+            unset, QLAM selects the backend default group. Defaults to None.
     """
 
     program_language: str
@@ -261,6 +264,35 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             group_id=self.group_id,
         )
 
+    def _resolve_config_group_id(self) -> UUID | None:
+        """Return the `~/.qsh` config group for submissions, if configured.
+
+        Mirrors the qsh CLI precedence for submission commands:
+        `plugins.tasks.group` first, then `defaults.group`. The config value
+        may be a group UUID or a group name; names are resolved through the
+        groups API, which requires an authenticated context.
+
+        Returns:
+            UUID | None: The configured group UUID, or None when the config
+                does not set a group.
+        """
+        config = self.app_context.config
+        plugin_config = config.get_plugin_config("tasks")
+        group = plugin_config.group if plugin_config is not None else None
+        if not group:
+            defaults = config.current_context.defaults
+            group = defaults.group if defaults is not None else None
+        if not group:
+            return None
+
+        try:
+            return UUID(group)
+        except ValueError:
+            pass
+
+        with GroupsClient(self.app_context) as client:
+            return self.call_with_auth_refresh(lambda: client.resolve_id(group))
+
     @overload
     def run_async(
         self,
@@ -330,6 +362,11 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
     ) -> FutureType:
         """Submit a prepared task definition and return a future.
 
+        When the definition does not set a group, the `~/.qsh` config group
+        (`plugins.tasks.group`, then `defaults.group`) is applied before
+        submission. When that is also unset, the group is omitted and QLAM
+        selects the backend default group.
+
         Keyword Args:
             task_definition (TaskDefinition): Task definition to submit.
             storage (StorageBackend | None): Storage backend that will receive
@@ -350,12 +387,21 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
 
         self.authenticate()
 
+        if task_definition.group_id is None:
+            config_group_id = self._resolve_config_group_id()
+            if config_group_id is not None:
+                task_definition = task_definition.model_copy(
+                    update={"group_id": config_group_id}
+                )
+
         task_request = TaskCreationRequest(root=task_definition)
         with TasksClient(self.app_context) as tasks_client:
+            # NOTE: create returns `Task | JsonDict` because its raw-mode flag
+            # has no overloads; we always pass a pydantic body, so it's a Task
             created_task = cast(
                 Task,
                 self.call_with_auth_refresh(
-                    lambda: tasks_client.create(body=task_request)  # type: ignore
+                    lambda: tasks_client.create(body=task_request)
                 ),
             )
 

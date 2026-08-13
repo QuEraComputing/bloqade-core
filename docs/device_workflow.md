@@ -103,8 +103,14 @@ that runs one kernel against several argument sets. The downstream steps
 
 QLAM groups organize task definitions and control who can access them. Set a
 device-level default when a workflow normally uses one group, and optionally
-override it for a single task. If neither value is set, QLAM selects the
-backend default group.
+override it for a single task. The group submitted with a task is resolved in
+this order, mirroring the qsh CLI:
+
+1. the task-level `group_id` argument,
+2. the device-level `group_id`,
+3. the `~/.qsh` config group (`plugins.tasks.group`, then `defaults.group`;
+   either may be a group UUID or name),
+4. otherwise the group is omitted and QLAM selects the backend default group.
 
 ```python
 from uuid import UUID
@@ -120,8 +126,10 @@ other_task = device.task(
     group_id=UUID("22222222-2222-2222-2222-222222222222"),
 )
 
-groups = device.list_groups()
-group = device.get_group(groups[0].id)
+# group assignments for a user (regular users can query themselves;
+# a user's UUID is reported as `created_by` on their submitted tasks)
+assignments = device.list_user_groups(user_id)
+group = device.get_group(assignments[0].groups[0])
 ```
 
 `group_id` is recorded on task definitions, including definitions stored in

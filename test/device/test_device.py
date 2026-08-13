@@ -178,23 +178,18 @@ def test_device_group_id_is_inherited_and_task_override_wins():
     assert task.create_task_definition().group_id == override_group_id
 
 
-def test_device_lists_and_gets_groups(monkeypatch):
-    first_group = remote.make_group()
-    second_group = remote.make_group(
-        id=UUID("11111111-1111-1111-1111-111111111111"),
-        name="second-group",
-    )
-    groups_client = remote.FakeGroupsClient(
-        list_all_return=[first_group, second_group], get_return=second_group
-    )
+def test_device_lists_user_groups_and_gets_group(monkeypatch):
+    assignment = remote.make_group_assignment(groups=[remote.DEFAULT_GROUP_ID])
+    group = remote.make_group()
+    users_client = remote.FakeUsersClient(get_groups_return=[assignment])
+    groups_client = remote.FakeGroupsClient(get_return=group)
     device = Device(context_name="ctx")
 
     monkeypatch.setattr(device_mod.AuthMixin, "authenticate", lambda self: None)
+    monkeypatch.setattr(device_mod, "UsersClient", lambda app_context: users_client)
     monkeypatch.setattr(device_mod, "GroupsClient", lambda app_context: groups_client)
 
-    assert device.list_groups() == [first_group, second_group]
-    assert device.get_group(second_group.id) == second_group
-    assert groups_client.calls == [
-        ("list_all", {}),
-        ("get", {"id": second_group.id}),
-    ]
+    assert device.list_user_groups(remote.DEFAULT_USER_ID) == [assignment]
+    assert device.get_group(assignment.groups[0]) == group
+    assert users_client.calls == [("get_groups", {"id": remote.DEFAULT_USER_ID})]
+    assert groups_client.calls == [("get", {"id": remote.DEFAULT_GROUP_ID})]

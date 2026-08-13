@@ -2,6 +2,7 @@ import base64
 import importlib
 import json
 from typing import cast
+from uuid import UUID
 
 import pytest
 from kirin.prelude import basic_no_opt
@@ -418,3 +419,120 @@ def test_submit_task_definition_retries_on_403_after_refresh(monkeypatch):
     assert len(invocations) == 2
     assert [name for name, _ in client.calls] == ["create", "create"]
     assert [name for name, _ in auth_client.calls] == ["refresh_credentials"]
+
+
+def _submit_and_get_created_definition(monkeypatch, task, storage=None):
+    """Submit `task`'s definition through a fake client; return the sent body."""
+    created_task = remote.make_task(
+        id="task-created",
+        task_status=TaskStatus.CREATED,
+        created_date=CREATION_TIME,
+    )
+    client = remote.FakeTasksClient(create_return=created_task)
+
+    monkeypatch.setattr(task, "authenticate", lambda: None)
+    monkeypatch.setattr(task_mod, "TasksClient", lambda app_context: client)
+
+    task.submit_task_definition(
+        task_definition=task.create_task_definition(),
+        storage=DictStorage() if storage is None else storage,
+    )
+
+    name, kwargs = client.calls[0]
+    assert name == "create"
+    return kwargs["body"].root
+
+
+def test_submit_task_definition_applies_config_defaults_group(
+    monkeypatch, write_qsh_config
+):
+    config_group_id = UUID("33333333-3333-3333-3333-333333333333")
+    write_qsh_config(defaults_group=str(config_group_id))
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        future_cls=RecordingFuture,  # type: ignore
+    )
+    storage = DictStorage()
+
+    sent = _submit_and_get_created_definition(monkeypatch, task, storage=storage)
+
+    assert sent.group_id == config_group_id
+    assert storage.get_task_definition("task-created").group_id == config_group_id
+
+
+def test_submit_task_definition_plugin_group_overrides_defaults_group(
+    monkeypatch, write_qsh_config
+):
+    plugin_group_id = UUID("44444444-4444-4444-4444-444444444444")
+    write_qsh_config(
+        defaults_group="33333333-3333-3333-3333-333333333333",
+        tasks_plugin_group=str(plugin_group_id),
+    )
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        future_cls=RecordingFuture,  # type: ignore
+    )
+
+    sent = _submit_and_get_created_definition(monkeypatch, task)
+
+    assert sent.group_id == plugin_group_id
+
+
+def test_submit_task_definition_explicit_group_wins_over_config(
+    monkeypatch, write_qsh_config
+):
+    explicit_group_id = UUID("22222222-2222-2222-2222-222222222222")
+    write_qsh_config(defaults_group="33333333-3333-3333-3333-333333333333")
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        group_id=explicit_group_id,
+        future_cls=RecordingFuture,  # type: ignore
+    )
+
+    sent = _submit_and_get_created_definition(monkeypatch, task)
+
+    assert sent.group_id == explicit_group_id
+
+
+def test_submit_task_definition_resolves_config_group_name(
+    monkeypatch, write_qsh_config
+):
+    resolved_group_id = UUID("55555555-5555-5555-5555-555555555555")
+    write_qsh_config(defaults_group="team-a")
+    groups_client = remote.FakeGroupsClient(resolve_id_return=resolved_group_id)
+    monkeypatch.setattr(task_mod, "GroupsClient", lambda app_context: groups_client)
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        future_cls=RecordingFuture,  # type: ignore
+    )
+
+    sent = _submit_and_get_created_definition(monkeypatch, task)
+
+    assert sent.group_id == resolved_group_id
+    assert groups_client.calls == [("resolve_id", {"group": "team-a"})]
+
+
+def test_submit_task_definition_omits_group_without_config(monkeypatch):
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        future_cls=RecordingFuture,  # type: ignore
+    )
+
+    sent = _submit_and_get_created_definition(monkeypatch, task)
+
+    assert sent.group_id is None

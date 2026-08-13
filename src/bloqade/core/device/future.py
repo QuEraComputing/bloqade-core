@@ -96,13 +96,11 @@ class Future(AuthMixin, Generic[ResultType]):
         """
         self.authenticate()
         with TasksClient(self.app_context) as client:
-            # NOTE: typing issue in qlam-core
-            # every client is BaseRestApi, which doesn't have get, but it actually does
+            # NOTE: get returns `Task | JsonDict` because its raw-mode flag has
+            # no overloads; we never pass raw=True, so it's a Task
             task = cast(
                 Task,
-                self.call_with_auth_refresh(
-                    lambda: client.get(id=self.task_id)  # type: ignore
-                ),
+                self.call_with_auth_refresh(lambda: client.get(id=self.task_id)),
             )
             logger.info(
                 f"Fetched task with id {self.task_id}. Current status: {task.task_status}"
@@ -126,9 +124,7 @@ class Future(AuthMixin, Generic[ResultType]):
             compilation_id = self.get_task().compilation_id
 
         with CompilationsClient(self.app_context) as client:
-            return self.call_with_auth_refresh(
-                lambda: client.get(id=compilation_id)  # type: ignore
-            )
+            return self.call_with_auth_refresh(lambda: client.get(id=compilation_id))
 
     def fetch(self) -> None:
         """Fetch currently available shot results into this future's storage.
@@ -146,7 +142,7 @@ class Future(AuthMixin, Generic[ResultType]):
             while not done:
                 done = self.call_with_auth_refresh(
                     lambda page=subtask_page: self._fetch_subtask_page(
-                        client=client,  # type: ignore
+                        client=client,
                         subtask_page=page,
                     )
                 )
@@ -181,9 +177,8 @@ class Future(AuthMixin, Generic[ResultType]):
         self.authenticate()
         with TasksClient(self.app_context) as client:
             try:
-                # NOTE: typing issue because client is seen as BaseClient instead of TaskClient
                 return self.call_with_auth_refresh(
-                    lambda: client.cancel(id=self.task_id)  # type: ignore
+                    lambda: client.cancel(id=self.task_id)
                 )
             except Exception as e:
                 warn(
@@ -431,28 +426,28 @@ class Future(AuthMixin, Generic[ResultType]):
         context_name = cls._resolve_context_name(context_name)
         auth = AuthMixin(context_name=context_name)
         auth.authenticate()
+        # NOTE: the casts narrow the `Model | JsonDict` unions the clients
+        # declare for their raw-mode flag; we never pass raw=True
         with TasksClient(auth.app_context) as client:
             task = cast(
                 Task,
-                auth.call_with_auth_refresh(
-                    lambda: client.get(id=task_id)  # type: ignore
-                ),
+                auth.call_with_auth_refresh(lambda: client.get(id=task_id)),
             )
 
         # fetch subtasks for metadata
         with DefinitionsClient(auth.app_context) as client:
             task_def = cast(
                 TaskDefinitionResponse,
-                auth.call_with_auth_refresh(
-                    lambda: client.get(id=task.definition_id)  # type: ignore
-                ),
+                auth.call_with_auth_refresh(lambda: client.get(id=task.definition_id)),
             )
 
         storage.add_task_definition(
             task_id,
             task_definition=TaskDefinition.model_validate(
                 {
-                    **task_def.model_dump(),
+                    **task_def.model_dump(
+                        include={"program_language", "programs", "subtasks"}
+                    ),
                     "group_id": task_def.group.id,
                 }
             ),
