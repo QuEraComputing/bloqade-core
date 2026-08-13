@@ -55,7 +55,11 @@
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
   </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a></code> </td> <td> <div class=doc-md-description> <p>Pagination and polling options.</p> </div> </td> </tr> </tbody> </table> <div class="doc doc-children"> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.cancel class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">cancel</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>cancel</span><span class=p>()</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Attempt to cancel the execution of the task.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> </td> <td> <div class=doc-md-description> <p>The backend cancellation response when cancellation is submitted;</p> </div> </td> </tr> <tr class=doc-section-item> <td> </td> <td> <div class=doc-md-description> <p>otherwise None if cancellation raises and a warning is emitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>173</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Attempt to cancel the execution of the task.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> </td> <td> <div class=doc-md-description> <p>The backend cancellation response when cancellation is submitted;</p> </div> </td> </tr> <tr class=doc-section-item> <td> </td> <td> <div class=doc-md-description> <p>otherwise None if cancellation raises and a warning is emitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>169</span>
+<span class=normal>170</span>
+<span class=normal>171</span>
+<span class=normal>172</span>
+<span class=normal>173</span>
 <span class=normal>174</span>
 <span class=normal>175</span>
 <span class=normal>176</span>
@@ -68,12 +72,7 @@
 <span class=normal>183</span>
 <span class=normal>184</span>
 <span class=normal>185</span>
-<span class=normal>186</span>
-<span class=normal>187</span>
-<span class=normal>188</span>
-<span class=normal>189</span>
-<span class=normal>190</span>
-<span class=normal>191</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>cancel</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+<span class=normal>186</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>cancel</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Attempt to cancel the execution of the task.</span>
 
 <span class=sd>    Returns:</span>
@@ -84,22 +83,21 @@
     <span class=bp>self</span><span class=o>.</span><span class=n>authenticate</span><span class=p>()</span>
     <span class=k>with</span> <span class=n>TasksClient</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>client</span><span class=p>:</span>
         <span class=k>try</span><span class=p>:</span>
-            <span class=c1># NOTE: typing issue because client is seen as BaseClient instead of TaskClient</span>
             <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span>
-                <span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>cancel</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>task_id</span><span class=p>)</span>  <span class=c1># type: ignore</span>
+                <span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>cancel</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>task_id</span><span class=p>)</span>
             <span class=p>)</span>
         <span class=k>except</span> <span class=ne>Exception</span> <span class=k>as</span> <span class=n>e</span><span class=p>:</span>
             <span class=n>warn</span><span class=p>(</span>
                 <span class=sa>f</span><span class=s2>&quot;Exception encountered when trying to cancel task with ID </span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>task_id</span><span class=si>}</span><span class=s2>: </span><span class=si>{</span><span class=nb>str</span><span class=p>(</span><span class=nb>repr</span><span class=p>(</span><span class=n>e</span><span class=p>))</span><span class=si>}</span><span class=s2>&quot;</span>
             <span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.cancelled class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">cancelled</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>cancelled</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>bool</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return whether the task was cancelled.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>bool</code></td> <td> <code><span title=bool>bool</span></code> </td> <td> <div class=doc-md-description> <p><code>True</code> if the task status is <code>CANCELLED</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>193</span>
-<span class=normal>194</span>
-<span class=normal>195</span>
-<span class=normal>196</span>
-<span class=normal>197</span>
-<span class=normal>198</span>
-<span class=normal>199</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>cancelled</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>bool</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return whether the task was cancelled.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>bool</code></td> <td> <code><span title=bool>bool</span></code> </td> <td> <div class=doc-md-description> <p><code>True</code> if the task status is <code>CANCELLED</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>188</span>
+<span class=normal>189</span>
+<span class=normal>190</span>
+<span class=normal>191</span>
+<span class=normal>192</span>
+<span class=normal>193</span>
+<span class=normal>194</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>cancelled</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>bool</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return whether the task was cancelled.</span>
 
 <span class=sd>    Returns:</span>
@@ -107,14 +105,14 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>status</span><span class=p>()</span> <span class=o>==</span> <span class=n>TaskStatus</span><span class=o>.</span><span class=n>CANCELLED</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.done class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">done</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>done</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>bool</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return whether the task has reached a terminal status.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>bool</code></td> <td> <code><span title=bool>bool</span></code> </td> <td> <div class=doc-md-description> <p><code>True</code> if the task status is one of <code>EXIT_STATUS</code> (completed, cancelled, failed, or payload processing error).</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>156</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return whether the task has reached a terminal status.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>bool</code></td> <td> <code><span title=bool>bool</span></code> </td> <td> <div class=doc-md-description> <p><code>True</code> if the task status is one of <code>EXIT_STATUS</code> (completed, cancelled, failed, or payload processing error).</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>152</span>
+<span class=normal>153</span>
+<span class=normal>154</span>
+<span class=normal>155</span>
+<span class=normal>156</span>
 <span class=normal>157</span>
 <span class=normal>158</span>
-<span class=normal>159</span>
-<span class=normal>160</span>
-<span class=normal>161</span>
-<span class=normal>162</span>
-<span class=normal>163</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>done</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>bool</span><span class=p>:</span>
+<span class=normal>159</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>done</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>bool</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return whether the task has reached a terminal status.</span>
 
 <span class=sd>    Returns:</span>
@@ -132,7 +130,12 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.ShotFilter</code>)' href=../local_storage/#bloqade.core.device.local_storage.ShotFilter>ShotFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Optional shot filter. When the filter includes <code>task_ids</code>, only those task definitions are copied. Otherwise, all task definitions from this future's storage are copied. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>257</span>
+  </span> (<code>bloqade.core.device.local_storage.ShotFilter</code>)' href=../local_storage/#bloqade.core.device.local_storage.ShotFilter>ShotFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Optional shot filter. When the filter includes <code>task_ids</code>, only those task definitions are copied. Otherwise, all task definitions from this future's storage are copied. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>252</span>
+<span class=normal>253</span>
+<span class=normal>254</span>
+<span class=normal>255</span>
+<span class=normal>256</span>
+<span class=normal>257</span>
 <span class=normal>258</span>
 <span class=normal>259</span>
 <span class=normal>260</span>
@@ -161,12 +164,7 @@
 <span class=normal>283</span>
 <span class=normal>284</span>
 <span class=normal>285</span>
-<span class=normal>286</span>
-<span class=normal>287</span>
-<span class=normal>288</span>
-<span class=normal>289</span>
-<span class=normal>290</span>
-<span class=normal>291</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>export_to</span><span class=p>(</span>
+<span class=normal>286</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>export_to</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span><span class=p>,</span>
     <span class=n>chunk_size</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1000</span><span class=p>,</span>
@@ -202,7 +200,11 @@
         <span class=n>creation_time</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>storage</span><span class=o>.</span><span class=n>get_task_creation_time</span><span class=p>(</span><span class=n>task_id</span><span class=p>)</span>
         <span class=n>storage</span><span class=o>.</span><span class=n>add_task_definition</span><span class=p>(</span><span class=n>task_id</span><span class=p>,</span> <span class=n>task_def</span><span class=p>,</span> <span class=n>creation_time</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.fetch class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">fetch</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>fetch</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Fetch currently available shot results into this future's storage.</p> <p>Results are requested from the first known incomplete subtask page and paginated by both subtask and shot page. Repeated calls are safe because storage backends de-duplicate rows by task ID, shot index, and frame type.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>133</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Fetch currently available shot results into this future's storage.</p> <p>Results are requested from the first known incomplete subtask page and paginated by both subtask and shot page. Repeated calls are safe because storage backends de-duplicate rows by task ID, shot index, and frame type.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>129</span>
+<span class=normal>130</span>
+<span class=normal>131</span>
+<span class=normal>132</span>
+<span class=normal>133</span>
 <span class=normal>134</span>
 <span class=normal>135</span>
 <span class=normal>136</span>
@@ -219,11 +221,7 @@
 <span class=normal>147</span>
 <span class=normal>148</span>
 <span class=normal>149</span>
-<span class=normal>150</span>
-<span class=normal>151</span>
-<span class=normal>152</span>
-<span class=normal>153</span>
-<span class=normal>154</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>fetch</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
+<span class=normal>150</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>fetch</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Fetch currently available shot results into this future&#39;s storage.</span>
 
 <span class=sd>    Results are requested from the first known incomplete subtask page and</span>
@@ -239,7 +237,7 @@
         <span class=k>while</span> <span class=ow>not</span> <span class=n>done</span><span class=p>:</span>
             <span class=n>done</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span>
                 <span class=k>lambda</span> <span class=n>page</span><span class=o>=</span><span class=n>subtask_page</span><span class=p>:</span> <span class=bp>self</span><span class=o>.</span><span class=n>_fetch_subtask_page</span><span class=p>(</span>
-                    <span class=n>client</span><span class=o>=</span><span class=n>client</span><span class=p>,</span>  <span class=c1># type: ignore</span>
+                    <span class=n>client</span><span class=o>=</span><span class=n>client</span><span class=p>,</span>
                     <span class=n>subtask_page</span><span class=o>=</span><span class=n>page</span><span class=p>,</span>
                 <span class=p>)</span>
             <span class=p>)</span>
@@ -248,16 +246,16 @@
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.fetch_and_export_to class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">fetch_and_export_to</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>fetch_and_export_to</span><span class=p>(</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span><span class=p>,</span> <span class=n>chunk_size</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1000</span>
 <span class=p>)</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Fetch available results and export this future's storage.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>storage</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a></code> </td> <td> <div class=doc-md-description> <p>Destination storage backend.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>chunk_size</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Maximum number of shots to write per batch. Defaults to 1000.</p> </div> </td> <td> <code>1000</code> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>293</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Fetch available results and export this future's storage.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>storage</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a></code> </td> <td> <div class=doc-md-description> <p>Destination storage backend.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>chunk_size</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Maximum number of shots to write per batch. Defaults to 1000.</p> </div> </td> <td> <code>1000</code> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>288</span>
+<span class=normal>289</span>
+<span class=normal>290</span>
+<span class=normal>291</span>
+<span class=normal>292</span>
+<span class=normal>293</span>
 <span class=normal>294</span>
 <span class=normal>295</span>
 <span class=normal>296</span>
-<span class=normal>297</span>
-<span class=normal>298</span>
-<span class=normal>299</span>
-<span class=normal>300</span>
-<span class=normal>301</span>
-<span class=normal>302</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>fetch_and_export_to</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span><span class=p>,</span> <span class=n>chunk_size</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1000</span><span class=p>):</span>
+<span class=normal>297</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>fetch_and_export_to</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span><span class=p>,</span> <span class=n>chunk_size</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1000</span><span class=p>):</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Fetch available results and export this future&#39;s storage.</span>
 
 <span class=sd>    Args:</span>
@@ -285,7 +283,12 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a>()</code> </td> </tr> <tr class=doc-section-item> <td> <code>context_name</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Name of the qlam context to attach to the returned future. When None, the class-level default on <code>cls</code> is used. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>Self</code></td> <td> <code><span title=typing_extensions.Self>Self</span></code> </td> <td> <div class=doc-md-description> <p>A future attached to the selected task ID.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If storage has no task IDs, the requested task ID is not present, multiple task IDs are present without an explicit <code>task_id</code>, or <code>context_name</code> is None and <code>cls</code> has no class-level default.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>328</span>
+  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a>()</code> </td> </tr> <tr class=doc-section-item> <td> <code>context_name</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Name of the qlam context to attach to the returned future. When None, the class-level default on <code>cls</code> is used. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>Self</code></td> <td> <code><span title=typing_extensions.Self>Self</span></code> </td> <td> <div class=doc-md-description> <p>A future attached to the selected task ID.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If storage has no task IDs, the requested task ID is not present, multiple task IDs are present without an explicit <code>task_id</code>, or <code>context_name</code> is None and <code>cls</code> has no class-level default.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>323</span>
+<span class=normal>324</span>
+<span class=normal>325</span>
+<span class=normal>326</span>
+<span class=normal>327</span>
+<span class=normal>328</span>
 <span class=normal>329</span>
 <span class=normal>330</span>
 <span class=normal>331</span>
@@ -344,12 +347,7 @@
 <span class=normal>384</span>
 <span class=normal>385</span>
 <span class=normal>386</span>
-<span class=normal>387</span>
-<span class=normal>388</span>
-<span class=normal>389</span>
-<span class=normal>390</span>
-<span class=normal>391</span>
-<span class=normal>392</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@classmethod</span>
+<span class=normal>387</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@classmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>from_storage</span><span class=p>(</span>
     <span class=bp>cls</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
@@ -431,7 +429,12 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a>()</code> </td> </tr> <tr class=doc-section-item> <td> <code>context_name</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Name of the qlam context used to fetch the task and attached to the returned future. When None, the class-level default on <code>cls</code> is used. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>Self</code></td> <td> <code><span title=typing_extensions.Self>Self</span></code> </td> <td> <div class=doc-md-description> <p>A future attached to <code>task_id</code>.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>context_name</code> is None and <code>cls</code> has no class-level default.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>394</span>
+  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a>()</code> </td> </tr> <tr class=doc-section-item> <td> <code>context_name</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Name of the qlam context used to fetch the task and attached to the returned future. When None, the class-level default on <code>cls</code> is used. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>Self</code></td> <td> <code><span title=typing_extensions.Self>Self</span></code> </td> <td> <div class=doc-md-description> <p>A future attached to <code>task_id</code>.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>context_name</code> is None and <code>cls</code> has no class-level default.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>389</span>
+<span class=normal>390</span>
+<span class=normal>391</span>
+<span class=normal>392</span>
+<span class=normal>393</span>
+<span class=normal>394</span>
 <span class=normal>395</span>
 <span class=normal>396</span>
 <span class=normal>397</span>
@@ -500,12 +503,7 @@
 <span class=normal>460</span>
 <span class=normal>461</span>
 <span class=normal>462</span>
-<span class=normal>463</span>
-<span class=normal>464</span>
-<span class=normal>465</span>
-<span class=normal>466</span>
-<span class=normal>467</span>
-<span class=normal>468</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@classmethod</span>
+<span class=normal>463</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@classmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>from_task_id</span><span class=p>(</span>
     <span class=bp>cls</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
@@ -545,28 +543,28 @@
     <span class=n>context_name</span> <span class=o>=</span> <span class=bp>cls</span><span class=o>.</span><span class=n>_resolve_context_name</span><span class=p>(</span><span class=n>context_name</span><span class=p>)</span>
     <span class=n>auth</span> <span class=o>=</span> <span class=n>AuthMixin</span><span class=p>(</span><span class=n>context_name</span><span class=o>=</span><span class=n>context_name</span><span class=p>)</span>
     <span class=n>auth</span><span class=o>.</span><span class=n>authenticate</span><span class=p>()</span>
+    <span class=c1># NOTE: the casts narrow the `Model | JsonDict` unions the clients</span>
+    <span class=c1># declare for their raw-mode flag; we never pass raw=True</span>
     <span class=k>with</span> <span class=n>TasksClient</span><span class=p>(</span><span class=n>auth</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>client</span><span class=p>:</span>
         <span class=n>task</span> <span class=o>=</span> <span class=n>cast</span><span class=p>(</span>
             <span class=n>Task</span><span class=p>,</span>
-            <span class=n>auth</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span>
-                <span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=n>task_id</span><span class=p>)</span>  <span class=c1># type: ignore</span>
-            <span class=p>),</span>
+            <span class=n>auth</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span><span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=n>task_id</span><span class=p>)),</span>
         <span class=p>)</span>
 
     <span class=c1># fetch subtasks for metadata</span>
     <span class=k>with</span> <span class=n>DefinitionsClient</span><span class=p>(</span><span class=n>auth</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>client</span><span class=p>:</span>
         <span class=n>task_def</span> <span class=o>=</span> <span class=n>cast</span><span class=p>(</span>
             <span class=n>TaskDefinitionResponse</span><span class=p>,</span>
-            <span class=n>auth</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span>
-                <span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=n>task</span><span class=o>.</span><span class=n>definition_id</span><span class=p>)</span>  <span class=c1># type: ignore</span>
-            <span class=p>),</span>
+            <span class=n>auth</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span><span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=n>task</span><span class=o>.</span><span class=n>definition_id</span><span class=p>)),</span>
         <span class=p>)</span>
 
     <span class=n>storage</span><span class=o>.</span><span class=n>add_task_definition</span><span class=p>(</span>
         <span class=n>task_id</span><span class=p>,</span>
         <span class=n>task_definition</span><span class=o>=</span><span class=n>TaskDefinition</span><span class=o>.</span><span class=n>model_validate</span><span class=p>(</span>
             <span class=p>{</span>
-                <span class=o>**</span><span class=n>task_def</span><span class=o>.</span><span class=n>model_dump</span><span class=p>(),</span>
+                <span class=o>**</span><span class=n>task_def</span><span class=o>.</span><span class=n>model_dump</span><span class=p>(</span>
+                    <span class=n>include</span><span class=o>=</span><span class=p>{</span><span class=s2>&quot;program_language&quot;</span><span class=p>,</span> <span class=s2>&quot;programs&quot;</span><span class=p>,</span> <span class=s2>&quot;subtasks&quot;</span><span class=p>}</span>
+                <span class=p>),</span>
                 <span class=s2>&quot;group_id&quot;</span><span class=p>:</span> <span class=n>task_def</span><span class=o>.</span><span class=n>group</span><span class=o>.</span><span class=n>id</span><span class=p>,</span>
             <span class=p>}</span>
         <span class=p>),</span>
@@ -581,7 +579,9 @@
         <span class=n>context_name</span><span class=o>=</span><span class=n>context_name</span><span class=p>,</span>
     <span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.get_compilation class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_compilation</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_compilation</span><span class=p>(</span><span class=n>compilation_id</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Fetch the compilation record associated with this task.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>compilation_id</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>ID of the compilation to fetch. When <code>None</code>, the compilation ID is retrieved from the task record. Defaults to <code>None</code>.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> </td> <td> <div class=doc-md-description> <p>The compilation object returned by the backend.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>112</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Fetch the compilation record associated with this task.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>compilation_id</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>ID of the compilation to fetch. When <code>None</code>, the compilation ID is retrieved from the task record. Defaults to <code>None</code>.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> </td> <td> <div class=doc-md-description> <p>The compilation object returned by the backend.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>110</span>
+<span class=normal>111</span>
+<span class=normal>112</span>
 <span class=normal>113</span>
 <span class=normal>114</span>
 <span class=normal>115</span>
@@ -596,11 +596,7 @@
 <span class=normal>124</span>
 <span class=normal>125</span>
 <span class=normal>126</span>
-<span class=normal>127</span>
-<span class=normal>128</span>
-<span class=normal>129</span>
-<span class=normal>130</span>
-<span class=normal>131</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_compilation</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>compilation_id</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>):</span>
+<span class=normal>127</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_compilation</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>compilation_id</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>):</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Fetch the compilation record associated with this task.</span>
 
 <span class=sd>    Args:</span>
@@ -617,9 +613,7 @@
         <span class=n>compilation_id</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>get_task</span><span class=p>()</span><span class=o>.</span><span class=n>compilation_id</span>
 
     <span class=k>with</span> <span class=n>CompilationsClient</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>client</span><span class=p>:</span>
-        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span>
-            <span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=n>compilation_id</span><span class=p>)</span>  <span class=c1># type: ignore</span>
-        <span class=p>)</span>
+        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span><span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=n>compilation_id</span><span class=p>))</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.get_task class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_task</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_task</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=n>Task</span>
 </code></pre></div> <div class="doc doc-contents "> <p>Fetch the current task record from the backend.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>Task</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.Task>Task</span></code> </td> <td> <div class=doc-md-description> <p>The task object returned by the backend.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 91</span>
 <span class=normal> 92</span>
@@ -638,9 +632,7 @@
 <span class=normal>105</span>
 <span class=normal>106</span>
 <span class=normal>107</span>
-<span class=normal>108</span>
-<span class=normal>109</span>
-<span class=normal>110</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>&quot;Task&quot;</span><span class=p>:</span>
+<span class=normal>108</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>&quot;Task&quot;</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Fetch the current task record from the backend.</span>
 
 <span class=sd>    Returns:</span>
@@ -648,30 +640,28 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=bp>self</span><span class=o>.</span><span class=n>authenticate</span><span class=p>()</span>
     <span class=k>with</span> <span class=n>TasksClient</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>client</span><span class=p>:</span>
-        <span class=c1># NOTE: typing issue in qlam-core</span>
-        <span class=c1># every client is BaseRestApi, which doesn&#39;t have get, but it actually does</span>
+        <span class=c1># NOTE: get returns `Task | JsonDict` because its raw-mode flag has</span>
+        <span class=c1># no overloads; we never pass raw=True, so it&#39;s a Task</span>
         <span class=n>task</span> <span class=o>=</span> <span class=n>cast</span><span class=p>(</span>
             <span class=n>Task</span><span class=p>,</span>
-            <span class=bp>self</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span>
-                <span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>task_id</span><span class=p>)</span>  <span class=c1># type: ignore</span>
-            <span class=p>),</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span><span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>task_id</span><span class=p>)),</span>
         <span class=p>)</span>
         <span class=n>logger</span><span class=o>.</span><span class=n>info</span><span class=p>(</span>
             <span class=sa>f</span><span class=s2>&quot;Fetched task with id </span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>task_id</span><span class=si>}</span><span class=s2>. Current status: </span><span class=si>{</span><span class=n>task</span><span class=o>.</span><span class=n>task_status</span><span class=si>}</span><span class=s2>&quot;</span>
         <span class=p>)</span>
         <span class=k>return</span> <span class=n>task</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.partial_result class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">partial_result</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>partial_result</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=n>ResultType</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Fetch currently available results and return a result view.</p> <p>Unlike <code>result</code>, this method does not wait for the task to finish.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>ResultType</code></td> <td> <code><span title=bloqade.core.device.result.ResultType>ResultType</span></code> </td> <td> <div class=doc-md-description> <p>A result view scoped to this future's task ID and the DETECTED frame type.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>227</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Fetch currently available results and return a result view.</p> <p>Unlike <code>result</code>, this method does not wait for the task to finish.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>ResultType</code></td> <td> <code><span title=bloqade.core.device.result.ResultType>ResultType</span></code> </td> <td> <div class=doc-md-description> <p>A result view scoped to this future's task ID and the DETECTED frame type.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>222</span>
+<span class=normal>223</span>
+<span class=normal>224</span>
+<span class=normal>225</span>
+<span class=normal>226</span>
+<span class=normal>227</span>
 <span class=normal>228</span>
 <span class=normal>229</span>
 <span class=normal>230</span>
 <span class=normal>231</span>
-<span class=normal>232</span>
-<span class=normal>233</span>
-<span class=normal>234</span>
-<span class=normal>235</span>
-<span class=normal>236</span>
-<span class=normal>237</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>partial_result</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ResultType</span><span class=p>:</span>
+<span class=normal>232</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>partial_result</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ResultType</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Fetch currently available results and return a result view.</span>
 
 <span class=sd>    Unlike `result`, this method does not wait for the task to finish.</span>
@@ -683,7 +673,12 @@
     <span class=bp>self</span><span class=o>.</span><span class=n>fetch</span><span class=p>()</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>results_from_storage</span><span class=p>()</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.result class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">result</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>result</span><span class=p>(</span><span class=o>*</span><span class=p>,</span> <span class=n>timeout</span><span class=p>:</span> <span class=nb>float</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ResultType</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Wait for completion, fetch results, and return a result view.</p> <p><span class=doc-section-title>Other Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>timeout</code></td> <td> <code><span title=float>float</span> | None</code> </td> <td> <div class=doc-md-description> <p>Maximum number of seconds to wait for a terminal task status. If None, wait indefinitely. Defaults to None.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>ResultType</code></td> <td> <code><span title=bloqade.core.device.result.ResultType>ResultType</span></code> </td> <td> <div class=doc-md-description> <p>A result view scoped to this future's task ID and the DETECTED frame type.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=TimeoutError>TimeoutError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>timeout</code> elapses before a terminal status is reached.</p> </div> </td> </tr> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If the task was cancelled or failed.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>201</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Wait for completion, fetch results, and return a result view.</p> <p><span class=doc-section-title>Other Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>timeout</code></td> <td> <code><span title=float>float</span> | None</code> </td> <td> <div class=doc-md-description> <p>Maximum number of seconds to wait for a terminal task status. If None, wait indefinitely. Defaults to None.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>ResultType</code></td> <td> <code><span title=bloqade.core.device.result.ResultType>ResultType</span></code> </td> <td> <div class=doc-md-description> <p>A result view scoped to this future's task ID and the DETECTED frame type.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=TimeoutError>TimeoutError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>timeout</code> elapses before a terminal status is reached.</p> </div> </td> </tr> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If the task was cancelled or failed.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>196</span>
+<span class=normal>197</span>
+<span class=normal>198</span>
+<span class=normal>199</span>
+<span class=normal>200</span>
+<span class=normal>201</span>
 <span class=normal>202</span>
 <span class=normal>203</span>
 <span class=normal>204</span>
@@ -702,12 +697,7 @@
 <span class=normal>217</span>
 <span class=normal>218</span>
 <span class=normal>219</span>
-<span class=normal>220</span>
-<span class=normal>221</span>
-<span class=normal>222</span>
-<span class=normal>223</span>
-<span class=normal>224</span>
-<span class=normal>225</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>result</span><span class=p>(</span>
+<span class=normal>220</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>result</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
     <span class=n>timeout</span><span class=p>:</span> <span class=nb>float</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
@@ -740,7 +730,12 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.ShotFilter</code>)' href=../local_storage/#bloqade.core.device.local_storage.ShotFilter>ShotFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Filter to apply to the result view. When None, the view is scoped to this future's task ID and the DETECTED frame type. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>ResultType</code></td> <td> <code><span title=bloqade.core.device.result.ResultType>ResultType</span></code> </td> <td> <div class=doc-md-description> <p>A result view over the storage backend.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>239</span>
+  </span> (<code>bloqade.core.device.local_storage.ShotFilter</code>)' href=../local_storage/#bloqade.core.device.local_storage.ShotFilter>ShotFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Filter to apply to the result view. When None, the view is scoped to this future's task ID and the DETECTED frame type. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>ResultType</code></td> <td> <code><span title=bloqade.core.device.result.ResultType>ResultType</span></code> </td> <td> <div class=doc-md-description> <p>A result view over the storage backend.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>234</span>
+<span class=normal>235</span>
+<span class=normal>236</span>
+<span class=normal>237</span>
+<span class=normal>238</span>
+<span class=normal>239</span>
 <span class=normal>240</span>
 <span class=normal>241</span>
 <span class=normal>242</span>
@@ -751,12 +746,7 @@
 <span class=normal>247</span>
 <span class=normal>248</span>
 <span class=normal>249</span>
-<span class=normal>250</span>
-<span class=normal>251</span>
-<span class=normal>252</span>
-<span class=normal>253</span>
-<span class=normal>254</span>
-<span class=normal>255</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>results_from_storage</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>shot_filter</span><span class=p>:</span> <span class=n>ShotFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ResultType</span><span class=p>:</span>
+<span class=normal>250</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>results_from_storage</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>shot_filter</span><span class=p>:</span> <span class=n>ShotFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ResultType</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Build a result view over this future&#39;s storage.</span>
 
 <span class=sd>    Args:</span>
@@ -774,13 +764,13 @@
         <span class=n>shot_filter</span><span class=o>=</span><span class=n>shot_filter</span><span class=p>,</span>
     <span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.status class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">status</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>status</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=n>TaskStatus</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the current status of the task.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>TaskStatus</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskStatus>TaskStatus</span></code> </td> <td> <div class=doc-md-description> <p>The task status as reported by the backend.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>165</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the current status of the task.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>TaskStatus</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskStatus>TaskStatus</span></code> </td> <td> <div class=doc-md-description> <p>The task status as reported by the backend.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>161</span>
+<span class=normal>162</span>
+<span class=normal>163</span>
+<span class=normal>164</span>
+<span class=normal>165</span>
 <span class=normal>166</span>
-<span class=normal>167</span>
-<span class=normal>168</span>
-<span class=normal>169</span>
-<span class=normal>170</span>
-<span class=normal>171</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>status</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>TaskStatus</span><span class=p>:</span>
+<span class=normal>167</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>status</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>TaskStatus</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the current status of the task.</span>
 
 <span class=sd>    Returns:</span>
