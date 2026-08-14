@@ -31,9 +31,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.ShotResult</code>)' href=#bloqade.core.device.local_storage.ShotResult>ShotResult</a>]</code> </td> <td> <div class=doc-md-description> <p>Shot rows to store.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>444</span>
-<span class=normal>445</span>
-<span class=normal>446</span>
+  </span> (<code>bloqade.core.device.local_storage.ShotResult</code>)' href=#bloqade.core.device.local_storage.ShotResult>ShotResult</a>]</code> </td> <td> <div class=doc-md-description> <p>Shot rows to store.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>446</span>
 <span class=normal>447</span>
 <span class=normal>448</span>
 <span class=normal>449</span>
@@ -43,7 +41,9 @@
 <span class=normal>453</span>
 <span class=normal>454</span>
 <span class=normal>455</span>
-<span class=normal>456</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_shots</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>shots</span><span class=p>:</span> <span class=n>Iterable</span><span class=p>[</span><span class=n>ShotResult</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
+<span class=normal>456</span>
+<span class=normal>457</span>
+<span class=normal>458</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_shots</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>shots</span><span class=p>:</span> <span class=n>Iterable</span><span class=p>[</span><span class=n>ShotResult</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Store shot result rows in memory.</span>
 
 <span class=sd>    Args:</span>
@@ -61,9 +61,7 @@
     <span class=n>task_definition</span><span class=p>:</span> <span class=n>TaskDefinition</span><span class=p>,</span>
     <span class=n>creation_time</span><span class=p>:</span> <span class=n>datetime</span><span class=p>,</span>
 <span class=p>)</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Store a task definition and creation time in memory.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>task_definition</code> </td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Task definition to store.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>creation_time</code> </td> <td> <code><span title=datetime.datetime>datetime</span></code> </td> <td> <div class=doc-md-description> <p>Backend task creation time.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>519</span>
-<span class=normal>520</span>
-<span class=normal>521</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Store a task definition and creation time in memory.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>task_definition</code> </td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Task definition to store.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>creation_time</code> </td> <td> <code><span title=datetime.datetime>datetime</span></code> </td> <td> <div class=doc-md-description> <p>Backend task creation time.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>521</span>
 <span class=normal>522</span>
 <span class=normal>523</span>
 <span class=normal>524</span>
@@ -112,7 +110,9 @@
 <span class=normal>567</span>
 <span class=normal>568</span>
 <span class=normal>569</span>
-<span class=normal>570</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_task_definition</span><span class=p>(</span>
+<span class=normal>570</span>
+<span class=normal>571</span>
+<span class=normal>572</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_task_definition</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
     <span class=n>task_definition</span><span class=p>:</span> <span class=n>TaskDefinition</span><span class=p>,</span>
@@ -165,9 +165,7 @@
         <span class=p>}</span>
     <span class=bp>self</span><span class=o>.</span><span class=n>_metadata</span><span class=p>[</span><span class=s2>&quot;subtasks&quot;</span><span class=p>]</span> <span class=o>=</span> <span class=n>current_subtasks</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.DictStorage.get_program_language class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_program_language</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_program_language</span><span class=p>(</span><span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the program language for a stored task definition.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Stored program language.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=KeyError>KeyError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>task_id</code> is not present.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>572</span>
-<span class=normal>573</span>
-<span class=normal>574</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the program language for a stored task definition.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Stored program language.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=KeyError>KeyError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>task_id</code> is not present.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>574</span>
 <span class=normal>575</span>
 <span class=normal>576</span>
 <span class=normal>577</span>
@@ -177,7 +175,9 @@
 <span class=normal>581</span>
 <span class=normal>582</span>
 <span class=normal>583</span>
-<span class=normal>584</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_program_language</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
+<span class=normal>584</span>
+<span class=normal>585</span>
+<span class=normal>586</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_program_language</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the program language for a stored task definition.</span>
 
 <span class=sd>    Args:</span>
@@ -193,9 +193,7 @@
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.DictStorage.get_programs class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_programs</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_programs</span><span class=p>(</span>
     <span class=n>task_ids</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return stored program records.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_ids</code> </td> <td> <code><span title=tuple>tuple</span>[<span title=str>str</span>, ...] | None</code> </td> <td> <div class=doc-md-description> <p>Optional task IDs to include. When None, programs for all stored tasks are returned. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>list[dict]: Independent program dictionaries.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>607</span>
-<span class=normal>608</span>
-<span class=normal>609</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return stored program records.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_ids</code> </td> <td> <code><span title=tuple>tuple</span>[<span title=str>str</span>, ...] | None</code> </td> <td> <div class=doc-md-description> <p>Optional task IDs to include. When None, programs for all stored tasks are returned. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>list[dict]: Independent program dictionaries.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>609</span>
 <span class=normal>610</span>
 <span class=normal>611</span>
 <span class=normal>612</span>
@@ -214,7 +212,9 @@
 <span class=normal>625</span>
 <span class=normal>626</span>
 <span class=normal>627</span>
-<span class=normal>628</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_programs</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_ids</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]:</span>
+<span class=normal>628</span>
+<span class=normal>629</span>
+<span class=normal>630</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_programs</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_ids</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return stored program records.</span>
 
 <span class=sd>    Args:</span>
@@ -249,9 +249,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.ShotResult</code>)' href=#bloqade.core.device.local_storage.ShotResult>ShotResult</a>]</code> </td> <td> <div class=doc-md-description> <p>Iterable[ShotResult]: Matching shot rows.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>458</span>
-<span class=normal>459</span>
-<span class=normal>460</span>
+  </span> (<code>bloqade.core.device.local_storage.ShotResult</code>)' href=#bloqade.core.device.local_storage.ShotResult>ShotResult</a>]</code> </td> <td> <div class=doc-md-description> <p>Iterable[ShotResult]: Matching shot rows.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>460</span>
 <span class=normal>461</span>
 <span class=normal>462</span>
 <span class=normal>463</span>
@@ -296,7 +294,9 @@
 <span class=normal>502</span>
 <span class=normal>503</span>
 <span class=normal>504</span>
-<span class=normal>505</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_shots</span><span class=p>(</span>
+<span class=normal>505</span>
+<span class=normal>506</span>
+<span class=normal>507</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_shots</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
     <span class=n>shot_filter</span><span class=p>:</span> <span class=n>ShotFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
@@ -352,9 +352,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Optional metadata filter. When None, all subtasks are returned. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>list[dict]: Independent subtask dictionaries.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>630</span>
-<span class=normal>631</span>
-<span class=normal>632</span>
+  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Optional metadata filter. When None, all subtasks are returned. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>list[dict]: Independent subtask dictionaries.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>632</span>
 <span class=normal>633</span>
 <span class=normal>634</span>
 <span class=normal>635</span>
@@ -392,7 +390,9 @@
 <span class=normal>667</span>
 <span class=normal>668</span>
 <span class=normal>669</span>
-<span class=normal>670</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_subtasks</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>storage_filter</span><span class=p>:</span> <span class=n>StorageFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]:</span>
+<span class=normal>670</span>
+<span class=normal>671</span>
+<span class=normal>672</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_subtasks</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>storage_filter</span><span class=p>:</span> <span class=n>StorageFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return stored subtask records.</span>
 
 <span class=sd>    Args:</span>
@@ -434,9 +434,7 @@
         <span class=n>filtered_subtasks</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=nb>dict</span><span class=p>(</span><span class=n>subtask</span><span class=p>))</span>
     <span class=k>return</span> <span class=n>filtered_subtasks</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.DictStorage.get_task_creation_time class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_task_creation_time</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_task_creation_time</span><span class=p>(</span><span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>datetime</span><span class=o>.</span><span class=n>datetime</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the creation time for a stored task.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=datetime.datetime>datetime</span></code> </td> <td> <div class=doc-md-description> <p>datetime.datetime: Stored task creation time.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=KeyError>KeyError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>task_id</code> is not present.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>586</span>
-<span class=normal>587</span>
-<span class=normal>588</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the creation time for a stored task.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=datetime.datetime>datetime</span></code> </td> <td> <div class=doc-md-description> <p>datetime.datetime: Stored task creation time.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=KeyError>KeyError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>task_id</code> is not present.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>588</span>
 <span class=normal>589</span>
 <span class=normal>590</span>
 <span class=normal>591</span>
@@ -446,7 +444,9 @@
 <span class=normal>595</span>
 <span class=normal>596</span>
 <span class=normal>597</span>
-<span class=normal>598</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task_creation_time</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>datetime</span><span class=o>.</span><span class=n>datetime</span><span class=p>:</span>
+<span class=normal>598</span>
+<span class=normal>599</span>
+<span class=normal>600</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task_creation_time</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>datetime</span><span class=o>.</span><span class=n>datetime</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the creation time for a stored task.</span>
 
 <span class=sd>    Args:</span>
@@ -460,21 +460,19 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_metadata</span><span class=p>[</span><span class=s2>&quot;task_definitions&quot;</span><span class=p>][</span><span class=n>task_id</span><span class=p>][</span><span class=s2>&quot;creation_time&quot;</span><span class=p>]</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.DictStorage.get_task_group_id class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_task_group_id</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_task_group_id</span><span class=p>(</span><span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>UUID</span> <span class=o>|</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the QLAM group stored for a task definition.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>600</span>
-<span class=normal>601</span>
-<span class=normal>602</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the QLAM group stored for a task definition.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>602</span>
 <span class=normal>603</span>
 <span class=normal>604</span>
-<span class=normal>605</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task_group_id</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>UUID</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
+<span class=normal>605</span>
+<span class=normal>606</span>
+<span class=normal>607</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task_group_id</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>UUID</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the QLAM group stored for a task definition.&quot;&quot;&quot;</span>
     <span class=n>group_id</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_metadata</span><span class=p>[</span><span class=s2>&quot;task_definitions&quot;</span><span class=p>][</span><span class=n>task_id</span><span class=p>]</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s2>&quot;group_id&quot;</span><span class=p>)</span>
     <span class=k>if</span> <span class=n>group_id</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
         <span class=k>return</span> <span class=kc>None</span>
     <span class=k>return</span> <span class=n>UUID</span><span class=p>(</span><span class=n>group_id</span><span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.DictStorage.task_ids class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">task_ids</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>task_ids</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>set</span><span class=p>[</span><span class=nb>str</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return task IDs with stored task definitions.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=set>set</span>[<span title=str>str</span>]</code> </td> <td> <div class=doc-md-description> <p>set[str]: Stored task IDs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>507</span>
-<span class=normal>508</span>
-<span class=normal>509</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return task IDs with stored task definitions.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=set>set</span>[<span title=str>str</span>]</code> </td> <td> <div class=doc-md-description> <p>set[str]: Stored task IDs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>509</span>
 <span class=normal>510</span>
 <span class=normal>511</span>
 <span class=normal>512</span>
@@ -482,7 +480,9 @@
 <span class=normal>514</span>
 <span class=normal>515</span>
 <span class=normal>516</span>
-<span class=normal>517</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>task_ids</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>set</span><span class=p>[</span><span class=nb>str</span><span class=p>]:</span>
+<span class=normal>517</span>
+<span class=normal>518</span>
+<span class=normal>519</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>task_ids</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>set</span><span class=p>[</span><span class=nb>str</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return task IDs with stored task definitions.</span>
 
 <span class=sd>    Returns:</span>
@@ -496,9 +496,7 @@
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.DictStorage.update_subtasks_completed_date class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">update_subtasks_completed_date</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>update_subtasks_completed_date</span><span class=p>(</span>
     <span class=n>task_id</span><span class=p>,</span> <span class=n>subtasks</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Update completion times for stored subtasks.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>subtasks</code> </td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>API subtask dictionaries containing <code>completed_date</code> and <code>shot_results</code> whose entries carry the <code>subtask_index</code>. The subtask object itself has no index.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>672</span>
-<span class=normal>673</span>
-<span class=normal>674</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Update completion times for stored subtasks.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>subtasks</code> </td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>API subtask dictionaries containing <code>completed_date</code> and <code>shot_results</code> whose entries carry the <code>subtask_index</code>. The subtask object itself has no index.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>674</span>
 <span class=normal>675</span>
 <span class=normal>676</span>
 <span class=normal>677</span>
@@ -526,7 +524,9 @@
 <span class=normal>699</span>
 <span class=normal>700</span>
 <span class=normal>701</span>
-<span class=normal>702</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>update_subtasks_completed_date</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>,</span> <span class=n>subtasks</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
+<span class=normal>702</span>
+<span class=normal>703</span>
+<span class=normal>704</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>update_subtasks_completed_date</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>,</span> <span class=n>subtasks</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Update completion times for stored subtasks.</span>
 
 <span class=sd>    Args:</span>
@@ -581,9 +581,7 @@
               });
             </script> <p>SQLite-backed storage for shot results.</p> <p>Use this backend to persist shots and task metadata across Python sessions. When used with a future, close the connection after fetching is complete, for example:</p> <div class=highlight><pre><span></span><code><span class=k>with</span> <span class=n>SQLiteStorage</span><span class=p>(</span><span class=s2>&quot;my_database.sql&quot;</span><span class=p>)</span> <span class=k>as</span> <span class=n>store</span><span class=p>:</span>
     <span class=n>future</span> <span class=o>=</span> <span class=n>task</span><span class=o>.</span><span class=n>run_async</span><span class=p>(</span><span class=o>...</span><span class=p>,</span> <span class=n>storage</span><span class=o>=</span><span class=n>store</span><span class=p>)</span>
-</code></pre></div> <p>Otherwise, garbage collection closes the connection later, which may keep the file lock open longer than expected.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>db_file</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Path to the SQLite database file.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If the stored schema version does not match this package's expected schema version.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>721</span>
-<span class=normal>722</span>
-<span class=normal>723</span>
+</code></pre></div> <p>Otherwise, garbage collection closes the connection later, which may keep the file lock open longer than expected.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>db_file</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Path to the SQLite database file.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If the stored schema version does not match this package's expected schema version.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>723</span>
 <span class=normal>724</span>
 <span class=normal>725</span>
 <span class=normal>726</span>
@@ -674,7 +672,17 @@
 <span class=normal>811</span>
 <span class=normal>812</span>
 <span class=normal>813</span>
-<span class=normal>814</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>db_file</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
+<span class=normal>814</span>
+<span class=normal>815</span>
+<span class=normal>816</span>
+<span class=normal>817</span>
+<span class=normal>818</span>
+<span class=normal>819</span>
+<span class=normal>820</span>
+<span class=normal>821</span>
+<span class=normal>822</span>
+<span class=normal>823</span>
+<span class=normal>824</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>db_file</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Initialize a SQLite storage backend.</span>
 
 <span class=sd>    Args:</span>
@@ -748,6 +756,14 @@
 <span class=s2>        &quot;&quot;&quot;</span><span class=p>)</span>
 
     <span class=k>if</span> <span class=n>stored_version</span> <span class=o>==</span> <span class=s2>&quot;0.1.0&quot;</span><span class=p>:</span>
+        <span class=c1># One-way, additive upgrade: adds a nullable column and restamps</span>
+        <span class=c1># the version. Older bloqade versions refuse the upgraded file.</span>
+        <span class=n>logger</span><span class=o>.</span><span class=n>info</span><span class=p>(</span>
+            <span class=sa>f</span><span class=s2>&quot;Migrating bloqade storage schema in </span><span class=si>{</span><span class=n>db_file</span><span class=si>!r}</span><span class=s2> from 0.1.0 &quot;</span>
+            <span class=sa>f</span><span class=s2>&quot;to </span><span class=si>{</span><span class=n>_BloqadeSchemaVersion</span><span class=o>.</span><span class=n>version</span><span class=si>}</span><span class=s2> (adds nullable &quot;</span>
+            <span class=s2>&quot;task_definitions.group_id; older bloqade versions will no &quot;</span>
+            <span class=s2>&quot;longer open this file)&quot;</span>
+        <span class=p>)</span>
         <span class=n>columns</span> <span class=o>=</span> <span class=p>{</span>
             <span class=n>row</span><span class=p>[</span><span class=s2>&quot;name&quot;</span><span class=p>]</span>
             <span class=k>for</span> <span class=n>row</span> <span class=ow>in</span> <span class=bp>self</span><span class=o>.</span><span class=n>conn</span><span class=o>.</span><span class=n>execute</span><span class=p>(</span><span class=s2>&quot;PRAGMA table_info(task_definitions)&quot;</span><span class=p>)</span>
@@ -769,13 +785,13 @@
 
     <span class=bp>self</span><span class=o>.</span><span class=n>conn</span><span class=o>.</span><span class=n>commit</span><span class=p>()</span>
 </code></pre></div></td></tr></table></div> </details> <div class="doc doc-children"> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.SQLiteStorage.__enter__ class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">__enter__</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>__enter__</span><span class=p>()</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return this storage backend for use as a context manager.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>SQLiteStorage</code></td> <td> </td> <td> <div class=doc-md-description> <p>This storage instance.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1184</span>
-<span class=normal>1185</span>
-<span class=normal>1186</span>
-<span class=normal>1187</span>
-<span class=normal>1188</span>
-<span class=normal>1189</span>
-<span class=normal>1190</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=fm>__enter__</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return this storage backend for use as a context manager.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>SQLiteStorage</code></td> <td> </td> <td> <div class=doc-md-description> <p>This storage instance.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1194</span>
+<span class=normal>1195</span>
+<span class=normal>1196</span>
+<span class=normal>1197</span>
+<span class=normal>1198</span>
+<span class=normal>1199</span>
+<span class=normal>1200</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=fm>__enter__</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return this storage backend for use as a context manager.</span>
 
 <span class=sd>    Returns:</span>
@@ -783,9 +799,9 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=k>return</span> <span class=bp>self</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.SQLiteStorage.__exit__ class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">__exit__</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>__exit__</span><span class=p>(</span><span class=nb>type</span><span class=p>,</span> <span class=n>value</span><span class=p>,</span> <span class=n>traceback</span><span class=p>)</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Close the SQLite connection when leaving a context manager.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1192</span>
-<span class=normal>1193</span>
-<span class=normal>1194</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=fm>__exit__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=nb>type</span><span class=p>,</span> <span class=n>value</span><span class=p>,</span> <span class=n>traceback</span><span class=p>):</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Close the SQLite connection when leaving a context manager.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1202</span>
+<span class=normal>1203</span>
+<span class=normal>1204</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=fm>__exit__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=nb>type</span><span class=p>,</span> <span class=n>value</span><span class=p>,</span> <span class=n>traceback</span><span class=p>):</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Close the SQLite connection when leaving a context manager.&quot;&quot;&quot;</span>
     <span class=bp>self</span><span class=o>.</span><span class=n>close</span><span class=p>()</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.SQLiteStorage.add_shots class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">add_shots</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>add_shots</span><span class=p>(</span><span class=n>shots</span><span class=p>:</span> <span class=n>Iterable</span><span class=p>[</span><span class=n>ShotResult</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span>
@@ -794,17 +810,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.ShotResult</code>)' href=#bloqade.core.device.local_storage.ShotResult>ShotResult</a>]</code> </td> <td> <div class=doc-md-description> <p>Shot rows to store.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>816</span>
-<span class=normal>817</span>
-<span class=normal>818</span>
-<span class=normal>819</span>
-<span class=normal>820</span>
-<span class=normal>821</span>
-<span class=normal>822</span>
-<span class=normal>823</span>
-<span class=normal>824</span>
-<span class=normal>825</span>
-<span class=normal>826</span>
+  </span> (<code>bloqade.core.device.local_storage.ShotResult</code>)' href=#bloqade.core.device.local_storage.ShotResult>ShotResult</a>]</code> </td> <td> <div class=doc-md-description> <p>Shot rows to store.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>826</span>
 <span class=normal>827</span>
 <span class=normal>828</span>
 <span class=normal>829</span>
@@ -818,7 +824,17 @@
 <span class=normal>837</span>
 <span class=normal>838</span>
 <span class=normal>839</span>
-<span class=normal>840</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_shots</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>shots</span><span class=p>:</span> <span class=n>Iterable</span><span class=p>[</span><span class=n>ShotResult</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
+<span class=normal>840</span>
+<span class=normal>841</span>
+<span class=normal>842</span>
+<span class=normal>843</span>
+<span class=normal>844</span>
+<span class=normal>845</span>
+<span class=normal>846</span>
+<span class=normal>847</span>
+<span class=normal>848</span>
+<span class=normal>849</span>
+<span class=normal>850</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_shots</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>shots</span><span class=p>:</span> <span class=n>Iterable</span><span class=p>[</span><span class=n>ShotResult</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Store shot result rows in SQLite.</span>
 
 <span class=sd>    Args:</span>
@@ -848,17 +864,7 @@
     <span class=n>task_definition</span><span class=p>:</span> <span class=n>TaskDefinition</span><span class=p>,</span>
     <span class=n>creation_time</span><span class=p>:</span> <span class=n>datetime</span><span class=p>,</span>
 <span class=p>)</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Store a task definition and creation time in SQLite.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>task_definition</code> </td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Task definition to store.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>creation_time</code> </td> <td> <code><span title=datetime.datetime>datetime</span></code> </td> <td> <div class=doc-md-description> <p>Backend task creation time.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 969</span>
-<span class=normal> 970</span>
-<span class=normal> 971</span>
-<span class=normal> 972</span>
-<span class=normal> 973</span>
-<span class=normal> 974</span>
-<span class=normal> 975</span>
-<span class=normal> 976</span>
-<span class=normal> 977</span>
-<span class=normal> 978</span>
-<span class=normal> 979</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Store a task definition and creation time in SQLite.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>task_definition</code> </td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Task definition to store.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>creation_time</code> </td> <td> <code><span title=datetime.datetime>datetime</span></code> </td> <td> <div class=doc-md-description> <p>Backend task creation time.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 979</span>
 <span class=normal> 980</span>
 <span class=normal> 981</span>
 <span class=normal> 982</span>
@@ -910,7 +916,17 @@
 <span class=normal>1028</span>
 <span class=normal>1029</span>
 <span class=normal>1030</span>
-<span class=normal>1031</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_task_definition</span><span class=p>(</span>
+<span class=normal>1031</span>
+<span class=normal>1032</span>
+<span class=normal>1033</span>
+<span class=normal>1034</span>
+<span class=normal>1035</span>
+<span class=normal>1036</span>
+<span class=normal>1037</span>
+<span class=normal>1038</span>
+<span class=normal>1039</span>
+<span class=normal>1040</span>
+<span class=normal>1041</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>add_task_definition</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
     <span class=n>task_definition</span><span class=p>:</span> <span class=n>TaskDefinition</span><span class=p>,</span>
@@ -974,23 +990,13 @@
 
     <span class=bp>self</span><span class=o>.</span><span class=n>conn</span><span class=o>.</span><span class=n>commit</span><span class=p>()</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.SQLiteStorage.close class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">close</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>close</span><span class=p>()</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Close the SQLite connection.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>948</span>
-<span class=normal>949</span>
-<span class=normal>950</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>close</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Close the SQLite connection.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>958</span>
+<span class=normal>959</span>
+<span class=normal>960</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>close</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Close the SQLite connection.&quot;&quot;&quot;</span>
     <span class=bp>self</span><span class=o>.</span><span class=n>conn</span><span class=o>.</span><span class=n>close</span><span class=p>()</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.SQLiteStorage.get_program_language class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_program_language</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_program_language</span><span class=p>(</span><span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the program language for a stored task definition.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Stored program language.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=KeyError>KeyError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>task_id</code> is not present.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1127</span>
-<span class=normal>1128</span>
-<span class=normal>1129</span>
-<span class=normal>1130</span>
-<span class=normal>1131</span>
-<span class=normal>1132</span>
-<span class=normal>1133</span>
-<span class=normal>1134</span>
-<span class=normal>1135</span>
-<span class=normal>1136</span>
-<span class=normal>1137</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the program language for a stored task definition.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Stored program language.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=KeyError>KeyError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>task_id</code> is not present.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1137</span>
 <span class=normal>1138</span>
 <span class=normal>1139</span>
 <span class=normal>1140</span>
@@ -1000,7 +1006,17 @@
 <span class=normal>1144</span>
 <span class=normal>1145</span>
 <span class=normal>1146</span>
-<span class=normal>1147</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_program_language</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
+<span class=normal>1147</span>
+<span class=normal>1148</span>
+<span class=normal>1149</span>
+<span class=normal>1150</span>
+<span class=normal>1151</span>
+<span class=normal>1152</span>
+<span class=normal>1153</span>
+<span class=normal>1154</span>
+<span class=normal>1155</span>
+<span class=normal>1156</span>
+<span class=normal>1157</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_program_language</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the program language for a stored task definition.</span>
 
 <span class=sd>    Args:</span>
@@ -1024,17 +1040,7 @@
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.SQLiteStorage.get_programs class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_programs</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_programs</span><span class=p>(</span>
     <span class=n>task_ids</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return stored program records.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_ids</code> </td> <td> <code><span title=tuple>tuple</span>[<span title=str>str</span>, ...] | None</code> </td> <td> <div class=doc-md-description> <p>Optional task IDs to include. When None, programs for all stored tasks are returned. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>list[dict]: Program dictionaries ordered by task ID and program index.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1033</span>
-<span class=normal>1034</span>
-<span class=normal>1035</span>
-<span class=normal>1036</span>
-<span class=normal>1037</span>
-<span class=normal>1038</span>
-<span class=normal>1039</span>
-<span class=normal>1040</span>
-<span class=normal>1041</span>
-<span class=normal>1042</span>
-<span class=normal>1043</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return stored program records.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_ids</code> </td> <td> <code><span title=tuple>tuple</span>[<span title=str>str</span>, ...] | None</code> </td> <td> <div class=doc-md-description> <p>Optional task IDs to include. When None, programs for all stored tasks are returned. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>list[dict]: Program dictionaries ordered by task ID and program index.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1043</span>
 <span class=normal>1044</span>
 <span class=normal>1045</span>
 <span class=normal>1046</span>
@@ -1047,7 +1053,17 @@
 <span class=normal>1053</span>
 <span class=normal>1054</span>
 <span class=normal>1055</span>
-<span class=normal>1056</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_programs</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_ids</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]:</span>
+<span class=normal>1056</span>
+<span class=normal>1057</span>
+<span class=normal>1058</span>
+<span class=normal>1059</span>
+<span class=normal>1060</span>
+<span class=normal>1061</span>
+<span class=normal>1062</span>
+<span class=normal>1063</span>
+<span class=normal>1064</span>
+<span class=normal>1065</span>
+<span class=normal>1066</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_programs</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_ids</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return stored program records.</span>
 
 <span class=sd>    Args:</span>
@@ -1084,17 +1100,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.ShotResult</code>)' href=#bloqade.core.device.local_storage.ShotResult>ShotResult</a>]</code> </td> <td> <div class=doc-md-description> <p>Iterable[ShotResult]: Matching shot rows.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>915</span>
-<span class=normal>916</span>
-<span class=normal>917</span>
-<span class=normal>918</span>
-<span class=normal>919</span>
-<span class=normal>920</span>
-<span class=normal>921</span>
-<span class=normal>922</span>
-<span class=normal>923</span>
-<span class=normal>924</span>
-<span class=normal>925</span>
+  </span> (<code>bloqade.core.device.local_storage.ShotResult</code>)' href=#bloqade.core.device.local_storage.ShotResult>ShotResult</a>]</code> </td> <td> <div class=doc-md-description> <p>Iterable[ShotResult]: Matching shot rows.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>925</span>
 <span class=normal>926</span>
 <span class=normal>927</span>
 <span class=normal>928</span>
@@ -1115,7 +1121,17 @@
 <span class=normal>943</span>
 <span class=normal>944</span>
 <span class=normal>945</span>
-<span class=normal>946</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_shots</span><span class=p>(</span>
+<span class=normal>946</span>
+<span class=normal>947</span>
+<span class=normal>948</span>
+<span class=normal>949</span>
+<span class=normal>950</span>
+<span class=normal>951</span>
+<span class=normal>952</span>
+<span class=normal>953</span>
+<span class=normal>954</span>
+<span class=normal>955</span>
+<span class=normal>956</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_shots</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
     <span class=n>shot_filter</span><span class=p>:</span> <span class=n>ShotFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
@@ -1155,17 +1171,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Optional metadata filter. When None, all subtasks are returned. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>list[dict]: Subtask dictionaries ordered by task ID and subtask index.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1058</span>
-<span class=normal>1059</span>
-<span class=normal>1060</span>
-<span class=normal>1061</span>
-<span class=normal>1062</span>
-<span class=normal>1063</span>
-<span class=normal>1064</span>
-<span class=normal>1065</span>
-<span class=normal>1066</span>
-<span class=normal>1067</span>
-<span class=normal>1068</span>
+  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Optional metadata filter. When None, all subtasks are returned. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>list[dict]: Subtask dictionaries ordered by task ID and subtask index.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1068</span>
 <span class=normal>1069</span>
 <span class=normal>1070</span>
 <span class=normal>1071</span>
@@ -1189,7 +1195,17 @@
 <span class=normal>1089</span>
 <span class=normal>1090</span>
 <span class=normal>1091</span>
-<span class=normal>1092</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_subtasks</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>storage_filter</span><span class=p>:</span> <span class=n>StorageFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]:</span>
+<span class=normal>1092</span>
+<span class=normal>1093</span>
+<span class=normal>1094</span>
+<span class=normal>1095</span>
+<span class=normal>1096</span>
+<span class=normal>1097</span>
+<span class=normal>1098</span>
+<span class=normal>1099</span>
+<span class=normal>1100</span>
+<span class=normal>1101</span>
+<span class=normal>1102</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_subtasks</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>storage_filter</span><span class=p>:</span> <span class=n>StorageFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return stored subtask records.</span>
 
 <span class=sd>    Args:</span>
@@ -1225,17 +1241,7 @@
         <span class=n>subtasks</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>subtask</span><span class=p>)</span>
     <span class=k>return</span> <span class=n>subtasks</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.SQLiteStorage.get_task_creation_time class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_task_creation_time</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_task_creation_time</span><span class=p>(</span><span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>datetime</span><span class=o>.</span><span class=n>datetime</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the creation time for a stored task.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=datetime.datetime>datetime</span></code> </td> <td> <div class=doc-md-description> <p>datetime.datetime: Stored task creation time.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=KeyError>KeyError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>task_id</code> is not present.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1149</span>
-<span class=normal>1150</span>
-<span class=normal>1151</span>
-<span class=normal>1152</span>
-<span class=normal>1153</span>
-<span class=normal>1154</span>
-<span class=normal>1155</span>
-<span class=normal>1156</span>
-<span class=normal>1157</span>
-<span class=normal>1158</span>
-<span class=normal>1159</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the creation time for a stored task.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=datetime.datetime>datetime</span></code> </td> <td> <div class=doc-md-description> <p>datetime.datetime: Stored task creation time.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=KeyError>KeyError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>task_id</code> is not present.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1159</span>
 <span class=normal>1160</span>
 <span class=normal>1161</span>
 <span class=normal>1162</span>
@@ -1245,7 +1251,17 @@
 <span class=normal>1166</span>
 <span class=normal>1167</span>
 <span class=normal>1168</span>
-<span class=normal>1169</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task_creation_time</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>datetime</span><span class=o>.</span><span class=n>datetime</span><span class=p>:</span>
+<span class=normal>1169</span>
+<span class=normal>1170</span>
+<span class=normal>1171</span>
+<span class=normal>1172</span>
+<span class=normal>1173</span>
+<span class=normal>1174</span>
+<span class=normal>1175</span>
+<span class=normal>1176</span>
+<span class=normal>1177</span>
+<span class=normal>1178</span>
+<span class=normal>1179</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task_creation_time</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>datetime</span><span class=o>.</span><span class=n>datetime</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the creation time for a stored task.</span>
 
 <span class=sd>    Args:</span>
@@ -1267,18 +1283,18 @@
     <span class=k>else</span><span class=p>:</span>
         <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_sql_txt_to_datetime</span><span class=p>(</span><span class=n>row</span><span class=p>[</span><span class=mi>0</span><span class=p>])</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.SQLiteStorage.get_task_group_id class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_task_group_id</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_task_group_id</span><span class=p>(</span><span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>UUID</span> <span class=o>|</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the QLAM group stored for a task definition.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1171</span>
-<span class=normal>1172</span>
-<span class=normal>1173</span>
-<span class=normal>1174</span>
-<span class=normal>1175</span>
-<span class=normal>1176</span>
-<span class=normal>1177</span>
-<span class=normal>1178</span>
-<span class=normal>1179</span>
-<span class=normal>1180</span>
-<span class=normal>1181</span>
-<span class=normal>1182</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task_group_id</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>UUID</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the QLAM group stored for a task definition.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1181</span>
+<span class=normal>1182</span>
+<span class=normal>1183</span>
+<span class=normal>1184</span>
+<span class=normal>1185</span>
+<span class=normal>1186</span>
+<span class=normal>1187</span>
+<span class=normal>1188</span>
+<span class=normal>1189</span>
+<span class=normal>1190</span>
+<span class=normal>1191</span>
+<span class=normal>1192</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task_group_id</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>UUID</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the QLAM group stored for a task definition.&quot;&quot;&quot;</span>
     <span class=n>cursor</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>conn</span><span class=o>.</span><span class=n>execute</span><span class=p>(</span>
         <span class=s2>&quot;SELECT group_id FROM task_definitions WHERE task_id = (?)&quot;</span><span class=p>,</span>
@@ -1291,14 +1307,14 @@
         <span class=k>return</span> <span class=kc>None</span>
     <span class=k>return</span> <span class=n>UUID</span><span class=p>(</span><span class=n>row</span><span class=p>[</span><span class=mi>0</span><span class=p>])</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.SQLiteStorage.task_ids class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">task_ids</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>task_ids</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>set</span><span class=p>[</span><span class=nb>str</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return task IDs with stored task definitions.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=set>set</span>[<span title=str>str</span>]</code> </td> <td> <div class=doc-md-description> <p>set[str]: Stored task IDs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>952</span>
-<span class=normal>953</span>
-<span class=normal>954</span>
-<span class=normal>955</span>
-<span class=normal>956</span>
-<span class=normal>957</span>
-<span class=normal>958</span>
-<span class=normal>959</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>task_ids</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>set</span><span class=p>[</span><span class=nb>str</span><span class=p>]:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return task IDs with stored task definitions.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=set>set</span>[<span title=str>str</span>]</code> </td> <td> <div class=doc-md-description> <p>set[str]: Stored task IDs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>962</span>
+<span class=normal>963</span>
+<span class=normal>964</span>
+<span class=normal>965</span>
+<span class=normal>966</span>
+<span class=normal>967</span>
+<span class=normal>968</span>
+<span class=normal>969</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>task_ids</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>set</span><span class=p>[</span><span class=nb>str</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return task IDs with stored task definitions.</span>
 
 <span class=sd>    Returns:</span>
@@ -1309,17 +1325,7 @@
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.SQLiteStorage.update_subtasks_completed_date class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">update_subtasks_completed_date</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>update_subtasks_completed_date</span><span class=p>(</span>
     <span class=n>task_id</span><span class=p>,</span> <span class=n>subtasks</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Update completion times for stored subtasks.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>subtasks</code> </td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>API subtask dictionaries containing <code>completed_date</code> and <code>shot_results</code> whose entries carry the <code>subtask_index</code>. The subtask object itself has no index.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1094</span>
-<span class=normal>1095</span>
-<span class=normal>1096</span>
-<span class=normal>1097</span>
-<span class=normal>1098</span>
-<span class=normal>1099</span>
-<span class=normal>1100</span>
-<span class=normal>1101</span>
-<span class=normal>1102</span>
-<span class=normal>1103</span>
-<span class=normal>1104</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Update completion times for stored subtasks.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>subtasks</code> </td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>API subtask dictionaries containing <code>completed_date</code> and <code>shot_results</code> whose entries carry the <code>subtask_index</code>. The subtask object itself has no index.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>1104</span>
 <span class=normal>1105</span>
 <span class=normal>1106</span>
 <span class=normal>1107</span>
@@ -1340,7 +1346,17 @@
 <span class=normal>1122</span>
 <span class=normal>1123</span>
 <span class=normal>1124</span>
-<span class=normal>1125</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>update_subtasks_completed_date</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>,</span> <span class=n>subtasks</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
+<span class=normal>1125</span>
+<span class=normal>1126</span>
+<span class=normal>1127</span>
+<span class=normal>1128</span>
+<span class=normal>1129</span>
+<span class=normal>1130</span>
+<span class=normal>1131</span>
+<span class=normal>1132</span>
+<span class=normal>1133</span>
+<span class=normal>1134</span>
+<span class=normal>1135</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>update_subtasks_completed_date</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>,</span> <span class=n>subtasks</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Update completion times for stored subtasks.</span>
 
 <span class=sd>    Args:</span>
@@ -1450,14 +1466,14 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.ShotResult</code>)' href=#bloqade.core.device.local_storage.ShotResult>ShotResult</a>]</code> </td> <td> <div class=doc-md-description> <p>Shot rows to store.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 99</span>
-<span class=normal>100</span>
-<span class=normal>101</span>
+  </span> (<code>bloqade.core.device.local_storage.ShotResult</code>)' href=#bloqade.core.device.local_storage.ShotResult>ShotResult</a>]</code> </td> <td> <div class=doc-md-description> <p>Shot rows to store.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>101</span>
 <span class=normal>102</span>
 <span class=normal>103</span>
 <span class=normal>104</span>
 <span class=normal>105</span>
-<span class=normal>106</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+<span class=normal>106</span>
+<span class=normal>107</span>
+<span class=normal>108</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>add_shots</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>shots</span><span class=p>:</span> <span class=n>Iterable</span><span class=p>[</span><span class=n>ShotResult</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Store shot result rows.</span>
 
@@ -1470,9 +1486,7 @@
     <span class=n>task_definition</span><span class=p>:</span> <span class=n>TaskDefinition</span><span class=p>,</span>
     <span class=n>creation_time</span><span class=p>:</span> <span class=n>datetime</span><span class=p>,</span>
 <span class=p>)</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Store a task definition and its creation time.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>task_definition</code> </td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Task definition to store.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>creation_time</code> </td> <td> <code><span title=datetime.datetime>datetime</span></code> </td> <td> <div class=doc-md-description> <p>Backend task creation time.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>134</span>
-<span class=normal>135</span>
-<span class=normal>136</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Store a task definition and its creation time.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>task_definition</code> </td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Task definition to store.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>creation_time</code> </td> <td> <code><span title=datetime.datetime>datetime</span></code> </td> <td> <div class=doc-md-description> <p>Backend task creation time.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>136</span>
 <span class=normal>137</span>
 <span class=normal>138</span>
 <span class=normal>139</span>
@@ -1484,7 +1498,9 @@
 <span class=normal>145</span>
 <span class=normal>146</span>
 <span class=normal>147</span>
-<span class=normal>148</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+<span class=normal>148</span>
+<span class=normal>149</span>
+<span class=normal>150</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>add_task_definition</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
@@ -1513,9 +1529,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a></code> </td> <td> <div class=doc-md-description> <p>Filter containing matching <code>(task_id, subtask_index)</code> pairs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>371</span>
-<span class=normal>372</span>
-<span class=normal>373</span>
+  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a></code> </td> <td> <div class=doc-md-description> <p>Filter containing matching <code>(task_id, subtask_index)</code> pairs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>373</span>
 <span class=normal>374</span>
 <span class=normal>375</span>
 <span class=normal>376</span>
@@ -1539,7 +1553,9 @@
 <span class=normal>394</span>
 <span class=normal>395</span>
 <span class=normal>396</span>
-<span class=normal>397</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>filter_by_arguments</span><span class=p>(</span>
+<span class=normal>397</span>
+<span class=normal>398</span>
+<span class=normal>399</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>filter_by_arguments</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>predicate</span><span class=p>:</span> <span class=n>Callable</span><span class=p>[[</span><span class=nb>dict</span> <span class=o>|</span> <span class=kc>None</span><span class=p>],</span> <span class=nb>bool</span><span class=p>],</span>
     <span class=n>storage_filter</span><span class=p>:</span> <span class=n>StorageFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
@@ -1580,9 +1596,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a></code> </td> <td> <div class=doc-md-description> <p>Filter containing matching <code>(task_id, subtask_index)</code> pairs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>328</span>
-<span class=normal>329</span>
-<span class=normal>330</span>
+  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a></code> </td> <td> <div class=doc-md-description> <p>Filter containing matching <code>(task_id, subtask_index)</code> pairs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>330</span>
 <span class=normal>331</span>
 <span class=normal>332</span>
 <span class=normal>333</span>
@@ -1621,7 +1635,9 @@
 <span class=normal>366</span>
 <span class=normal>367</span>
 <span class=normal>368</span>
-<span class=normal>369</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>filter_by_metadata</span><span class=p>(</span>
+<span class=normal>369</span>
+<span class=normal>370</span>
+<span class=normal>371</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>filter_by_metadata</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>predicate</span><span class=p>:</span> <span class=n>Callable</span><span class=p>[[</span><span class=nb>dict</span> <span class=o>|</span> <span class=kc>None</span><span class=p>],</span> <span class=nb>bool</span><span class=p>],</span>
     <span class=n>storage_filter</span><span class=p>:</span> <span class=n>StorageFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
@@ -1682,9 +1698,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.ShotFilter</code>)' href=#bloqade.core.device.local_storage.ShotFilter>ShotFilter</a></code> </td> <td> <div class=doc-md-description> <p>Filter containing matching <code>(task_id, shot_index)</code> pairs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>399</span>
-<span class=normal>400</span>
-<span class=normal>401</span>
+  </span> (<code>bloqade.core.device.local_storage.ShotFilter</code>)' href=#bloqade.core.device.local_storage.ShotFilter>ShotFilter</a></code> </td> <td> <div class=doc-md-description> <p>Filter containing matching <code>(task_id, shot_index)</code> pairs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>401</span>
 <span class=normal>402</span>
 <span class=normal>403</span>
 <span class=normal>404</span>
@@ -1710,7 +1724,9 @@
 <span class=normal>424</span>
 <span class=normal>425</span>
 <span class=normal>426</span>
-<span class=normal>427</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>filter_by_shots</span><span class=p>(</span>
+<span class=normal>427</span>
+<span class=normal>428</span>
+<span class=normal>429</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>filter_by_shots</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>predicate</span><span class=p>:</span> <span class=n>Callable</span><span class=p>[[</span><span class=n>ShotResult</span><span class=p>],</span> <span class=nb>bool</span><span class=p>],</span>
     <span class=n>shot_filter</span><span class=p>:</span> <span class=n>ShotFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
@@ -1753,9 +1769,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a></code> </td> <td> <div class=doc-md-description> <p>Filter containing matching <code>(task_id, subtask_index)</code> pairs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>298</span>
-<span class=normal>299</span>
-<span class=normal>300</span>
+  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a></code> </td> <td> <div class=doc-md-description> <p>Filter containing matching <code>(task_id, subtask_index)</code> pairs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>300</span>
 <span class=normal>301</span>
 <span class=normal>302</span>
 <span class=normal>303</span>
@@ -1781,7 +1795,9 @@
 <span class=normal>323</span>
 <span class=normal>324</span>
 <span class=normal>325</span>
-<span class=normal>326</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>filter_by_subtasks</span><span class=p>(</span>
+<span class=normal>326</span>
+<span class=normal>327</span>
+<span class=normal>328</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>filter_by_subtasks</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>predicate</span><span class=p>:</span> <span class=n>Callable</span><span class=p>[[</span><span class=nb>dict</span><span class=p>],</span> <span class=nb>bool</span><span class=p>],</span>
     <span class=n>storage_filter</span><span class=p>:</span> <span class=n>StorageFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
@@ -1818,9 +1834,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Optional subtask metadata filter. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span> | None]</code> </td> <td> <div class=doc-md-description> <p>list[dict | None]: Arguments from matching subtasks.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>282</span>
-<span class=normal>283</span>
-<span class=normal>284</span>
+  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Optional subtask metadata filter. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span> | None]</code> </td> <td> <div class=doc-md-description> <p>list[dict | None]: Arguments from matching subtasks.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>284</span>
 <span class=normal>285</span>
 <span class=normal>286</span>
 <span class=normal>287</span>
@@ -1831,7 +1845,9 @@
 <span class=normal>292</span>
 <span class=normal>293</span>
 <span class=normal>294</span>
-<span class=normal>295</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_arguments</span><span class=p>(</span>
+<span class=normal>295</span>
+<span class=normal>296</span>
+<span class=normal>297</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_arguments</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span> <span class=n>storage_filter</span><span class=p>:</span> <span class=n>StorageFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span> <span class=o>|</span> <span class=kc>None</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return arguments from stored subtasks.</span>
@@ -1846,9 +1862,7 @@
     <span class=n>subtasks</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>get_subtasks</span><span class=p>(</span><span class=n>storage_filter</span><span class=o>=</span><span class=n>storage_filter</span><span class=p>)</span>
     <span class=k>return</span> <span class=p>[</span><span class=n>subtask</span><span class=p>[</span><span class=s2>&quot;arguments&quot;</span><span class=p>]</span> <span class=k>for</span> <span class=n>subtask</span> <span class=ow>in</span> <span class=n>subtasks</span><span class=p>]</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.StorageBackend.get_program_language class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_program_language</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_program_language</span><span class=p>(</span><span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the program language for a stored task definition.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Program language stored for the task.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=KeyError>KeyError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>task_id</code> is not present.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>150</span>
-<span class=normal>151</span>
-<span class=normal>152</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the program language for a stored task definition.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Program language stored for the task.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=KeyError>KeyError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>task_id</code> is not present.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>152</span>
 <span class=normal>153</span>
 <span class=normal>154</span>
 <span class=normal>155</span>
@@ -1859,7 +1873,9 @@
 <span class=normal>160</span>
 <span class=normal>161</span>
 <span class=normal>162</span>
-<span class=normal>163</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+<span class=normal>163</span>
+<span class=normal>164</span>
+<span class=normal>165</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>get_program_language</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the program language for a stored task definition.</span>
 
@@ -1876,9 +1892,7 @@
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.StorageBackend.get_programs class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_programs</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_programs</span><span class=p>(</span>
     <span class=n>task_ids</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return stored program records.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_ids</code> </td> <td> <code><span title=tuple>tuple</span>[<span title=str>str</span>, ...] | None</code> </td> <td> <div class=doc-md-description> <p>Optional task IDs to include. When None, programs for all stored task IDs are returned. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>list[dict]: Program dictionaries with <code>task_id</code>, <code>program_index</code>, and <code>content</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>196</span>
-<span class=normal>197</span>
-<span class=normal>198</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return stored program records.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_ids</code> </td> <td> <code><span title=tuple>tuple</span>[<span title=str>str</span>, ...] | None</code> </td> <td> <div class=doc-md-description> <p>Optional task IDs to include. When None, programs for all stored task IDs are returned. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>list[dict]: Program dictionaries with <code>task_id</code>, <code>program_index</code>, and <code>content</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>198</span>
 <span class=normal>199</span>
 <span class=normal>200</span>
 <span class=normal>201</span>
@@ -1889,7 +1903,9 @@
 <span class=normal>206</span>
 <span class=normal>207</span>
 <span class=normal>208</span>
-<span class=normal>209</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+<span class=normal>209</span>
+<span class=normal>210</span>
+<span class=normal>211</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>get_programs</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_ids</span><span class=p>:</span> <span class=nb>tuple</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=o>...</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return stored program records.</span>
 
@@ -1916,9 +1932,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.ShotResult</code>)' href=#bloqade.core.device.local_storage.ShotResult>ShotResult</a>]</code> </td> <td> <div class=doc-md-description> <p>Iterable[ShotResult]: Matching shot rows.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>108</span>
-<span class=normal>109</span>
-<span class=normal>110</span>
+  </span> (<code>bloqade.core.device.local_storage.ShotResult</code>)' href=#bloqade.core.device.local_storage.ShotResult>ShotResult</a>]</code> </td> <td> <div class=doc-md-description> <p>Iterable[ShotResult]: Matching shot rows.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>110</span>
 <span class=normal>111</span>
 <span class=normal>112</span>
 <span class=normal>113</span>
@@ -1931,7 +1945,9 @@
 <span class=normal>120</span>
 <span class=normal>121</span>
 <span class=normal>122</span>
-<span class=normal>123</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+<span class=normal>123</span>
+<span class=normal>124</span>
+<span class=normal>125</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>get_shots</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
@@ -1955,9 +1971,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Optional subtask metadata filter. When None, all subtasks are returned. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>list[dict]: Subtask dictionaries, including task ID, subtask index, program index, shot count, arguments, metadata, and completion date.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>211</span>
-<span class=normal>212</span>
-<span class=normal>213</span>
+  </span> (<code>bloqade.core.device.local_storage.StorageFilter</code>)' href=#bloqade.core.device.local_storage.StorageFilter>StorageFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Optional subtask metadata filter. When None, all subtasks are returned. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>list[dict]: Subtask dictionaries, including task ID, subtask index, program index, shot count, arguments, metadata, and completion date.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>213</span>
 <span class=normal>214</span>
 <span class=normal>215</span>
 <span class=normal>216</span>
@@ -1968,7 +1982,9 @@
 <span class=normal>221</span>
 <span class=normal>222</span>
 <span class=normal>223</span>
-<span class=normal>224</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+<span class=normal>224</span>
+<span class=normal>225</span>
+<span class=normal>226</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>get_subtasks</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>storage_filter</span><span class=p>:</span> <span class=n>StorageFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return stored subtask records.</span>
 
@@ -1983,9 +1999,7 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=o>...</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.StorageBackend.get_task_creation_time class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_task_creation_time</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_task_creation_time</span><span class=p>(</span><span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>datetime</span><span class=o>.</span><span class=n>datetime</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the creation time for a stored task.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=datetime.datetime>datetime</span></code> </td> <td> <div class=doc-md-description> <p>datetime.datetime: Stored task creation time.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=KeyError>KeyError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>task_id</code> is not present.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>165</span>
-<span class=normal>166</span>
-<span class=normal>167</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the creation time for a stored task.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=datetime.datetime>datetime</span></code> </td> <td> <div class=doc-md-description> <p>datetime.datetime: Stored task creation time.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=KeyError>KeyError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>task_id</code> is not present.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>167</span>
 <span class=normal>168</span>
 <span class=normal>169</span>
 <span class=normal>170</span>
@@ -1996,7 +2010,9 @@
 <span class=normal>175</span>
 <span class=normal>176</span>
 <span class=normal>177</span>
-<span class=normal>178</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+<span class=normal>178</span>
+<span class=normal>179</span>
+<span class=normal>180</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>get_task_creation_time</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>datetime</span><span class=o>.</span><span class=n>datetime</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the creation time for a stored task.</span>
 
@@ -2011,9 +2027,7 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=o>...</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.StorageBackend.get_task_definition class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_task_definition</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_task_definition</span><span class=p>(</span><span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>TaskDefinition</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Reconstruct a task definition from stored metadata.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>TaskDefinition</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Reconstructed task definition.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>238</span>
-<span class=normal>239</span>
-<span class=normal>240</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Reconstruct a task definition from stored metadata.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>TaskDefinition</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Reconstructed task definition.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>240</span>
 <span class=normal>241</span>
 <span class=normal>242</span>
 <span class=normal>243</span>
@@ -2053,7 +2067,9 @@
 <span class=normal>277</span>
 <span class=normal>278</span>
 <span class=normal>279</span>
-<span class=normal>280</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task_definition</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>TaskDefinition</span><span class=p>:</span>
+<span class=normal>280</span>
+<span class=normal>281</span>
+<span class=normal>282</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task_definition</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>TaskDefinition</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Reconstruct a task definition from stored metadata.</span>
 
 <span class=sd>    Args:</span>
@@ -2097,9 +2113,7 @@
         <span class=n>group_id</span><span class=o>=</span><span class=n>group_id</span><span class=p>,</span>
     <span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.StorageBackend.get_task_group_id class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_task_group_id</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_task_group_id</span><span class=p>(</span><span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>UUID</span> <span class=o>|</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the QLAM group associated with a stored task definition.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=uuid.UUID>UUID</span> | None</code> </td> <td> <div class=doc-md-description> <p>UUID | None: Stored group UUID, or None when the task definition</p> </div> </td> </tr> <tr class=doc-section-item> <td> <code><span title=uuid.UUID>UUID</span> | None</code> </td> <td> <div class=doc-md-description> <p>did not specify a group.</p> </div> </td> </tr> </tbody> </table> <p>The default keeps existing custom storage backends compatible; those backends simply reconstruct definitions without an explicit group. Built-in storage backends override this to preserve the group UUID.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>180</span>
-<span class=normal>181</span>
-<span class=normal>182</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the QLAM group associated with a stored task definition.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=uuid.UUID>UUID</span> | None</code> </td> <td> <div class=doc-md-description> <p>UUID | None: Stored group UUID, or None when the task definition</p> </div> </td> </tr> <tr class=doc-section-item> <td> <code><span title=uuid.UUID>UUID</span> | None</code> </td> <td> <div class=doc-md-description> <p>did not specify a group.</p> </div> </td> </tr> </tbody> </table> <p>The default keeps existing custom storage backends compatible; those backends simply reconstruct definitions without an explicit group. Built-in storage backends override this to preserve the group UUID.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>182</span>
 <span class=normal>183</span>
 <span class=normal>184</span>
 <span class=normal>185</span>
@@ -2111,7 +2125,9 @@
 <span class=normal>191</span>
 <span class=normal>192</span>
 <span class=normal>193</span>
-<span class=normal>194</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task_group_id</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>UUID</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
+<span class=normal>194</span>
+<span class=normal>195</span>
+<span class=normal>196</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task_group_id</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>UUID</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the QLAM group associated with a stored task definition.</span>
 
 <span class=sd>    Args:</span>
@@ -2127,14 +2143,14 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=k>return</span> <span class=kc>None</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.StorageBackend.task_ids class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">task_ids</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>task_ids</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>set</span><span class=p>[</span><span class=nb>str</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return task IDs with stored task definitions.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=set>set</span>[<span title=str>str</span>]</code> </td> <td> <div class=doc-md-description> <p>set[str]: Stored task IDs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>125</span>
-<span class=normal>126</span>
-<span class=normal>127</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return task IDs with stored task definitions.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=set>set</span>[<span title=str>str</span>]</code> </td> <td> <div class=doc-md-description> <p>set[str]: Stored task IDs.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>127</span>
 <span class=normal>128</span>
 <span class=normal>129</span>
 <span class=normal>130</span>
 <span class=normal>131</span>
-<span class=normal>132</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+<span class=normal>132</span>
+<span class=normal>133</span>
+<span class=normal>134</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>task_ids</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>set</span><span class=p>[</span><span class=nb>str</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return task IDs with stored task definitions.</span>
 
@@ -2145,9 +2161,7 @@
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.local_storage.StorageBackend.update_subtasks_completed_date class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">update_subtasks_completed_date</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>update_subtasks_completed_date</span><span class=p>(</span>
     <span class=n>task_id</span><span class=p>,</span> <span class=n>subtasks</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Update completion times for stored subtasks.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>subtasks</code> </td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>API subtask dictionaries containing <code>completed_date</code> and <code>shot_results</code> whose entries carry the <code>subtask_index</code>. The subtask object itself has no index.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>226</span>
-<span class=normal>227</span>
-<span class=normal>228</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Update completion times for stored subtasks.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>subtasks</code> </td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>API subtask dictionaries containing <code>completed_date</code> and <code>shot_results</code> whose entries carry the <code>subtask_index</code>. The subtask object itself has no index.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/local_storage.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>228</span>
 <span class=normal>229</span>
 <span class=normal>230</span>
 <span class=normal>231</span>
@@ -2155,7 +2169,9 @@
 <span class=normal>233</span>
 <span class=normal>234</span>
 <span class=normal>235</span>
-<span class=normal>236</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+<span class=normal>236</span>
+<span class=normal>237</span>
+<span class=normal>238</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>update_subtasks_completed_date</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>task_id</span><span class=p>,</span> <span class=n>subtasks</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>])</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Update completion times for stored subtasks.</span>
 
