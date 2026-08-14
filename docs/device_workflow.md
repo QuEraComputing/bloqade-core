@@ -109,7 +109,7 @@ this order, mirroring the qsh CLI:
 1. the task-level `group_id` argument,
 2. the device-level `group_id`,
 3. the `~/.qsh` config group (`plugins.tasks.group`, then `defaults.group`;
-   either may be a group UUID or name),
+   must be a group UUID — unlike qsh, bloqade does not resolve group names),
 4. otherwise the group is omitted and QLAM selects the backend default group.
 
 ```python
@@ -125,15 +125,20 @@ other_task = device.task(
     bell,
     group_id=UUID("22222222-2222-2222-2222-222222222222"),
 )
-
-# group assignments for a user (regular users can query themselves;
-# a user's UUID is reported as `created_by` on their submitted tasks)
-assignments = device.list_user_groups(user_id)
-group = device.get_group(assignments[0].groups[0])
 ```
 
 `group_id` is recorded on task definitions, including definitions stored in
-`DictStorage` and `SQLiteStorage`.
+`DictStorage` and `SQLiteStorage`. The group a task actually landed in is
+reported on every task response (`future.get_task().group`).
+
+Knowing which groups you belong to is a prerequisite, not something the
+device discovers for you — group membership is assigned by your tenant
+admin, who can tell you the group UUID to use. To look it up yourself, use
+`qsh users groups <your-user-uuid>` or qlam-core's
+`UsersClient.get_groups(id=...)` / `GroupsClient.get(id=...)` (your user
+UUID is reported as `created_by` on your submitted tasks). Group
+administration (creating groups, managing membership) is a qlam-core/qsh
+concern and is not exposed by bloqade.
 
 ## Persisting results
 

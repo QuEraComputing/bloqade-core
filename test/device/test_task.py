@@ -503,13 +503,10 @@ def test_submit_task_definition_explicit_group_wins_over_config(
     assert sent.group_id == explicit_group_id
 
 
-def test_submit_task_definition_resolves_config_group_name(
+def test_submit_task_definition_rejects_config_group_name(
     monkeypatch, write_qsh_config
 ):
-    resolved_group_id = UUID("55555555-5555-5555-5555-555555555555")
     write_qsh_config(defaults_group="team-a")
-    groups_client = remote.FakeGroupsClient(resolve_id_return=resolved_group_id)
-    monkeypatch.setattr(task_mod, "GroupsClient", lambda app_context: groups_client)
     task = SingleKernelTask(
         context_name="ctx",
         program_language="squin",
@@ -518,10 +515,8 @@ def test_submit_task_definition_resolves_config_group_name(
         future_cls=RecordingFuture,  # type: ignore
     )
 
-    sent = _submit_and_get_created_definition(monkeypatch, task)
-
-    assert sent.group_id == resolved_group_id
-    assert groups_client.calls == [("resolve_id", {"group": "team-a"})]
+    with pytest.raises(ValueError, match="'team-a'.*is not a UUID"):
+        _submit_and_get_created_definition(monkeypatch, task)
 
 
 def test_submit_task_definition_omits_group_without_config(monkeypatch):

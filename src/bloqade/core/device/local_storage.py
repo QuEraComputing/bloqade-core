@@ -14,6 +14,8 @@ from qlam_core.plugins.tasks.api.tasks_models import (
     TaskMetadata,
 )
 
+from .log_info import logger
+
 
 @dataclass(frozen=True)
 class ShotResult:
@@ -792,6 +794,14 @@ class SQLiteStorage(StorageBackend):
             """)
 
         if stored_version == "0.1.0":
+            # One-way, additive upgrade: adds a nullable column and restamps
+            # the version. Older bloqade versions refuse the upgraded file.
+            logger.info(
+                f"Migrating bloqade storage schema in {db_file!r} from 0.1.0 "
+                f"to {_BloqadeSchemaVersion.version} (adds nullable "
+                "task_definitions.group_id; older bloqade versions will no "
+                "longer open this file)"
+            )
             columns = {
                 row["name"]
                 for row in self.conn.execute("PRAGMA table_info(task_definitions)")

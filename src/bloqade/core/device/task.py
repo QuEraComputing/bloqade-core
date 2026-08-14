@@ -7,7 +7,6 @@ from uuid import UUID
 
 from kirin import ir
 from kirin.serialization import JSONSerializer
-from qlam_core.plugins.groups.api.client import GroupsClient
 from qlam_core.plugins.tasks.api.client import TasksClient
 from qlam_core.plugins.tasks.api.tasks_models import (
     Program,
@@ -268,13 +267,16 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         """Return the `~/.qsh` config group for submissions, if configured.
 
         Mirrors the qsh CLI precedence for submission commands:
-        `plugins.tasks.group` first, then `defaults.group`. The config value
-        may be a group UUID or a group name; names are resolved through the
-        groups API, which requires an authenticated context.
+        `plugins.tasks.group` first, then `defaults.group`. Unlike qsh, the
+        config value must be a group UUID: resolving group *names* requires
+        the group-list endpoint, which regular users cannot call.
 
         Returns:
             UUID | None: The configured group UUID, or None when the config
                 does not set a group.
+
+        Raises:
+            ValueError: If the config sets a group that is not a UUID.
         """
         config = self.app_context.config
         plugin_config = config.get_plugin_config("tasks")
@@ -288,10 +290,13 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         try:
             return UUID(group)
         except ValueError:
-            pass
-
-        with GroupsClient(self.app_context) as client:
-            return self.call_with_auth_refresh(lambda: client.resolve_id(group))
+            raise ValueError(
+                f"The group {group!r} configured in ~/.qsh config (context "
+                f"{config.context_name!r}) is not a UUID. bloqade does not "
+                "resolve group names; set the group UUID instead (it is "
+                "reported as `task.group.id` on tasks submitted to the group, "
+                "or ask your tenant admin)."
+            ) from None
 
     @overload
     def run_async(
