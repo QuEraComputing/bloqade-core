@@ -4,6 +4,8 @@ from uuid import UUID
 
 from kirin import ir
 from kirin.serialization import JSONSerializer
+from qlam_core.plugins.groups.api.client import GroupsClient
+from qlam_core.plugins.users.api.client import UsersClient
 
 from .future import Future, FutureType
 from .mixins import AuthMixin
@@ -13,6 +15,21 @@ from .task import (
     ParameterScanTask,
     SingleKernelTask,
 )
+
+
+@dataclass(frozen=True)
+class Group:
+    """A QLAM group usable for task submission.
+
+    Attributes:
+        name (str): Human-readable group name.
+        id (UUID): Group UUID, usable as the `group_id` of a device or task.
+        description (str): Group description.
+    """
+
+    name: str
+    id: UUID
+    description: str
 
 
 @dataclass(kw_only=True)
@@ -74,6 +91,47 @@ class Device(Generic[FutureType], AuthMixin):
             return self.group_id
 
         return group_id
+
+    def list_groups(self) -> list[Group]:
+        """Return the QLAM groups the authenticated user belongs to.
+
+        Membership is gathered from the user's group assignments, and each
+        group is resolved to its name and description. Use a returned group's
+        `id` as the `group_id` of this device or of an individual task.
+
+        Returns:
+            list[Group]: The user's groups, sorted by name.
+        """
+        self.authenticate()
+        user_id = self.current_user_id()
+
+        with UsersClient(self.app_context) as users_client:
+            assignments = self.call_with_auth_refresh(
+                lambda: users_client.get_groups(id=user_id)
+            )
+
+        group_ids = {
+            group_id for assignment in assignments for group_id in assignment.groups
+        }
+
+        # NOTE: group records are member-scoped for regular users, so only
+        # membership groups (as opposed to e.g. the tenant default group) can
+        # be resolved here
+        groups = []
+        with GroupsClient(self.app_context) as groups_client:
+            for group_id in sorted(group_ids, key=str):
+                response = self.call_with_auth_refresh(
+                    lambda group_id=group_id: groups_client.get(id=group_id)
+                )
+                groups.append(
+                    Group(
+                        name=response.name,
+                        id=response.id,
+                        description=response.description,
+                    )
+                )
+
+        return sorted(groups, key=lambda group: group.name)
 
     def task(
         self,

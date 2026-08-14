@@ -1,4 +1,7 @@
-from .device import Device as Device
+from .device import (
+    Device as Device,
+    Group as Group,
+)
 from .future import Future as Future
 from .local_storage import (
     DictStorage as DictStorage,

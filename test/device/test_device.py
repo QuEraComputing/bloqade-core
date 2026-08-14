@@ -1,14 +1,20 @@
+import base64
+import json
 from uuid import UUID
 
 from kirin.prelude import basic_no_opt
 
-from bloqade.core.device.device import Device
+import bloqade.core.device.device as device_mod
+import bloqade.core.device.mixins as mixins
+from bloqade.core.device.device import Device, Group
 from bloqade.core.device.future import Future
 from bloqade.core.device.task import (
     KernelBatchTask,
     ParameterScanTask,
     SingleKernelTask,
 )
+
+from .fixtures import remote
 
 
 class CustomFuture(Future):
@@ -173,3 +179,68 @@ def test_device_group_id_is_inherited_and_task_override_wins():
     task = device.task(first, group_id=override_group_id)
     assert task.group_id == override_group_id
     assert task.create_task_definition().group_id == override_group_id
+
+
+def test_device_lists_groups(monkeypatch):
+    group_id_a = UUID("11111111-1111-1111-1111-111111111111")
+    group_id_b = UUID("22222222-2222-2222-2222-222222222222")
+    group_a = remote.make_group(id=group_id_a, name="qec-experiments")
+    group_b = remote.make_group(id=group_id_b, name="benchmarking")
+    # two assignments sharing a group: membership must be de-duplicated
+    assignments = [
+        remote.make_group_assignment(groups=[group_id_a, group_id_b]),
+        remote.make_group_assignment(groups=[group_id_a]),
+    ]
+    users_client = remote.FakeUsersClient(get_groups_return=assignments)
+    groups_client = remote.FakeGroupsClient(
+        get_returns={group_id_a: group_a, group_id_b: group_b}
+    )
+    device = Device(context_name="ctx")
+
+    monkeypatch.setattr(device_mod.AuthMixin, "authenticate", lambda self: None)
+    monkeypatch.setattr(
+        device_mod.AuthMixin, "current_user_id", lambda self: remote.DEFAULT_USER_ID
+    )
+    monkeypatch.setattr(device_mod, "UsersClient", lambda app_context: users_client)
+    monkeypatch.setattr(device_mod, "GroupsClient", lambda app_context: groups_client)
+
+    assert device.list_groups() == [
+        Group(name="benchmarking", id=group_id_b, description="test group"),
+        Group(name="qec-experiments", id=group_id_a, description="test group"),
+    ]
+    assert users_client.calls == [("get_groups", {"id": remote.DEFAULT_USER_ID})]
+    assert groups_client.calls == [
+        ("get", {"id": group_id_a}),
+        ("get", {"id": group_id_b}),
+    ]
+
+
+def _encode_token_segment(obj: dict) -> str:
+    raw = base64.urlsafe_b64encode(json.dumps(obj).encode())
+    return raw.rstrip(b"=").decode()
+
+
+def _make_access_token(claims: dict) -> str:
+    return (
+        f"{_encode_token_segment({'alg': 'none'})}.{_encode_token_segment(claims)}.sig"
+    )
+
+
+def test_user_id_from_access_token():
+    user_id = UUID("acbabea1-b48d-40c4-a7f6-d05bcf75cdd0")
+
+    namespaced = _make_access_token({"https://v2/dev/user_id": str(user_id)})
+    assert mixins._user_id_from_access_token(namespaced) == user_id
+
+    bare = _make_access_token({"user_id": str(user_id)})
+    assert mixins._user_id_from_access_token(bare) == user_id
+
+    assert mixins._user_id_from_access_token(_make_access_token({"sub": "abc"})) is None
+    assert (
+        mixins._user_id_from_access_token(
+            _make_access_token({"https://v2/dev/user_id": "not-a-uuid"})
+        )
+        is None
+    )
+    assert mixins._user_id_from_access_token("not-a-jwt") is None
+    assert mixins._user_id_from_access_token("also.not-base64.a-jwt") is None

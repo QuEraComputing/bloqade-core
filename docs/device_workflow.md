@@ -131,14 +131,17 @@ other_task = device.task(
 `DictStorage` and `SQLiteStorage`. The group a task actually landed in is
 reported on every task response (`future.get_task().group`).
 
-Knowing which groups you belong to is a prerequisite, not something the
-device discovers for you — group membership is assigned by your tenant
-admin, who can tell you the group UUID to use. To look it up yourself, use
-`qsh users groups <your-user-uuid>` or qlam-core's
-`UsersClient.get_groups(id=...)` / `GroupsClient.get(id=...)` (your user
-UUID is reported as `created_by` on your submitted tasks). Group
-administration (creating groups, managing membership) is a qlam-core/qsh
-concern and is not exposed by bloqade.
+To discover which groups you can use, ask the device — each entry carries
+the group's `name`, `id`, and `description`:
+
+```python
+groups = device.list_groups()
+task = device.task(bell, group_id=groups[0].id)
+```
+
+Group membership is assigned by your tenant admin. Group administration
+(creating groups, managing membership) is a qlam-core/qsh concern and is
+not exposed by bloqade.
 
 ## Persisting results
 
