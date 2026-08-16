@@ -1,11 +1,8 @@
-import base64
-import json
 from uuid import UUID
 
 from kirin.prelude import basic_no_opt
 
 import bloqade.core.device.device as device_mod
-import bloqade.core.device.mixins as mixins
 from bloqade.core.device.device import Device, Group
 from bloqade.core.device.future import Future
 from bloqade.core.device.task import (
@@ -159,7 +156,7 @@ def test_device_kernel_serializer_override_wins_over_device_default():
     )
 
 
-def test_device_group_id_is_inherited_and_task_override_wins():
+def test_device_task_group_id_is_passed_to_each_task_shape():
     @basic_no_opt
     def first():
         return
@@ -168,17 +165,15 @@ def test_device_group_id_is_inherited_and_task_override_wins():
     def second():
         return
 
-    default_group_id = UUID("11111111-1111-1111-1111-111111111111")
-    override_group_id = UUID("22222222-2222-2222-2222-222222222222")
-    device = Device(context_name="ctx", group_id=default_group_id)
+    group_id = UUID("11111111-1111-1111-1111-111111111111")
+    device = Device(context_name="ctx")
 
-    assert device.task(first).group_id == default_group_id
-    assert device.batch_task([first, second]).group_id == default_group_id
-    assert device.parameter_scan(first, arguments=[{}]).group_id == default_group_id
-
-    task = device.task(first, group_id=override_group_id)
-    assert task.group_id == override_group_id
-    assert task.create_task_definition().group_id == override_group_id
+    assert device.task(first, group_id=group_id).group_id == group_id
+    assert device.batch_task([first, second], group_id=group_id).group_id == group_id
+    assert (
+        device.parameter_scan(first, arguments=[{}], group_id=group_id).group_id
+        == group_id
+    )
 
 
 def test_device_lists_groups(monkeypatch):
@@ -213,34 +208,3 @@ def test_device_lists_groups(monkeypatch):
         ("get", {"id": group_id_a}),
         ("get", {"id": group_id_b}),
     ]
-
-
-def _encode_token_segment(obj: dict) -> str:
-    raw = base64.urlsafe_b64encode(json.dumps(obj).encode())
-    return raw.rstrip(b"=").decode()
-
-
-def _make_access_token(claims: dict) -> str:
-    return (
-        f"{_encode_token_segment({'alg': 'none'})}.{_encode_token_segment(claims)}.sig"
-    )
-
-
-def test_user_id_from_access_token():
-    user_id = UUID("acbabea1-b48d-40c4-a7f6-d05bcf75cdd0")
-
-    namespaced = _make_access_token({"https://v2/dev/user_id": str(user_id)})
-    assert mixins._user_id_from_access_token(namespaced) == user_id
-
-    bare = _make_access_token({"user_id": str(user_id)})
-    assert mixins._user_id_from_access_token(bare) == user_id
-
-    assert mixins._user_id_from_access_token(_make_access_token({"sub": "abc"})) is None
-    assert (
-        mixins._user_id_from_access_token(
-            _make_access_token({"https://v2/dev/user_id": "not-a-uuid"})
-        )
-        is None
-    )
-    assert mixins._user_id_from_access_token("not-a-jwt") is None
-    assert mixins._user_id_from_access_token("also.not-base64.a-jwt") is None

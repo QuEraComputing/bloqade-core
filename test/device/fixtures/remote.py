@@ -16,7 +16,7 @@ testing the production normalization paths (`.upper()` in future.py) exercises
 realistic input. The bloqade local dict schema lives in `local.py`.
 
 These builders and the `examples/` dumps they mirror were verified against
-qlam-core v0.5.x (the `~=0.5.0` pin in pyproject.toml).
+qlam-core v0.6.x (the `~=0.6.0` pin in pyproject.toml).
 """
 
 from __future__ import annotations
@@ -25,6 +25,7 @@ from datetime import datetime, timezone
 from typing import Any, Callable
 from uuid import UUID
 
+from qlam_core.auth.user_info import UserInfo
 from qlam_core.plugins.compilations.api.compilations_models import (
     ProgramFailure,
     PublicCompilation,
@@ -136,6 +137,11 @@ def make_group_assignment(
         qpu_name=qpu_name,
         groups=[DEFAULT_GROUP_ID] if groups is None else groups,
     )
+
+
+def make_user_info(*, user_id: UUID | None = DEFAULT_USER_ID) -> UserInfo:
+    """Build a typed QLAM UserInfo response."""
+    return UserInfo(user_id=user_id)
 
 
 def make_task_creation_request(
@@ -574,12 +580,18 @@ class FakeAuthClient(_RecordingContextManager):
         app_context: Any = None,
         *,
         refresh_result: dict[str, bool] | None = None,
+        user_info: UserInfo | None = None,
     ) -> None:
         _RecordingContextManager.__init__(self)
         self.app_context = app_context
         self.refresh_result = (
             {"qlam": True} if refresh_result is None else refresh_result
         )
+        self.user_info = make_user_info() if user_info is None else user_info
+
+    def get_user_info(self, provider: str | None = None) -> UserInfo:
+        self._record("get_user_info", provider=provider)
+        return self.user_info
 
     def refresh_credentials(self, provider: str | None = None, *, force: bool = False):
         self._record("refresh_credentials", provider=provider, force=force)

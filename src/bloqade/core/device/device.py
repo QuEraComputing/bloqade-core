@@ -47,12 +47,6 @@ class Device(Generic[FutureType], AuthMixin):
             `TaskABC.serialize_kernel`; it should provide an `encode` method
             for Kirin serialization modules.
             Defaults to `kirin.serialization.JSONSerializer`.
-        group_id (UUID | None): Default QLAM group applied to task definitions
-            created by this device. A task-specific value takes precedence.
-            When neither is set, the `~/.qsh` config group
-            (`plugins.tasks.group`, then `defaults.group`) is applied at
-            submission time; when that is also unset, QLAM selects the backend
-            default group. Defaults to None.
     """
 
     # NOTE: for python 3.10, we need the future_cls to be Future, not Future[Result]
@@ -60,7 +54,6 @@ class Device(Generic[FutureType], AuthMixin):
     # FutureType TypeVar
     future_cls: type[FutureType] = cast(type[FutureType], Future)
     kernel_serializer: KernelSerializer = field(default_factory=JSONSerializer)
-    group_id: UUID | None = None
 
     # NOTE: we also need to cast these, otherwise the return type annotations
     # give type errors in the task creating methods below
@@ -85,19 +78,11 @@ class Device(Generic[FutureType], AuthMixin):
 
         return kernel_serializer
 
-    def _resolve_group_id(self, group_id: UUID | None) -> UUID | None:
-        """Return a task-specific group, or this device's default group."""
-        if group_id is None:
-            return self.group_id
-
-        return group_id
-
     def list_groups(self) -> list[Group]:
         """Return the QLAM groups the authenticated user belongs to.
 
         Membership is gathered from the user's group assignments, and each
-        group is resolved to its name and description. Use a returned group's
-        `id` as the `group_id` of this device or of an individual task.
+        group is resolved to its name and description.
 
         Returns:
             list[Group]: The user's groups, sorted by name.
@@ -162,7 +147,7 @@ class Device(Generic[FutureType], AuthMixin):
                 task's kernel. When None, the device's `kernel_serializer` is
                 used. Defaults to None.
             group_id (UUID | None): QLAM group for this task definition. When
-                None, the device's default group is used. Defaults to None.
+                None, the configured group is used at submission time.
 
         Returns:
             SingleKernelTask[FutureType]: A task object ready for dry-run or submission.
@@ -178,7 +163,7 @@ class Device(Generic[FutureType], AuthMixin):
             language_version=language_version,
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
-            group_id=self._resolve_group_id(group_id),
+            group_id=group_id,
         )
 
     def batch_task(
@@ -210,7 +195,7 @@ class Device(Generic[FutureType], AuthMixin):
                 task's kernels. When None, the device's `kernel_serializer` is
                 used. Defaults to None.
             group_id (UUID | None): QLAM group for this task definition. When
-                None, the device's default group is used. Defaults to None.
+                None, the configured group is used at submission time.
 
         Returns:
             KernelBatchTask[FutureType]: A batch task object ready for dry-run or
@@ -227,7 +212,7 @@ class Device(Generic[FutureType], AuthMixin):
             language_version=language_version,
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
-            group_id=self._resolve_group_id(group_id),
+            group_id=group_id,
         )
 
     def parameter_scan(
@@ -258,7 +243,7 @@ class Device(Generic[FutureType], AuthMixin):
                 scanned kernel. When None, the device's `kernel_serializer` is
                 used. Defaults to None.
             group_id (UUID | None): QLAM group for this task definition. When
-                None, the device's default group is used. Defaults to None.
+                None, the configured group is used at submission time.
 
         Returns:
             ParameterScanTask[FutureType]: A parameter-scan task object ready for
@@ -275,5 +260,5 @@ class Device(Generic[FutureType], AuthMixin):
             language_version=language_version,
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
-            group_id=self._resolve_group_id(group_id),
+            group_id=group_id,
         )

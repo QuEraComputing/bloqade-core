@@ -1,14 +1,11 @@
 import time
 from dataclasses import dataclass, field
-from typing import Any, Generic, cast
+from typing import Any, Generic
 from warnings import warn
 
 import numpy as np
 from qlam_core.plugins.compilations.api import CompilationsClient
 from qlam_core.plugins.definitions.api.client import DefinitionsClient
-from qlam_core.plugins.definitions.api.definitions_models import (
-    TaskDefinitionResponse,
-)
 from qlam_core.plugins.results.api.client import ResultsClient
 from qlam_core.plugins.tasks.api.client import TasksClient
 from qlam_core.plugins.tasks.api.tasks_models import (
@@ -96,12 +93,7 @@ class Future(AuthMixin, Generic[ResultType]):
         """
         self.authenticate()
         with TasksClient(self.app_context) as client:
-            # NOTE: get returns `Task | JsonDict` because its raw-mode flag has
-            # no overloads; we never pass raw=True, so it's a Task
-            task = cast(
-                Task,
-                self.call_with_auth_refresh(lambda: client.get(id=self.task_id)),
-            )
+            task = self.call_with_auth_refresh(lambda: client.get(id=self.task_id))
             logger.info(
                 f"Fetched task with id {self.task_id}. Current status: {task.task_status}"
             )
@@ -426,19 +418,13 @@ class Future(AuthMixin, Generic[ResultType]):
         context_name = cls._resolve_context_name(context_name)
         auth = AuthMixin(context_name=context_name)
         auth.authenticate()
-        # NOTE: the casts narrow the `Model | JsonDict` unions the clients
-        # declare for their raw-mode flag; we never pass raw=True
-        with TasksClient(auth.app_context) as client:
-            task = cast(
-                Task,
-                auth.call_with_auth_refresh(lambda: client.get(id=task_id)),
-            )
+        with TasksClient(auth.app_context) as tasks_client:
+            task = auth.call_with_auth_refresh(lambda: tasks_client.get(id=task_id))
 
         # fetch subtasks for metadata
-        with DefinitionsClient(auth.app_context) as client:
-            task_def = cast(
-                TaskDefinitionResponse,
-                auth.call_with_auth_refresh(lambda: client.get(id=task.definition_id)),
+        with DefinitionsClient(auth.app_context) as definitions_client:
+            task_def = auth.call_with_auth_refresh(
+                lambda: definitions_client.get(id=task.definition_id)
             )
 
         storage.add_task_definition(

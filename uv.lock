@@ -217,7 +217,7 @@ doc = [
 requires-dist = [
     { name = "kirin-toolchain", specifier = "~=0.22.11" },
     { name = "loguru", specifier = ">=0.7.3" },
-    { name = "qlam-core", specifier = "~=0.5.0" },
+    { name = "qlam-core", specifier = "~=0.6.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -2258,7 +2258,7 @@ wheels = [
 
 [[package]]
 name = "qlam-core"
-version = "0.5.0"
+version = "0.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "email-validator" },
@@ -2268,7 +2268,7 @@ dependencies = [
     { name = "segno" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6e/bb/26f769fd0eaedb9ed3ecc6d981050dec0ddb69aa76e281d4498e965f622e/qlam_core-0.5.0-py3-none-any.whl", hash = "sha256:bdaedaddc2cdf2dab3328670db419e3209acc804e0ecc9143bc7fab17202c6a9", size = 159011, upload-time = "2026-08-10T17:18:02.193Z" },
+    { url = "https://files.pythonhosted.org/packages/5f/f6/9db7682084d90cd00371d4fce981e83a0281e1b3571163c89e010adb0ed5/qlam_core-0.6.0-py3-none-any.whl", hash = "sha256:00ed021b8c6ebe6f0d7f874f5fc2530be0f8bef2d0f4a5d2347e89ba6f548561", size = 164230, upload-time = "2026-08-15T02:40:20.337Z" },
 ]
 
 [[package]]

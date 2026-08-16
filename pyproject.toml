@@ -10,7 +10,7 @@ authors = [
 dependencies = [
     "kirin-toolchain~=0.22.11",
     "loguru>=0.7.3",
-    "qlam-core~=0.5.0",
+    "qlam-core~=0.6.0",
 ]
 requires-python = ">= 3.10"
 

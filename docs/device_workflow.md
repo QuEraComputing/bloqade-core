@@ -101,30 +101,18 @@ that runs one kernel against several argument sets. The downstream steps
 
 ## Groups
 
-QLAM groups organize task definitions and control who can access them. Set a
-device-level default when a workflow normally uses one group, and optionally
-override it for a single task. The group submitted with a task is resolved in
-this order, mirroring the qsh CLI:
+QLAM groups organize task definitions and control who can access them. The
+group submitted with a task is resolved in this order, mirroring the qsh CLI:
 
-1. the task-level `group_id` argument,
-2. the device-level `group_id`,
-3. the `~/.qsh` config group (`plugins.tasks.group`, then `defaults.group`;
+1. a task-level `group_id` argument,
+2. the `~/.qsh` config group (`plugins.tasks.group`, then `defaults.group`;
    must be a group UUID — unlike qsh, bloqade does not resolve group names),
-4. otherwise the group is omitted and QLAM selects the backend default group.
+3. otherwise the group is omitted and the server decides according to its
+   configured submission mode.
 
 ```python
-from uuid import UUID
-
-device = Device(
-    context_name="my-context",
-    group_id=UUID("11111111-1111-1111-1111-111111111111"),
-)
-
-task = device.task(bell)  # inherits the device group
-other_task = device.task(
-    bell,
-    group_id=UUID("22222222-2222-2222-2222-222222222222"),
-)
+device = Device(context_name="my-context")
+task = device.task(bell)
 ```
 
 `group_id` is recorded on task definitions, including definitions stored in
@@ -136,7 +124,7 @@ the group's `name`, `id`, and `description`:
 
 ```python
 groups = device.list_groups()
-task = device.task(bell, group_id=groups[0].id)
+other_task = device.task(bell, group_id=groups[0].id)
 ```
 
 Group membership is assigned by your tenant admin. Group administration
