@@ -106,22 +106,3 @@ def test_call_with_auth_refresh_only_retries_once(monkeypatch):
     assert excinfo.value.status_code == 403
     assert len(invocations) == 2
     assert [name for name, _ in fake.calls] == ["refresh_credentials"]
-
-
-def test_current_user_id_uses_user_info_api(monkeypatch):
-    user_info = remote.make_user_info()
-    fake = remote.FakeAuthClient(user_info=user_info)
-    auth = AuthMixin(context_name="ctx")
-    monkeypatch.setattr(mixins_mod, "AuthClient", lambda app_context: fake)
-
-    assert auth.current_user_id() == remote.DEFAULT_USER_ID
-    assert fake.calls == [("get_user_info", {"provider": None})]
-
-
-def test_current_user_id_rejects_user_info_without_user_id(monkeypatch):
-    fake = remote.FakeAuthClient(user_info=remote.make_user_info(user_id=None))
-    auth = AuthMixin(context_name="ctx")
-    monkeypatch.setattr(mixins_mod, "AuthClient", lambda app_context: fake)
-
-    with pytest.raises(RuntimeError, match="has no user_id"):
-        auth.current_user_id()

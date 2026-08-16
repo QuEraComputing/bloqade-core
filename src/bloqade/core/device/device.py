@@ -1,11 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Any, Generic, cast
-from uuid import UUID
 
 from kirin import ir
 from kirin.serialization import JSONSerializer
-from qlam_core.plugins.groups.api.client import GroupsClient
-from qlam_core.plugins.users.api.client import UsersClient
 
 from .future import Future, FutureType
 from .mixins import AuthMixin
@@ -15,21 +12,6 @@ from .task import (
     ParameterScanTask,
     SingleKernelTask,
 )
-
-
-@dataclass(frozen=True)
-class Group:
-    """A QLAM group usable for task submission.
-
-    Attributes:
-        name (str): Human-readable group name.
-        id (UUID): Group UUID, usable as the `group_id` of a device or task.
-        description (str): Group description.
-    """
-
-    name: str
-    id: UUID
-    description: str
 
 
 @dataclass(kw_only=True)
@@ -78,46 +60,6 @@ class Device(Generic[FutureType], AuthMixin):
 
         return kernel_serializer
 
-    def list_groups(self) -> list[Group]:
-        """Return the QLAM groups the authenticated user belongs to.
-
-        Membership is gathered from the user's group assignments, and each
-        group is resolved to its name and description.
-
-        Returns:
-            list[Group]: The user's groups, sorted by name.
-        """
-        self.authenticate()
-        user_id = self.current_user_id()
-
-        with UsersClient(self.app_context) as users_client:
-            assignments = self.call_with_auth_refresh(
-                lambda: users_client.get_groups(id=user_id)
-            )
-
-        group_ids = {
-            group_id for assignment in assignments for group_id in assignment.groups
-        }
-
-        # NOTE: group records are member-scoped for regular users, so only
-        # membership groups (as opposed to e.g. the tenant default group) can
-        # be resolved here
-        groups = []
-        with GroupsClient(self.app_context) as groups_client:
-            for group_id in sorted(group_ids, key=str):
-                response = self.call_with_auth_refresh(
-                    lambda group_id=group_id: groups_client.get(id=group_id)
-                )
-                groups.append(
-                    Group(
-                        name=response.name,
-                        id=response.id,
-                        description=response.description,
-                    )
-                )
-
-        return sorted(groups, key=lambda group: group.name)
-
     def task(
         self,
         kernel: ir.Method,
@@ -127,7 +69,7 @@ class Device(Generic[FutureType], AuthMixin):
         program_language: str = "squin",
         language_version: str = "0.1.0",
         kernel_serializer: KernelSerializer | None = None,
-        group_id: UUID | None = None,
+        group: str | None = None,
     ) -> SingleKernelTask[FutureType]:
         """Create a task for one kernel.
 
@@ -146,8 +88,9 @@ class Device(Generic[FutureType], AuthMixin):
             kernel_serializer (KernelSerializer | None): Serializer for this
                 task's kernel. When None, the device's `kernel_serializer` is
                 used. Defaults to None.
-            group_id (UUID | None): QLAM group for this task definition. When
-                None, the configured group is used at submission time.
+            group (str | None): Name of the QLAM group for this task
+                definition. When None, the configured group is used at
+                submission time.
 
         Returns:
             SingleKernelTask[FutureType]: A task object ready for dry-run or submission.
@@ -163,7 +106,7 @@ class Device(Generic[FutureType], AuthMixin):
             language_version=language_version,
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
-            group_id=group_id,
+            group=group,
         )
 
     def batch_task(
@@ -175,7 +118,7 @@ class Device(Generic[FutureType], AuthMixin):
         program_language: str = "squin",
         language_version: str = "0.1.0",
         kernel_serializer: KernelSerializer | None = None,
-        group_id: UUID | None = None,
+        group: str | None = None,
     ) -> KernelBatchTask[FutureType]:
         """Create a task containing one subtask per kernel.
 
@@ -194,8 +137,9 @@ class Device(Generic[FutureType], AuthMixin):
             kernel_serializer (KernelSerializer | None): Serializer for this
                 task's kernels. When None, the device's `kernel_serializer` is
                 used. Defaults to None.
-            group_id (UUID | None): QLAM group for this task definition. When
-                None, the configured group is used at submission time.
+            group (str | None): Name of the QLAM group for this task
+                definition. When None, the configured group is used at
+                submission time.
 
         Returns:
             KernelBatchTask[FutureType]: A batch task object ready for dry-run or
@@ -212,7 +156,7 @@ class Device(Generic[FutureType], AuthMixin):
             language_version=language_version,
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
-            group_id=group_id,
+            group=group,
         )
 
     def parameter_scan(
@@ -224,7 +168,7 @@ class Device(Generic[FutureType], AuthMixin):
         program_language: str = "squin",
         language_version: str = "0.1.0",
         kernel_serializer: KernelSerializer | None = None,
-        group_id: UUID | None = None,
+        group: str | None = None,
     ) -> ParameterScanTask[FutureType]:
         """Create a parameter-scan task for one kernel.
 
@@ -242,8 +186,9 @@ class Device(Generic[FutureType], AuthMixin):
             kernel_serializer (KernelSerializer | None): Serializer for the
                 scanned kernel. When None, the device's `kernel_serializer` is
                 used. Defaults to None.
-            group_id (UUID | None): QLAM group for this task definition. When
-                None, the configured group is used at submission time.
+            group (str | None): Name of the QLAM group for this task
+                definition. When None, the configured group is used at
+                submission time.
 
         Returns:
             ParameterScanTask[FutureType]: A parameter-scan task object ready for
@@ -260,5 +205,5 @@ class Device(Generic[FutureType], AuthMixin):
             language_version=language_version,
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
-            group_id=group_id,
+            group=group,
         )

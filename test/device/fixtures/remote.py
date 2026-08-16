@@ -25,7 +25,6 @@ from datetime import datetime, timezone
 from typing import Any, Callable
 from uuid import UUID
 
-from qlam_core.auth.user_info import UserInfo
 from qlam_core.plugins.compilations.api.compilations_models import (
     ProgramFailure,
     PublicCompilation,
@@ -36,7 +35,6 @@ from qlam_core.plugins.definitions.api.definitions_models import (
     GroupSummary as DefinitionGroupSummary,
     TaskDefinitionResponse,
 )
-from qlam_core.plugins.groups.api.groups_models import GroupResponse
 from qlam_core.plugins.tasks.api.tasks_models import (
     GroupSummary as TaskGroupSummary,
     Program,
@@ -47,7 +45,6 @@ from qlam_core.plugins.tasks.api.tasks_models import (
     TaskMetadata,
     TaskStatus,
 )
-from qlam_core.plugins.user_tenant.api.user_tenant_models import GroupAssignment
 
 # Anchor values shared by every builder. Using a constant UUID/timestamp keeps
 # fixture equality predictable and matches `examples/task_completed.json`.
@@ -56,7 +53,6 @@ DEFAULT_DEFINITION_ID = "db25a08c-0318-4a0d-b161-2d1658d15fa9"
 DEFAULT_COMPILATION_ID = "7cd3b1aa-b0d8-4839-b060-79c8d160883e"
 DEFAULT_GROUP_ID = UUID("00000000-0000-0000-0000-000000000000")
 DEFAULT_GROUP_NAME = "default-group"
-DEFAULT_TENANT_ID = UUID("ab12cd34-ef56-4789-abcd-ef0123456789")
 DEFAULT_USER_ID = UUID("acbabea1-b48d-40c4-a7f6-d05bcf75cdd0")
 DEFAULT_CREATED_DATE = datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
 
@@ -121,59 +117,12 @@ def make_task_definition(
     )
 
 
-def make_group_assignment(
-    *,
-    tenant_id: UUID = DEFAULT_TENANT_ID,
-    org_name: str | None = "test-org",
-    audience: str = "https://v2/tasks",
-    qpu_name: str | None = "test-qpu",
-    groups: list[UUID] | None = None,
-) -> GroupAssignment:
-    """Build a real QLAM `GroupAssignment` model."""
-    return GroupAssignment(
-        tenant_id=tenant_id,
-        org_name=org_name,
-        audience=audience,
-        qpu_name=qpu_name,
-        groups=[DEFAULT_GROUP_ID] if groups is None else groups,
-    )
-
-
-def make_user_info(*, user_id: UUID | None = DEFAULT_USER_ID) -> UserInfo:
-    """Build a typed QLAM UserInfo response."""
-    return UserInfo(user_id=user_id)
-
-
 def make_task_creation_request(
     task_definition: TaskDefinition | None = None,
 ) -> TaskCreationRequest:
     if task_definition is None:
         task_definition = make_task_definition()
     return TaskCreationRequest(root=task_definition)
-
-
-def make_group(
-    *,
-    id: UUID = DEFAULT_GROUP_ID,  # noqa: A002 — mirrors qlam field name
-    name: str = DEFAULT_GROUP_NAME,
-    description: str = "test group",
-    is_shared: bool = False,
-    created_date: datetime = DEFAULT_CREATED_DATE,
-    created_by: UUID = DEFAULT_USER_ID,
-    modified_date: datetime = DEFAULT_CREATED_DATE,
-    modified_by: UUID = DEFAULT_USER_ID,
-) -> GroupResponse:
-    """Build a real QLAM `GroupResponse` model."""
-    return GroupResponse(
-        id=id,
-        name=name,
-        description=description,
-        is_shared=is_shared,
-        created_date=created_date,
-        created_by=created_by,
-        modified_date=modified_date,
-        modified_by=modified_by,
-    )
 
 
 def make_task(
@@ -430,44 +379,6 @@ class _RecordingContextManager:
         self.calls.append((name, kwargs))
 
 
-class FakeGroupsClient(_RecordingContextManager):
-    """Replaces `qlam_core.plugins.groups.api.client.GroupsClient` in tests."""
-
-    def __init__(
-        self,
-        app_context: Any = None,
-        *,
-        get_returns: dict[UUID, GroupResponse] | None = None,
-    ) -> None:
-        _RecordingContextManager.__init__(self)
-        self.app_context = app_context
-        self.get_returns = {} if get_returns is None else get_returns
-
-    def get(self, id):  # noqa: A002
-        self._record("get", id=id)
-        if id not in self.get_returns:
-            raise AssertionError(f"FakeGroupsClient.get called with unknown id {id}")
-        return self.get_returns[id]
-
-
-class FakeUsersClient(_RecordingContextManager):
-    """Replaces `qlam_core.plugins.users.api.client.UsersClient` in tests."""
-
-    def __init__(
-        self,
-        app_context: Any = None,
-        *,
-        get_groups_return: list[GroupAssignment] | None = None,
-    ) -> None:
-        _RecordingContextManager.__init__(self)
-        self.app_context = app_context
-        self.get_groups_return = [] if get_groups_return is None else get_groups_return
-
-    def get_groups(self, id):  # noqa: A002
-        self._record("get_groups", id=id)
-        return self.get_groups_return
-
-
 class FakeTasksClient(_RecordingContextManager):
     """Replaces `qlam_core.plugins.tasks.api.client.TasksClient` in tests.
 
@@ -515,6 +426,31 @@ class FakeTasksClient(_RecordingContextManager):
         if self.cancel_raises is not None:
             raise self.cancel_raises
         return None
+
+
+class FakeGroupsClient(_RecordingContextManager):
+    """Replaces ``qlam_core.plugins.groups.api.client.GroupsClient`` in tests."""
+
+    def __init__(
+        self,
+        app_context: Any = None,
+        *,
+        resolve_id_return: UUID | Callable[[str], UUID] | None = None,
+    ) -> None:
+        _RecordingContextManager.__init__(self)
+        self.app_context = app_context
+        self.resolve_id_return = resolve_id_return
+
+    def resolve_id(self, group: str) -> UUID:
+        self._record("resolve_id", group=group)
+        ret = self.resolve_id_return
+        if ret is None:
+            raise AssertionError(
+                "FakeGroupsClient.resolve_id called but no resolve_id_return set"
+            )
+        if callable(ret):
+            return ret(group)
+        return ret
 
 
 class FakeDefinitionsClient(_RecordingContextManager):
@@ -580,18 +516,12 @@ class FakeAuthClient(_RecordingContextManager):
         app_context: Any = None,
         *,
         refresh_result: dict[str, bool] | None = None,
-        user_info: UserInfo | None = None,
     ) -> None:
         _RecordingContextManager.__init__(self)
         self.app_context = app_context
         self.refresh_result = (
             {"qlam": True} if refresh_result is None else refresh_result
         )
-        self.user_info = make_user_info() if user_info is None else user_info
-
-    def get_user_info(self, provider: str | None = None) -> UserInfo:
-        self._record("get_user_info", provider=provider)
-        return self.user_info
 
     def refresh_credentials(self, provider: str | None = None, *, force: bool = False):
         self._record("refresh_credentials", provider=provider, force=force)

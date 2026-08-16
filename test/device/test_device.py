@@ -1,17 +1,12 @@
-from uuid import UUID
-
 from kirin.prelude import basic_no_opt
 
-import bloqade.core.device.device as device_mod
-from bloqade.core.device.device import Device, Group
+from bloqade.core.device.device import Device
 from bloqade.core.device.future import Future
 from bloqade.core.device.task import (
     KernelBatchTask,
     ParameterScanTask,
     SingleKernelTask,
 )
-
-from .fixtures import remote
 
 
 class CustomFuture(Future):
@@ -156,7 +151,7 @@ def test_device_kernel_serializer_override_wins_over_device_default():
     )
 
 
-def test_device_task_group_id_is_passed_to_each_task_shape():
+def test_device_group_is_passed_to_each_task_shape():
     @basic_no_opt
     def first():
         return
@@ -165,46 +160,9 @@ def test_device_task_group_id_is_passed_to_each_task_shape():
     def second():
         return
 
-    group_id = UUID("11111111-1111-1111-1111-111111111111")
+    group = "qec-experiments"
     device = Device(context_name="ctx")
 
-    assert device.task(first, group_id=group_id).group_id == group_id
-    assert device.batch_task([first, second], group_id=group_id).group_id == group_id
-    assert (
-        device.parameter_scan(first, arguments=[{}], group_id=group_id).group_id
-        == group_id
-    )
-
-
-def test_device_lists_groups(monkeypatch):
-    group_id_a = UUID("11111111-1111-1111-1111-111111111111")
-    group_id_b = UUID("22222222-2222-2222-2222-222222222222")
-    group_a = remote.make_group(id=group_id_a, name="qec-experiments")
-    group_b = remote.make_group(id=group_id_b, name="benchmarking")
-    # two assignments sharing a group: membership must be de-duplicated
-    assignments = [
-        remote.make_group_assignment(groups=[group_id_a, group_id_b]),
-        remote.make_group_assignment(groups=[group_id_a]),
-    ]
-    users_client = remote.FakeUsersClient(get_groups_return=assignments)
-    groups_client = remote.FakeGroupsClient(
-        get_returns={group_id_a: group_a, group_id_b: group_b}
-    )
-    device = Device(context_name="ctx")
-
-    monkeypatch.setattr(device_mod.AuthMixin, "authenticate", lambda self: None)
-    monkeypatch.setattr(
-        device_mod.AuthMixin, "current_user_id", lambda self: remote.DEFAULT_USER_ID
-    )
-    monkeypatch.setattr(device_mod, "UsersClient", lambda app_context: users_client)
-    monkeypatch.setattr(device_mod, "GroupsClient", lambda app_context: groups_client)
-
-    assert device.list_groups() == [
-        Group(name="benchmarking", id=group_id_b, description="test group"),
-        Group(name="qec-experiments", id=group_id_a, description="test group"),
-    ]
-    assert users_client.calls == [("get_groups", {"id": remote.DEFAULT_USER_ID})]
-    assert groups_client.calls == [
-        ("get", {"id": group_id_a}),
-        ("get", {"id": group_id_b}),
-    ]
+    assert device.task(first, group=group).group == group
+    assert device.batch_task([first, second], group=group).group == group
+    assert device.parameter_scan(first, arguments=[{}], group=group).group == group

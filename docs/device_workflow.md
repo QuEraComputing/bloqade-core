@@ -104,32 +104,28 @@ that runs one kernel against several argument sets. The downstream steps
 QLAM groups organize task definitions and control who can access them. The
 group submitted with a task is resolved in this order, mirroring the qsh CLI:
 
-1. a task-level `group_id` argument,
-2. the `~/.qsh` config group (`plugins.tasks.group`, then `defaults.group`;
-   must be a group UUID — unlike qsh, bloqade does not resolve group names),
+1. a task-level `group` name,
+2. the `~/.qsh` config group (`plugins.tasks.group`, then `defaults.group`),
 3. otherwise the group is omitted and the server decides according to its
    configured submission mode.
 
 ```python
 device = Device(context_name="my-context")
-task = device.task(bell)
+group = "qec-experiments"
+
+task = device.task(bell, group=group)
+batch = device.batch_task([bell, bell], group=group)
+scan = device.parameter_scan(bell, arguments=[{}, {}], group=group)
 ```
 
-`group_id` is recorded on task definitions, including definitions stored in
-`DictStorage` and `SQLiteStorage`. The group a task actually landed in is
+Task-level and configured group values are resolved through QLAM before
+submission. The resolved group ID is recorded on task definitions, including
+definitions stored in `DictStorage` and `SQLiteStorage`. The group a task actually landed in is
 reported on every task response (`future.get_task().group`).
 
-To discover which groups you can use, ask the device — each entry carries
-the group's `name`, `id`, and `description`:
-
-```python
-groups = device.list_groups()
-other_task = device.task(bell, group_id=groups[0].id)
-```
-
 Group membership is assigned by your tenant admin. Group administration
-(creating groups, managing membership) is a qlam-core/qsh concern and is
-not exposed by bloqade.
+(including discovery) is a qlam-core/qsh concern and is not exposed by
+bloqade.
 
 ## Persisting results
 

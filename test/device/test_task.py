@@ -421,17 +421,21 @@ def test_submit_task_definition_retries_on_403_after_refresh(monkeypatch):
     assert [name for name, _ in auth_client.calls] == ["refresh_credentials"]
 
 
-def _submit_and_get_created_definition(monkeypatch, task, storage=None):
-    """Submit `task`'s definition through a fake client; return the sent body."""
+def _submit_and_get_created_definition(
+    monkeypatch, task, storage=None, resolved_group_id=None
+):
+    """Submit ``task`` through fake clients; return its definition and resolver."""
     created_task = remote.make_task(
         id="task-created",
         task_status=TaskStatus.CREATED,
         created_date=CREATION_TIME,
     )
     client = remote.FakeTasksClient(create_return=created_task)
+    groups_client = remote.FakeGroupsClient(resolve_id_return=resolved_group_id)
 
     monkeypatch.setattr(task, "authenticate", lambda: None)
     monkeypatch.setattr(task_mod, "TasksClient", lambda app_context: client)
+    monkeypatch.setattr(task_mod, "GroupsClient", lambda app_context: groups_client)
 
     task.submit_task_definition(
         task_definition=task.create_task_definition(),
@@ -440,14 +444,14 @@ def _submit_and_get_created_definition(monkeypatch, task, storage=None):
 
     name, kwargs = client.calls[0]
     assert name == "create"
-    return kwargs["body"].root
+    return kwargs["body"].root, groups_client
 
 
 def test_submit_task_definition_applies_config_defaults_group(
     monkeypatch, write_qsh_config
 ):
-    config_group_id = UUID("33333333-3333-3333-3333-333333333333")
-    write_qsh_config(defaults_group=str(config_group_id))
+    resolved_group_id = UUID("33333333-3333-3333-3333-333333333333")
+    write_qsh_config(defaults_group="qec-experiments")
     task = SingleKernelTask(
         context_name="ctx",
         program_language="squin",
@@ -457,19 +461,25 @@ def test_submit_task_definition_applies_config_defaults_group(
     )
     storage = DictStorage()
 
-    sent = _submit_and_get_created_definition(monkeypatch, task, storage=storage)
+    sent, groups_client = _submit_and_get_created_definition(
+        monkeypatch,
+        task,
+        storage=storage,
+        resolved_group_id=resolved_group_id,
+    )
 
-    assert sent.group_id == config_group_id
-    assert storage.get_task_definition("task-created").group_id == config_group_id
+    assert sent.group_id == resolved_group_id
+    assert storage.get_task_definition("task-created").group_id == resolved_group_id
+    assert groups_client.calls == [("resolve_id", {"group": "qec-experiments"})]
 
 
 def test_submit_task_definition_plugin_group_overrides_defaults_group(
     monkeypatch, write_qsh_config
 ):
-    plugin_group_id = UUID("44444444-4444-4444-4444-444444444444")
+    resolved_group_id = UUID("44444444-4444-4444-4444-444444444444")
     write_qsh_config(
-        defaults_group="33333333-3333-3333-3333-333333333333",
-        tasks_plugin_group=str(plugin_group_id),
+        defaults_group="default-group",
+        tasks_plugin_group="tasks-group",
     )
     task = SingleKernelTask(
         context_name="ctx",
@@ -479,31 +489,37 @@ def test_submit_task_definition_plugin_group_overrides_defaults_group(
         future_cls=RecordingFuture,  # type: ignore
     )
 
-    sent = _submit_and_get_created_definition(monkeypatch, task)
+    sent, groups_client = _submit_and_get_created_definition(
+        monkeypatch, task, resolved_group_id=resolved_group_id
+    )
 
-    assert sent.group_id == plugin_group_id
+    assert sent.group_id == resolved_group_id
+    assert groups_client.calls == [("resolve_id", {"group": "tasks-group"})]
 
 
 def test_submit_task_definition_explicit_group_wins_over_config(
     monkeypatch, write_qsh_config
 ):
-    explicit_group_id = UUID("22222222-2222-2222-2222-222222222222")
-    write_qsh_config(defaults_group="33333333-3333-3333-3333-333333333333")
+    resolved_group_id = UUID("22222222-2222-2222-2222-222222222222")
+    write_qsh_config(defaults_group="configured-group")
     task = SingleKernelTask(
         context_name="ctx",
         program_language="squin",
         kernel=main,
         num_shots=1,
-        group_id=explicit_group_id,
+        group="task-group",
         future_cls=RecordingFuture,  # type: ignore
     )
 
-    sent = _submit_and_get_created_definition(monkeypatch, task)
+    sent, groups_client = _submit_and_get_created_definition(
+        monkeypatch, task, resolved_group_id=resolved_group_id
+    )
 
-    assert sent.group_id == explicit_group_id
+    assert sent.group_id == resolved_group_id
+    assert groups_client.calls == [("resolve_id", {"group": "task-group"})]
 
 
-def test_submit_task_definition_rejects_config_group_name(
+def test_submit_task_definition_resolves_config_group_name(
     monkeypatch, write_qsh_config
 ):
     write_qsh_config(defaults_group="team-a")
@@ -515,8 +531,14 @@ def test_submit_task_definition_rejects_config_group_name(
         future_cls=RecordingFuture,  # type: ignore
     )
 
-    with pytest.raises(ValueError, match="'team-a'.*is not a UUID"):
-        _submit_and_get_created_definition(monkeypatch, task)
+    sent, groups_client = _submit_and_get_created_definition(
+        monkeypatch,
+        task,
+        resolved_group_id=UUID("55555555-5555-5555-5555-555555555555"),
+    )
+
+    assert sent.group_id == UUID("55555555-5555-5555-5555-555555555555")
+    assert groups_client.calls == [("resolve_id", {"group": "team-a"})]
 
 
 def test_submit_task_definition_omits_group_without_config(monkeypatch):
@@ -528,6 +550,7 @@ def test_submit_task_definition_omits_group_without_config(monkeypatch):
         future_cls=RecordingFuture,  # type: ignore
     )
 
-    sent = _submit_and_get_created_definition(monkeypatch, task)
+    sent, groups_client = _submit_and_get_created_definition(monkeypatch, task)
 
     assert sent.group_id is None
+    assert groups_client.calls == []

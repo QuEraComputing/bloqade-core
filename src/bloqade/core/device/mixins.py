@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Callable, TypeVar
-from uuid import UUID
 
 from qlam_core.auth.client import AuthClient
 from qlam_core.common import AppContext
@@ -42,28 +41,6 @@ class AuthMixin:
                 return
 
             return client.login()
-
-    def current_user_id(self) -> UUID:
-        """Return the authenticated user's QLAM user UUID.
-
-        The UUID is retrieved from QLAM's typed UserInfo API. Call
-        `authenticate` first to ensure a credential exists.
-
-        Returns:
-            UUID: The authenticated user's ID.
-
-        Raises:
-            RuntimeError: If the UserInfo response has no user ID.
-        """
-        with AuthClient(self.app_context) as client:
-            user_info = self.call_with_auth_refresh(client.get_user_info)
-            if user_info.user_id is not None:
-                return user_info.user_id
-
-        raise RuntimeError(
-            "Could not determine the current user: the UserInfo response for "
-            f"context {self.context_name!r} has no user_id"
-        )
 
     def call_with_auth_refresh(self, fn: Callable[[], T]) -> T:
         """Run a qlam API call, refreshing credentials once on a 401 or 403.
