@@ -15,7 +15,7 @@ from .task import (
 
 
 @dataclass(kw_only=True)
-class Device(Generic[FutureType], AuthMixin):
+class Device(AuthMixin, Generic[FutureType]):
     """Factory for tasks.
 
     The device does not submit work directly. Instead, it builds task objects
@@ -34,7 +34,7 @@ class Device(Generic[FutureType], AuthMixin):
     # NOTE: for python 3.10, we need the future_cls to be Future, not Future[Result]
     # in order to keep the typing correct, we use cast and set a default on the
     # FutureType TypeVar
-    future_cls: type[FutureType] = cast(type[FutureType], Future)
+    future_cls: type[FutureType] = Future  # type: ignore[assignment]
     kernel_serializer: KernelSerializer = field(default_factory=JSONSerializer)
 
     # NOTE: we also need to cast these, otherwise the return type annotations

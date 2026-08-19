@@ -1,6 +1,6 @@
 import time
 from dataclasses import dataclass, field
-from typing import Any, Generic
+from typing import Any, Generic, Self
 from warnings import warn
 
 import numpy as np
@@ -13,7 +13,7 @@ from qlam_core.plugins.tasks.api.tasks_models import (
     TaskDefinition,
     TaskStatus,
 )
-from typing_extensions import Self, TypeVar
+from typing_extensions import TypeVar
 
 from .local_storage import (
     DictStorage,
@@ -48,6 +48,9 @@ class ApiFetchOptions:
     poll_interval_initial: float = 0.5  # seconds before first retry
     poll_interval_max: float = 30.0  # cap for backoff
     poll_interval_factor: float = 2.0  # multiplier per iteration
+
+
+DEFAULT_FETCH_OPTIONS = ApiFetchOptions()
 
 
 @dataclass(kw_only=True)
@@ -172,9 +175,9 @@ class Future(AuthMixin, Generic[ResultType]):
                 return self.call_with_auth_refresh(
                     lambda: client.cancel(id=self.task_id)
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 warn(
-                    f"Exception encountered when trying to cancel task with ID {self.task_id}: {str(repr(e))}"
+                    f"Exception encountered when trying to cancel task with ID {self.task_id}: {repr(e)!s}"
                 )
 
     def cancelled(self) -> bool:
@@ -319,7 +322,7 @@ class Future(AuthMixin, Generic[ResultType]):
         storage: StorageBackend,
         new_storage: StorageBackend | None = None,
         task_id: str | None = None,
-        fetch_options: ApiFetchOptions = ApiFetchOptions(),
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
         context_name: str | None = None,
     ) -> Self:
         """Create a future from task metadata already present in storage.
@@ -384,7 +387,7 @@ class Future(AuthMixin, Generic[ResultType]):
         *,
         task_id: str,
         storage: StorageBackend | None = None,
-        fetch_options: ApiFetchOptions = ApiFetchOptions(),
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
         context_name: str | None = None,
     ) -> Self:
         """Create a future from a backend task ID.

@@ -1,9 +1,11 @@
+from typing import Annotated
+
 from kirin import ir
 from kirin.dialects import ilist
 from kirin.ir.method import Method
 from kirin.passes.default import Default
 from kirin.prelude import structural
-from typing_extensions import Annotated, Doc
+from typing_extensions import Doc
 
 from bloqade.geometry.dialects import filled, grid
 

@@ -1,8 +1,8 @@
+from collections.abc import Callable
 from dataclasses import dataclass, field, replace
-from typing import Callable, TypeVar
+from typing import Self, TypeVar
 
 import numpy as np
-from typing_extensions import Self
 
 from .local_storage import ShotFilter, ShotResult, StorageBackend, StorageFilter
 

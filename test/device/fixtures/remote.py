@@ -21,8 +21,9 @@ qlam-core v0.6.x (the `~=0.6.0` pin in pyproject.toml).
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Any, Callable
+from collections.abc import Callable
+from datetime import UTC, datetime
+from typing import Any
 from uuid import UUID
 
 from qlam_core.plugins.compilations.api.compilations_models import (
@@ -54,7 +55,7 @@ DEFAULT_COMPILATION_ID = "7cd3b1aa-b0d8-4839-b060-79c8d160883e"
 DEFAULT_GROUP_ID = UUID("00000000-0000-0000-0000-000000000000")
 DEFAULT_GROUP_NAME = "default-group"
 DEFAULT_USER_ID = UUID("acbabea1-b48d-40c4-a7f6-d05bcf75cdd0")
-DEFAULT_CREATED_DATE = datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
+DEFAULT_CREATED_DATE = datetime(2026, 1, 2, 3, 4, 5, tzinfo=UTC)
 
 
 # --------------------------------------------------------------------------- #
@@ -127,7 +128,7 @@ def make_task_creation_request(
 
 def make_task(
     *,
-    id: str | None = DEFAULT_TASK_ID,  # noqa: A002 — mirrors qlam field name
+    id: str | None = DEFAULT_TASK_ID,
     task_status: TaskStatus = TaskStatus.COMPLETED,
     definition_id: str | None = DEFAULT_DEFINITION_ID,
     compilation_id: str | None = DEFAULT_COMPILATION_ID,
@@ -171,7 +172,7 @@ def make_task(
 
 def make_task_definition_response(
     *,
-    id: UUID | str = DEFAULT_DEFINITION_ID,  # noqa: A002
+    id: UUID | str = DEFAULT_DEFINITION_ID,
     program_language: str = "squin.v0.1.0",
     programs: list[Program] | None = None,
     subtasks: list[Subtask] | None = None,
@@ -216,7 +217,7 @@ def make_task_definition_response(
 
 def make_public_compilation(
     *,
-    id: UUID | str = DEFAULT_COMPILATION_ID,  # noqa: A002
+    id: UUID | str = DEFAULT_COMPILATION_ID,
     input_definition_id: UUID | str = DEFAULT_DEFINITION_ID,
     status: PublicCompilationStatus = PublicCompilationStatus.SUCCEEDED,
     stack_trace: str | None = None,
@@ -401,7 +402,7 @@ class FakeTasksClient(_RecordingContextManager):
         self.create_return = create_return
         self.cancel_raises = cancel_raises
 
-    def get(self, id):  # noqa: A002
+    def get(self, id):
         self._record("get", id=id)
         ret = self.get_return
         if ret is None:
@@ -421,11 +422,10 @@ class FakeTasksClient(_RecordingContextManager):
             return ret(body)
         return ret
 
-    def cancel(self, id):  # noqa: A002
+    def cancel(self, id):
         self._record("cancel", id=id)
         if self.cancel_raises is not None:
             raise self.cancel_raises
-        return None
 
 
 class FakeGroupsClient(_RecordingContextManager):
@@ -473,7 +473,7 @@ class FakeDefinitionsClient(_RecordingContextManager):
         self.app_context = app_context
         self.get_return = get_return
 
-    def get(self, id):  # noqa: A002
+    def get(self, id):
         self._record("get", id=id)
         if self.get_return is None:
             raise AssertionError(
@@ -493,7 +493,7 @@ class FakeCompilationsClient(_RecordingContextManager):
         self.app_context = app_context
         self.get_return = get_return
 
-    def get(self, id):  # noqa: A002
+    def get(self, id):
         self._record("get", id=id)
         if self.get_return is None:
             raise AssertionError(
