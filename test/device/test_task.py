@@ -1,8 +1,12 @@
+import base64
 import importlib
 import json
+from typing import cast
 
 import pytest
 from kirin.prelude import basic_no_opt
+from kirin.serialization import JSONSerializer
+from kirin.serialization.bsonserializer import CompressedBSONSerializer
 from qlam_core.errors import APIError
 from qlam_core.plugins.tasks.api.tasks_models import TaskStatus
 
@@ -10,6 +14,7 @@ from bloqade.core.device.future import ApiFetchOptions
 from bloqade.core.device.local_storage import DictStorage
 from bloqade.core.device.task import (
     KernelBatchTask,
+    KernelSerializer,
     ParameterScanTask,
     SingleKernelTask,
 )
@@ -87,6 +92,56 @@ def test_single_kernel_task_omits_arguments_and_metadata_when_unset():
     subtask = task.create_task_definition().subtasks[0]
     assert subtask.arguments is None
     assert subtask.subtask_metadata is None
+
+
+def test_single_kernel_task_serializes_kernel_with_json_by_default():
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+    )
+
+    content = task.create_task_definition().programs[0].content
+    encoded_module = main.dialects.encode(main, version=task.program_language_version)
+
+    assert content == JSONSerializer().encode(encoded_module)
+    assert json.loads(content)
+
+
+def test_single_kernel_task_base64_encodes_binary_serializer_output():
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="flair",
+        kernel=main,
+        num_shots=1,
+        kernel_serializer=CompressedBSONSerializer(),
+    )
+
+    content = task.create_task_definition().programs[0].content
+    decoded_module = CompressedBSONSerializer().decode(
+        base64.b64decode(content, validate=True)
+    )
+    restored_main = main.dialects.decode(decoded_module)
+
+    assert restored_main.code.is_structurally_equal(main.code)
+
+
+def test_single_kernel_task_rejects_non_string_serializer_output():
+    class DictSerializer:
+        def encode(self, _encoded_module):
+            return {"content": "not valid"}
+
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        kernel_serializer=cast(KernelSerializer, DictSerializer()),
+    )
+
+    with pytest.raises(TypeError, match="kernel_serializer.encode must return"):
+        task.serialize_kernel(main)
 
 
 def test_parameter_scan_reuses_one_program_for_all_argument_sets():

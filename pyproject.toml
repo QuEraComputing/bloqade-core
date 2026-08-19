@@ -99,7 +99,7 @@ exclude_also = [
 ]
 
 [tool.pyright]
-ignore = ["demo/qasm_single_task.py", "demo/qasm_single_task_persistent.py"]  # requires bloqade-circuit so pyright will always fail
+ignore = ["demo/qasm_single_task.py", "demo/qasm_single_task_persistent.py", "demo/qasm_single_task_simpler_serialization.py"]  # requires bloqade-circuit so pyright will always fail
 
 [tool.pytest.ini_options]
 testpaths = "test/"

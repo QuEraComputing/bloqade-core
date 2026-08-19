@@ -7,34 +7,23 @@ qasm_single_task_persistent.py.
 NOTE: requires bloqade-circuit[qasm2] to be installed.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from bloqade.qasm2.emit import QASM2
 from kirin.ir.method import Method as Method
 
 from bloqade import qasm2
-from bloqade.core.device import Device, Future, Result, set_logging
-from bloqade.core.device.task import SingleKernelTask
+from bloqade.core.device import Device, set_logging
 
 set_logging()
 
 
-# NOTE: custom task that overrides serialization with QASM2 string emit
-@dataclass
-class QASM2Task(SingleKernelTask):
-    @property
-    def program_language_version(self) -> str:
-        return "2.0.0"
+@dataclass(frozen=True)
+class QASM2Serializer:
+    kernel: Method
 
-    def serialize_kernel(self, kernel: Method) -> str:
-        return QASM2().emit_str(kernel)
-
-
-@dataclass
-class QASM2Device(Device):
-    single_kernel_task_cls: type[SingleKernelTask[Future[Result]]] = field(
-        default=QASM2Task, init=False
-    )
+    def encode(self, _encoded_module: object) -> str:
+        return QASM2().emit_str(self.kernel)
 
 
 # 1. Create a simple kernel (simulator supports up to 10 qubits)
@@ -45,11 +34,16 @@ def bell():
     qasm2.cx(q[0], q[1])
 
 
-# 2. Create the task using the device -- optionally set some metadata
-# NOTE: context_name and program_language are set to qasm for testing
-device = QASM2Device(context_name="gemini-qasm")
+# 2. Create the task using the device -- optionally set some metadata.
+# NOTE: context_name and program_language are set to qasm for testing.
+device = Device(context_name="gemini-qasm")
 task = device.task(
-    kernel=bell, num_shots=2, metadata={"tag": "bell"}, program_language="qasm"
+    kernel=bell,
+    num_shots=2,
+    metadata={"tag": "bell"},
+    program_language="qasm",
+    language_version="2.0.0",
+    kernel_serializer=QASM2Serializer(bell),
 )  # metadata is completely customizable
 
 # 3a. Dry run
