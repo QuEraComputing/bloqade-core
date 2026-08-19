@@ -48,11 +48,6 @@ def second():
     return
 
 
-class FakeKernel:
-    def __init__(self, sym_name: str):
-        self.sym_name = sym_name
-
-
 class SerializableSingleKernelTask(SingleKernelTask):
     def serialize_kernel(self, kernel):
         return f"serialized:{kernel.sym_name}"
@@ -106,7 +101,7 @@ def test_single_kernel_task_omits_arguments_and_metadata_when_unset():
     task = SerializableSingleKernelTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("main"),
+        kernel=main,
         num_shots=1,
     )
 
@@ -172,7 +167,7 @@ def test_parameter_scan_reuses_one_program_for_all_argument_sets():
     task = SerializableParameterScanTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("scan"),
+        kernel=scan,
         arguments=[{"x": 1.0}, {"x": 2.0}, {"x": 3.0}],
         metadata=[{"i": 0}, {"i": 1}, {"i": 2}],
         num_shots=7,
@@ -201,7 +196,7 @@ def test_kernel_batch_task_maps_each_kernel_to_its_own_program():
     task = SerializableKernelBatchTask(
         context_name="ctx",
         program_language="squin",
-        kernels=[FakeKernel("first"), FakeKernel("second")],
+        kernels=[first, second],
         arguments=[{"x": 1.0}, {"x": 2.0}],
         num_shots=[3, 5],
     )
@@ -224,7 +219,7 @@ def test_validate_arguments_rejects_metadata_length_mismatch():
     task = SerializableParameterScanTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("scan"),
+        kernel=scan,
         arguments=[{"x": 1.0}, {"x": 2.0}],
         metadata=[{"only": "one"}],
         num_shots=7,
@@ -238,7 +233,7 @@ def test_validate_arguments_rejects_shot_count_length_mismatch():
     task = SerializableKernelBatchTask(
         context_name="ctx",
         program_language="squin",
-        kernels=[FakeKernel("first"), FakeKernel("second")],
+        kernels=[first, second],
         num_shots=[3],
     )
 
@@ -250,7 +245,7 @@ def test_run_async_dry_run_prints_summary_and_does_not_submit(monkeypatch, capsy
     task = SerializableSingleKernelTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("main"),
+        kernel=main,
         num_shots=1,
     )
 
@@ -270,7 +265,7 @@ def test_run_async_submits_created_task_definition(monkeypatch):
     task = SerializableSingleKernelTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("main"),
+        kernel=main,
         num_shots=1,
     )
     storage = DictStorage()
@@ -301,9 +296,9 @@ def test_submit_task_definition_stores_definition_and_returns_future(monkeypatch
     task = SerializableSingleKernelTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("main"),
+        kernel=main,
         num_shots=1,
-        future_cls=RecordingFuture,
+        future_cls=RecordingFuture,  # type: ignore[reportArgumentType]
     )
     storage = DictStorage()
     fetch_options = ApiFetchOptions(subtasks_per_fetch=2)
@@ -390,7 +385,7 @@ def test_submit_task_definition_rejects_missing_created_task_id(monkeypatch):
     task = SerializableSingleKernelTask(
         context_name="ctx",
         program_language="squin",
-        kernel=FakeKernel("main"),
+        kernel=main,
         num_shots=1,
     )
 

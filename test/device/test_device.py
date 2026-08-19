@@ -9,11 +9,6 @@ from bloqade.core.device.task import (
 )
 
 
-class FakeKernel:
-    def __init__(self, sym_name: str):
-        self.sym_name = sym_name
-
-
 class CustomFuture(Future):
     pass
 
@@ -24,7 +19,11 @@ class RecordingSerializer:
 
 
 def test_device_task_builds_single_kernel_task_with_device_defaults():
-    kernel = FakeKernel("main")
+    @basic_no_opt
+    def main():
+        return
+
+    kernel = main
     device = Device(context_name="ctx", future_cls=CustomFuture)
 
     task = device.task(
@@ -47,7 +46,15 @@ def test_device_task_builds_single_kernel_task_with_device_defaults():
 
 
 def test_device_batch_task_builds_kernel_batch_task():
-    kernels = [FakeKernel("first"), FakeKernel("second")]
+    @basic_no_opt
+    def first():
+        return
+
+    @basic_no_opt
+    def second():
+        return
+
+    kernels = [first, second]
     device = Device(context_name="ctx", future_cls=CustomFuture)
 
     task = device.batch_task(
@@ -70,7 +77,11 @@ def test_device_batch_task_builds_kernel_batch_task():
 
 
 def test_device_parameter_scan_builds_parameter_scan_task():
-    kernel = FakeKernel("scan")
+    @basic_no_opt
+    def scan():
+        return
+
+    kernel = scan
     device = Device(context_name="ctx", future_cls=CustomFuture)
 
     task = device.parameter_scan(

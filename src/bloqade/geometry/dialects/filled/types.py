@@ -1,7 +1,8 @@
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from functools import cached_property
 from itertools import product
-from typing import Any, Iterable, Sequence, TypeVar
+from typing import Any, TypeVar
 
 from kirin import types
 from kirin.dialects import ilist
@@ -45,7 +46,7 @@ class FilledGrid(grid.Grid[NumX, NumY]):
     def __hash__(self):
         return hash((self.parent, self.vacancies))
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         return (
             isinstance(other, FilledGrid)
             and self.parent == other.parent
