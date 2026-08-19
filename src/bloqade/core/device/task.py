@@ -17,7 +17,7 @@ from qlam_core.plugins.tasks.api.tasks_models import (
     TaskMetadata,
 )
 
-from .future import ApiFetchOptions, Future, FutureType
+from .future import DEFAULT_FETCH_OPTIONS, ApiFetchOptions, Future, FutureType
 from .local_storage import DictStorage, StorageBackend
 from .log_info import logger
 from .mixins import AuthMixin
@@ -32,7 +32,7 @@ class KernelSerializer(Protocol):
 
 
 @dataclass(kw_only=True)
-class TaskABC(Generic[FutureType], AuthMixin, ABC):
+class TaskABC(AuthMixin, ABC, Generic[FutureType]):
     """Abstract base class for kernel tasks.
 
     A task collects one or more kernels and per-subtask metadata into a
@@ -295,7 +295,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         *,
         dry_run: Literal[True],
         storage: StorageBackend | None = None,
-        fetch_options: ApiFetchOptions = ApiFetchOptions(),
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
     ) -> None: ...
 
     @overload
@@ -304,7 +304,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         *,
         dry_run: Literal[False],
         storage: StorageBackend | None = None,
-        fetch_options: ApiFetchOptions = ApiFetchOptions(),
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
     ) -> FutureType: ...
 
     def run_async(
@@ -312,7 +312,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         *,
         dry_run: bool,
         storage: StorageBackend | None = None,
-        fetch_options: ApiFetchOptions = ApiFetchOptions(),
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
     ) -> FutureType | None:
         """Validate the task and either dry-run or submit it.
 
@@ -354,7 +354,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         *,
         task_definition: TaskDefinition,
         storage: StorageBackend | None = None,
-        fetch_options: ApiFetchOptions = ApiFetchOptions(),
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
     ) -> FutureType:
         """Submit a prepared task definition and return a future.
 

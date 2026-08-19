@@ -62,7 +62,9 @@ src_paths = ["src/bloqade"]
 line-length = 88
 
 [tool.ruff]
-target-version = "py312"
+# The package supports Python 3.10+, so do not suggest syntax introduced in
+# Python 3.12 (PEP 695 type parameters).
+target-version = "py310"
 exclude = [
     ".bzr",
     ".direnv",
@@ -88,6 +90,14 @@ exclude = [
 
 [tool.ruff.lint]
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+# Import ordering is handled by the dedicated isort hook.
+ignore = ["I001"]
+
+[tool.ruff.lint.per-file-ignores]
+# These decorated interface functions are runtime stubs. Their ellipses are
+# necessary for Pyright to treat them as non-returning implementations.
+"src/bloqade/geometry/dialects/filled/_interface.py" = ["PIE790"]
+"src/bloqade/geometry/dialects/grid/_interface.py" = ["PIE790"]
 
 [tool.coverage.run]
 include = ["src/bloqade/*"]
