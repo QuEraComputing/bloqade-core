@@ -29,7 +29,7 @@ def _bloqade_emitter():
     """
     fake = types.ModuleType("bloqade.core.device._probe")
     fake.logger = logger  # type: ignore
-    exec("def emit(msg):\n    logger.info(msg)", fake.__dict__)
+    exec("def emit(msg):\n    logger.info(msg)", fake.__dict__)  # noqa: S102
     return fake.emit
 
 

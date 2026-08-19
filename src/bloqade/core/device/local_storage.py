@@ -2,8 +2,8 @@ import datetime
 import json
 import sqlite3
 from abc import ABC, abstractmethod
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
-from typing import Callable, Iterable
 from uuid import UUID
 
 import numpy as np

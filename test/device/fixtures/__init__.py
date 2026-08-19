@@ -21,4 +21,4 @@ the builders against the new wire shapes.
 
 from . import local, remote
 
-__all__ = ["remote", "local"]
+__all__ = ["local", "remote"]
