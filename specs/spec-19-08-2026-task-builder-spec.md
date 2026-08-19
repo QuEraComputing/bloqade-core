@@ -100,12 +100,15 @@ i1 = task.add_subtask(k2, 23)         # -> 1
 i2 = task.add_subtask(k3, 230)        # -> 2
 i3 = task.add_subtask(k1, 100)        # -> 3  (reuses k1's program; new subtask)
 
+# Kernel arguments are passed as keyword arguments; metadata is keyword-only.
+i4 = task.add_subtask(k7, 500, metadata={"tag": "cal"}, theta=1.5)  # -> 4
+
 # Branch without mutating the original.
 new_task = task.copy()
 new_task.add_subtask(k4, 50)          # does not affect `task`
 
-# Convenience for many subtasks at once.
-task.add_batch_subtask([k5, k6], [10, 20])   # -> [4, 5]
+# Convenience for many subtasks at once (shots only).
+task.add_batch_subtask([k5, k6], [10, 20])   # -> [5, 6]
 
 # Inspect before running.
 print(task)                           # short summary (see §5.6)
@@ -137,23 +140,37 @@ Internal state:
 The builder holds **no** device, dialect group, validation suite, serializer,
 or language. Those are supplied by the `Device` at finalize time (§5.5).
 
-### 5.2 `add_subtask(kernel, num_shots, arguments=None, metadata=None) -> int`
+### 5.2 `add_subtask(kernel, num_shots, *, metadata=None, **kernel_args) -> int`
+
+Kernel arguments are supplied as **keyword arguments** — you are effectively
+*calling* the kernel — and collected into the subtask's `arguments` dict.
+
+```python
+task.add_subtask(kernel, num_shots=100, theta=1.5, phi=0.2)
+# -> arguments = {"theta": 1.5, "phi": 0.2}
+```
 
 - Looks up `kernel` in `_programs` by identity; appends it if absent (this is
   the only place a new program is created).
+- Collects `**kernel_args` into the subtask's `arguments` (`None` /`{}` when no
+  kwargs are given). `metadata` is a keyword-only dict.
 - Appends a `_Subtask` referencing that program index.
 - Returns the **subtask index** (the position in `_subtasks`).
+- **Reserved names.** Because kernel arguments ride on `**kwargs`, the
+  parameter names `kernel`, `num_shots`, and `metadata` cannot be used as
+  kernel argument names via this method.
 
-### 5.3 `add_batch_subtask(kernels, num_shots, arguments=None, metadata=None) -> list[int]`
+### 5.3 `add_batch_subtask(kernels, num_shots) -> list[int]`
 
-Convenience wrapper over `add_subtask`.
+Convenience wrapper over `add_subtask` for adding many subtasks at once.
+Deliberately **shots-only** — it does not take per-kernel arguments or
+metadata. When a subtask needs arguments, call `add_subtask` in a loop.
 
 - `num_shots`: `int` (broadcast to every kernel) or `list[int]` (per kernel,
   length-checked against `kernels`).
-- `arguments` / `metadata`: `None` or a list matching `kernels` in length.
 - Returns the list of subtask indices produced, in order.
-- Raises `ValueError` on any length mismatch, before adding anything (no
-  partial mutation).
+- Raises `ValueError` on a `num_shots` length mismatch, before adding anything
+  (no partial mutation).
 
 ### 5.4 `copy() -> TaskBuilder`
 
@@ -172,22 +189,24 @@ Internal (leading underscore); normally called by `Device.run_async`. **Pure /
 non-mutating**: it does not change builder state and may be called repeatedly
 (e.g. once for a dry-run summary, again for the real submission).
 
-Proposed signature (final arg list TBD during implementation — at minimum it
-receives what the qlam payload and validation need):
+It receives a single **`FinalizeContext`** — a frozen dataclass bundling
+everything the qlam payload and validation need, built by the `Device` from its
+own fields:
 
 ```python
-def _finalize(
-    self,
-    *,
-    program_language: str,
-    language_version: str,
-    dialect_group: ir.DialectGroup | None,
-    validation_suite: ValidationSuite | None,
-    kernel_serializer: KernelSerializer,
-) -> TaskDefinition: ...
+@dataclass(frozen=True)
+class FinalizeContext:
+    program_language: str
+    language_version: str
+    kernel_serializer: KernelSerializer
+    dialect_group: ir.DialectGroup | None = None
+    validation_suite: ValidationSuite | None = None
+
+
+def _finalize(self, ctx: FinalizeContext) -> TaskDefinition: ...
 ```
 
-Behavior:
+Behavior (reading fields from `ctx`):
 
 1. **Dialect-group check (level 1)** — for each unique program kernel, if
    `dialect_group is not None`, require
@@ -197,9 +216,12 @@ Behavior:
 2. **Validation suite** — for each unique program kernel, if
    `validation_suite is not None`, run `validation_suite.validate(kernel)` and
    collect any invalid result.
-3. If either check produced failures, raise a single exception whose body is a
-   **detailed per-kernel report** (kernel `sym_name` + the specific dialect
-   and/or validation errors). No submission happens.
+3. If either check produced failures, raise a single **`TaskFinalizeError`**
+   (a dedicated `bloqade` exception) whose body is a **detailed per-kernel
+   report** (kernel `sym_name` + the specific dialect and/or validation
+   errors), aggregating both check kinds into one uniform message. It also
+   holds the underlying kirin `ValidationResult`s for programmatic access. No
+   submission happens.
 4. On success, build the qlam payload:
    - `programs = [Program(content=encode(kernel)) for kernel in _programs]`,
      serialized with `kernel_serializer` at `language_version` (same encoding
@@ -265,10 +287,12 @@ prepared `TaskDefinition`.
 - `Device` inherits `TaskSubmitterMixin`.
 - `task_builder() -> TaskBuilder` — a thin factory returning `TaskBuilder()`,
   for discoverability. (Direct `TaskBuilder()` construction is also supported.)
+- A `_finalize_context() -> FinalizeContext` helper that bundles the device's
+  `program_language`, `language_version`, `kernel_serializer`, `dialect_group`,
+  and `validation_suite`.
 - `run_async(builder, *, dry_run, storage=None, fetch_options=...)` with
   `Literal[True] -> None` / `Literal[False] -> FutureType` overloads:
-  1. `task_def = builder._finalize(...)` using the device's language, dialect
-     group, validation suite, and serializer.
+  1. `task_def = builder._finalize(self._finalize_context())`.
   2. If `dry_run`: print the builder summary (DRY-RUN banner + `str(builder)`),
      return `None`.
   3. Else: `return self.submit_task_definition(task_definition=task_def, ...)`.
@@ -280,21 +304,31 @@ Decisions locked in discussion (see issue #398 and design review):
 1. **Standalone builder + `device.run_async(builder, ...)`.** The builder is a
    plain mutable object, not a `TaskABC`. The device owns the run entry point,
    matching the spec sketch `device.run_async(task, dry_run)`.
-2. **`_finalize` receives language, dialect group, and validation suite as
-   arguments** (passed by the device at run time) rather than storing them on
-   the builder at construction.
+2. **`_finalize` receives a `FinalizeContext`** (bundling language,
+   language version, serializer, dialect group, and validation suite), built by
+   the device at run time, rather than storing them on the builder at
+   construction.
 3. **`_finalize` is non-mutating / re-runnable.** No finalize "lock" and no
    `_finalized` flag. A dry-run does not prevent further edits.
 4. **Dialect check is hardcoded to level 1** (kernel dialects ⊆ group). The
-   three-level scheme from the issue (subset / set-equal / same-object
-   identity) is noted for the future, but only level 1 ships now.
-5. **`add_batch_subtask` is in scope; `modify_*` methods are not.** In-place
+   set-equal and same-object-identity variants from the issue are **not**
+   planned — level 1 is the only check.
+5. **`_finalize` failures raise a dedicated `TaskFinalizeError`** that
+   aggregates dialect and validation failures into one uniform per-kernel
+   report and retains the underlying kirin `ValidationResult`s.
+6. **Kernel arguments are passed as `**kwargs` on `add_subtask`;
+   `add_batch_subtask` is shots-only.** `add_subtask(kernel, num_shots, *,
+   metadata=None, **kernel_args)` collects kernel arguments as keyword
+   arguments (`kernel`/`num_shots`/`metadata` are reserved names).
+   `add_batch_subtask(kernels, num_shots)` takes no per-kernel arguments; loop
+   `add_subtask` when arguments are needed.
+7. **`add_batch_subtask` is in scope; `modify_*` methods are not.** In-place
    editing risks silently mutating a program shared by other subtasks, and the
    team prefers friction here — a mistake means rebuilding (or `copy()`-ing and
    re-adding), which forces the user to slow down. Validation failures crash
    before any submission (unlike Aquila's submit-time validation), so there is
    no partial-submission recovery problem to solve with in-place edits.
-6. **Programs are deduplicated by object identity.** Re-adding the same kernel
+8. **Programs are deduplicated by object identity.** Re-adding the same kernel
    reuses its program; distinct kernel objects get distinct programs.
 
 ## 8. Testing plan
@@ -303,16 +337,22 @@ New `test/device/test_builder.py`:
 
 - `add_subtask` returns correct subtask indices; program dedup by identity;
   distinct kernels get distinct program indices.
+- `add_subtask` collects `**kernel_args` into the subtask's `arguments`;
+  keyword-only `metadata` is stored separately; no-kwargs case yields empty/None
+  arguments.
 - `add_batch_subtask` broadcast vs list shots; length-mismatch raises before
-  mutation.
+  mutation; produces no arguments/metadata.
 - `copy` isolates both lists (adds on copy/original don't cross over) and shares
   kernel objects.
 - `_finalize` produces the expected `programs` / `subtasks` / `program_language`
   payload; dedup reflected in `program_index`.
-- `_finalize` dialect-check failure raises with a per-kernel report; passing
-  case and `dialect_group=None` skip.
-- `_finalize` validation-suite failure raises an aggregated per-kernel report;
+- `_finalize` dialect-check failure raises `TaskFinalizeError` with a per-kernel
+  report; passing case and `dialect_group=None` skip.
+- `_finalize` validation-suite failure raises `TaskFinalizeError` with an
+  aggregated per-kernel report and retains the `ValidationResult`s;
   `validation_suite=None` skips.
+- `_finalize` reports both dialect and validation failures together in one
+  `TaskFinalizeError`.
 - `_finalize` is non-mutating (state identical before/after; re-runnable).
 - `__str__` / `print_detailed` formatting.
 
@@ -326,18 +366,23 @@ Extend `test/device/test_device.py`:
 Regression: existing `test/device/test_task.py` must remain green after the
 submission-mixin refactor.
 
-## 9. Open questions
+## 9. Resolved questions
 
-- **Exact `_finalize` argument list.** Whether serialization inputs
-  (`kernel_serializer`, `language_version`) travel as explicit args or the
-  device pre-serializes. Current lean: explicit args (above).
-- **Error type for finalize failures.** Reuse kirin's `ValidationErrorGroup`,
-  or a new `bloqade` exception that aggregates dialect + validation reports?
-  Leaning toward a dedicated exception for a uniform report across both check
-  kinds.
-- **`add_batch_subtask` argument shape** for `arguments` / `metadata` when only
-  some subtasks need them.
-- **Retrieval / `Future` hardening** (save, load, fetch, concatenate, SQL
-  interaction) — deferred to a separate issue per Jon Wurtz.
-- **Future dialect-check levels 2/3** — do we ever need set-equal or
-  same-object identity checks, and if so, how is the level selected?
+These were open during review and are now settled (folded into the sections
+above):
+
+1. **`_finalize` inputs** → bundled into a frozen `FinalizeContext` built by the
+   device (§5.5, §6.2).
+2. **Finalize error type** → a dedicated `TaskFinalizeError` aggregating dialect
+   + validation failures, retaining the kirin `ValidationResult`s (§5.5).
+3. **`add_batch_subtask` argument shape** → kernel arguments move to `**kwargs`
+   on `add_subtask`; `add_batch_subtask` is shots-only (§5.2, §5.3).
+4. **Retrieval / `Future` hardening** → out of scope; deferred to its own issue.
+5. **Dialect-check levels 2/3** → not planned; level 1 is the only check.
+
+## 10. Remaining decisions (implementation-time)
+
+- Exact wording/format of the `TaskFinalizeError` per-kernel report and the
+  dry-run summary banner.
+- Whether `add_subtask` stores empty kwargs as `None` or `{}` in the subtask
+  (payload-equivalent, but pick one for consistency).
