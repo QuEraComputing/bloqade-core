@@ -374,7 +374,10 @@ def test_fetch_subtask_page_parses_results_and_tracks_first_incomplete_page():
 
     client = remote.FakeResultsClient(envelope_return=envelope)
 
-    done = future._fetch_subtask_page(client=client, subtask_page=3)
+    done = future._fetch_subtask_page(
+        client=client,  # type: ignore[reportArgumentType]
+        subtask_page=3,
+    )
 
     assert done is True
     assert future._first_incomplete_subtask_page == 3
