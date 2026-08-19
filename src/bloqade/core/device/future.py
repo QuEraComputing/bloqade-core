@@ -1,6 +1,6 @@
 import time
 from dataclasses import dataclass, field
-from typing import Any, Generic, Self
+from typing import Any, Generic
 from warnings import warn
 
 import numpy as np
@@ -13,7 +13,7 @@ from qlam_core.plugins.tasks.api.tasks_models import (
     TaskDefinition,
     TaskStatus,
 )
-from typing_extensions import TypeVar
+from typing_extensions import Self, TypeVar
 
 from .local_storage import (
     DictStorage,

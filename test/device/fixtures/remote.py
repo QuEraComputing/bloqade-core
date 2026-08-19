@@ -22,7 +22,7 @@ qlam-core v0.6.x (the `~=0.6.0` pin in pyproject.toml).
 from __future__ import annotations
 
 from collections.abc import Callable
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 from uuid import UUID
 
@@ -55,7 +55,7 @@ DEFAULT_COMPILATION_ID = "7cd3b1aa-b0d8-4839-b060-79c8d160883e"
 DEFAULT_GROUP_ID = UUID("00000000-0000-0000-0000-000000000000")
 DEFAULT_GROUP_NAME = "default-group"
 DEFAULT_USER_ID = UUID("acbabea1-b48d-40c4-a7f6-d05bcf75cdd0")
-DEFAULT_CREATED_DATE = datetime(2026, 1, 2, 3, 4, 5, tzinfo=UTC)
+DEFAULT_CREATED_DATE = datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
 
 
 # --------------------------------------------------------------------------- #

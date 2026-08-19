@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from uuid import UUID
 
 from qlam_core.plugins.tasks.api.tasks_models import (
@@ -449,8 +449,8 @@ def test_storage_get_task_creation_time_round_trip(storage):
 
 
 def test_storage_update_subtasks_completed_date_round_trip(storage):
-    first_completed_date = datetime(2026, 1, 2, 3, 4, 6, tzinfo=UTC)
-    second_completed_date = datetime(2026, 1, 2, 3, 4, 7, tzinfo=UTC)
+    first_completed_date = datetime(2026, 1, 2, 3, 4, 6, tzinfo=timezone.utc)
+    second_completed_date = datetime(2026, 1, 2, 3, 4, 7, tzinfo=timezone.utc)
     add_task_definition(
         storage,
         "task-1",

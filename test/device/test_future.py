@@ -1,5 +1,5 @@
 import importlib
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from types import SimpleNamespace
 
 import numpy as np
@@ -420,7 +420,7 @@ def test_fetch_subtask_page_persists_completed_dates_from_api_schema(storage):
         fetch_options=ApiFetchOptions(subtasks_per_fetch=10, shots_per_fetch=100),
     )
 
-    completed_at_0 = datetime(2026, 5, 21, 10, 0, 0, tzinfo=UTC)
+    completed_at_0 = datetime(2026, 5, 21, 10, 0, 0, tzinfo=timezone.utc)
     completed_at_1_iso = "2026-05-21T11:00:00+00:00"
 
     envelope = remote.make_result_envelope(
@@ -481,7 +481,7 @@ def test_fetch_subtask_page_updates_completed_dates_only_on_first_shot_page():
         fetch_options=ApiFetchOptions(subtasks_per_fetch=10, shots_per_fetch=2),
     )
 
-    completed_at = datetime(2026, 5, 21, 10, 0, 0, tzinfo=UTC)
+    completed_at = datetime(2026, 5, 21, 10, 0, 0, tzinfo=timezone.utc)
 
     update_calls = []
     original_update = dict_storage.update_subtasks_completed_date

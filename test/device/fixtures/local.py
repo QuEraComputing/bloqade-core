@@ -10,7 +10,7 @@ this fixture should switch to importing it.
 from __future__ import annotations
 
 from collections.abc import Iterable
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 import numpy as np
 import pytest
@@ -22,7 +22,7 @@ from bloqade.core.device.local_storage import (
 )
 
 # Shared anchor; previously duplicated across test_storage / test_future / test_result.
-CREATION_TIME = datetime(2026, 1, 2, 3, 4, 5, tzinfo=UTC)
+CREATION_TIME = datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
 
 
 def make_shot(
