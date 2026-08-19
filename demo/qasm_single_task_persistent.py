@@ -15,7 +15,6 @@ from bloqade.core.device.task import SingleKernelTask
 
 # NOTE: custom task that overrides serialization with QASM2 string emit
 @dataclass
-@dataclass
 class QASM2Task(SingleKernelTask):
     @property
     def program_language_version(self) -> str:

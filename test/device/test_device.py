@@ -13,6 +13,11 @@ class CustomFuture(Future):
     pass
 
 
+class RecordingSerializer:
+    def encode(self, encoded_module):
+        return f"serialized:{encoded_module.version}"
+
+
 def test_device_task_builds_single_kernel_task_with_device_defaults():
     @basic_no_opt
     def main():
@@ -37,6 +42,7 @@ def test_device_task_builds_single_kernel_task_with_device_defaults():
     assert task.arguments == {"theta": 1.5}
     assert task.metadata == {"label": "calibration"}
     assert task.program_language == "flair.v1"
+    assert task.kernel_serializer is device.kernel_serializer
 
 
 def test_device_batch_task_builds_kernel_batch_task():
@@ -67,6 +73,7 @@ def test_device_batch_task_builds_kernel_batch_task():
     assert task.metadata == [{"name": "a"}, {"name": "b"}]
     assert task.num_shots == [3, 5]
     assert task.program_language == "squin"
+    assert task.kernel_serializer is device.kernel_serializer
 
 
 def test_device_parameter_scan_builds_parameter_scan_task():
@@ -93,3 +100,52 @@ def test_device_parameter_scan_builds_parameter_scan_task():
     assert task.metadata == [{"point": "left"}, {"point": "right"}]
     assert task.num_shots == 11
     assert task.program_language == "flair.v2"
+    assert task.kernel_serializer is device.kernel_serializer
+
+
+def test_device_uses_configured_kernel_serializer_for_all_task_shapes():
+    @basic_no_opt
+    def first():
+        return
+
+    @basic_no_opt
+    def second():
+        return
+
+    serializer = RecordingSerializer()
+    device = Device(context_name="ctx", kernel_serializer=serializer)
+
+    assert device.task(first).kernel_serializer is serializer
+    assert device.batch_task([first, second]).kernel_serializer is serializer
+    assert device.parameter_scan(first, arguments=[{}]).kernel_serializer is serializer
+
+
+def test_device_kernel_serializer_override_wins_over_device_default():
+    @basic_no_opt
+    def first():
+        return
+
+    @basic_no_opt
+    def second():
+        return
+
+    default_serializer = RecordingSerializer()
+    override_serializer = RecordingSerializer()
+    device = Device(context_name="ctx", kernel_serializer=default_serializer)
+
+    assert (
+        device.task(first, kernel_serializer=override_serializer).kernel_serializer
+        is override_serializer
+    )
+    assert (
+        device.batch_task(
+            [first, second], kernel_serializer=override_serializer
+        ).kernel_serializer
+        is override_serializer
+    )
+    assert (
+        device.parameter_scan(
+            first, arguments=[{}], kernel_serializer=override_serializer
+        ).kernel_serializer
+        is override_serializer
+    )
