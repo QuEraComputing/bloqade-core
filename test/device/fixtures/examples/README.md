@@ -3,7 +3,7 @@
 Sanitized JSON dumps captured from the live qlam-core API, used as the
 reference wire shapes for the builders in `../remote.py`.
 
-**Verified against qlam-core v0.2.0** (the `qlam-core>=0.2.0` pin in
+**Verified against qlam-core v0.6.x** (the `qlam-core~=0.6.0` pin in
 `pyproject.toml`). If that pin is bumped, re-capture these dumps and re-check
 the `remote.py` builders against the new shapes.
 

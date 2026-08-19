@@ -16,7 +16,7 @@ testing the production normalization paths (`.upper()` in future.py) exercises
 realistic input. The bloqade local dict schema lives in `local.py`.
 
 These builders and the `examples/` dumps they mirror were verified against
-qlam-core v0.2.0 (the `>=0.2.0` pin in pyproject.toml).
+qlam-core v0.6.x (the `~=0.6.0` pin in pyproject.toml).
 """
 
 from __future__ import annotations
@@ -32,9 +32,11 @@ from qlam_core.plugins.compilations.api.compilations_models import (
 )
 from qlam_core.plugins.definitions.api import definitions_models as _defs
 from qlam_core.plugins.definitions.api.definitions_models import (
+    GroupSummary as DefinitionGroupSummary,
     TaskDefinitionResponse,
 )
 from qlam_core.plugins.tasks.api.tasks_models import (
+    GroupSummary as TaskGroupSummary,
     Program,
     Subtask,
     Task,
@@ -49,6 +51,8 @@ from qlam_core.plugins.tasks.api.tasks_models import (
 DEFAULT_TASK_ID = "799ea417-f001-41ae-b788-7cba56e8da27"
 DEFAULT_DEFINITION_ID = "db25a08c-0318-4a0d-b161-2d1658d15fa9"
 DEFAULT_COMPILATION_ID = "7cd3b1aa-b0d8-4839-b060-79c8d160883e"
+DEFAULT_GROUP_ID = UUID("00000000-0000-0000-0000-000000000000")
+DEFAULT_GROUP_NAME = "default-group"
 DEFAULT_USER_ID = UUID("acbabea1-b48d-40c4-a7f6-d05bcf75cdd0")
 DEFAULT_CREATED_DATE = datetime(2026, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
 
@@ -99,6 +103,7 @@ def make_task_definition(
     program_language: str | None = "squin.v0.1.0",
     programs: list[Program] | None = None,
     subtasks: list[Subtask] | None = None,
+    group_id: UUID | None = None,
 ) -> TaskDefinition:
     if programs is None:
         programs = [make_program()]
@@ -108,6 +113,7 @@ def make_task_definition(
         program_language=program_language,
         programs=programs,
         subtasks=subtasks,
+        group_id=group_id,
     )
 
 
@@ -129,16 +135,17 @@ def make_task(
     created_date: datetime = DEFAULT_CREATED_DATE,
     modified_date: datetime | None = None,
     modified_by: UUID | None = None,
+    scheduled_date: datetime | None = None,
+    group: TaskGroupSummary | None = None,
     error_reasons: list[str] | None = None,
     **extras: Any,
 ) -> Task:
     """Build a real `Task` pydantic model.
 
-    Extra kwargs land in `model_extra` (the real API includes `scheduled_date`
-    and `group_id` there). Passing a field name the model does not declare —
-    e.g. the historical `definition=` typo — does NOT silently succeed: it
-    becomes a model_extra entry, so production code that accesses it as a
-    declared attribute will still fail.
+    Passing a field name the model does not declare — e.g. the historical
+    `definition=` typo — does NOT silently succeed: it becomes a
+    `model_extra` entry, so production code that accesses it as a declared
+    attribute will still fail.
     """
     return Task(
         id=id,
@@ -149,6 +156,14 @@ def make_task(
         created_date=created_date,
         modified_date=modified_date,
         modified_by=modified_by,
+        scheduled_date=scheduled_date,
+        group=(
+            TaskGroupSummary(
+                id=DEFAULT_GROUP_ID, name=DEFAULT_GROUP_NAME, deactivated=False
+            )
+            if group is None
+            else group
+        ),
         error_reasons=[] if error_reasons is None else error_reasons,
         **extras,
     )
@@ -164,6 +179,7 @@ def make_task_definition_response(
     created_by: UUID = DEFAULT_USER_ID,
     modified_date: datetime | None = None,
     modified_by: UUID | None = None,
+    group: DefinitionGroupSummary | None = None,
 ) -> TaskDefinitionResponse:
     """Build a `TaskDefinitionResponse`.
 
@@ -188,6 +204,13 @@ def make_task_definition_response(
         created_by=created_by,
         modified_date=modified_date,
         modified_by=modified_by,
+        group=(
+            DefinitionGroupSummary(
+                id=DEFAULT_GROUP_ID, name=DEFAULT_GROUP_NAME, deactivated=False
+            )
+            if group is None
+            else group
+        ),
     )
 
 
@@ -403,6 +426,31 @@ class FakeTasksClient(_RecordingContextManager):
         if self.cancel_raises is not None:
             raise self.cancel_raises
         return None
+
+
+class FakeGroupsClient(_RecordingContextManager):
+    """Replaces ``qlam_core.plugins.groups.api.client.GroupsClient`` in tests."""
+
+    def __init__(
+        self,
+        app_context: Any = None,
+        *,
+        resolve_id_return: UUID | Callable[[str], UUID] | None = None,
+    ) -> None:
+        _RecordingContextManager.__init__(self)
+        self.app_context = app_context
+        self.resolve_id_return = resolve_id_return
+
+    def resolve_id(self, group: str) -> UUID:
+        self._record("resolve_id", group=group)
+        ret = self.resolve_id_return
+        if ret is None:
+            raise AssertionError(
+                "FakeGroupsClient.resolve_id called but no resolve_id_return set"
+            )
+        if callable(ret):
+            return ret(group)
+        return ret
 
 
 class FakeDefinitionsClient(_RecordingContextManager):

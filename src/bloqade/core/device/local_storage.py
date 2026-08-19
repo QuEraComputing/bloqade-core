@@ -4,6 +4,7 @@ import sqlite3
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Callable, Iterable
+from uuid import UUID
 
 import numpy as np
 from qlam_core.plugins.tasks.api.tasks_models import (
@@ -12,6 +13,8 @@ from qlam_core.plugins.tasks.api.tasks_models import (
     TaskDefinition,
     TaskMetadata,
 )
+
+from .log_info import logger
 
 
 @dataclass(frozen=True)
@@ -81,7 +84,7 @@ class ShotFilter(StorageFilter):
 
 
 class _BloqadeSchemaVersion:
-    version: str = "0.1.0"
+    version: str = "0.2.0"
 
 
 class StorageBackend(ABC):
@@ -176,6 +179,22 @@ class StorageBackend(ABC):
         """
         ...
 
+    def get_task_group_id(self, task_id: str) -> UUID | None:
+        """Return the QLAM group associated with a stored task definition.
+
+        Args:
+            task_id (str): Backend task ID.
+
+        Returns:
+            UUID | None: Stored group UUID, or None when the task definition
+            did not specify a group.
+
+        The default keeps existing custom storage backends compatible; those
+        backends simply reconstruct definitions without an explicit group.
+        Built-in storage backends override this to preserve the group UUID.
+        """
+        return None
+
     @abstractmethod
     def get_programs(self, task_ids: tuple[str, ...] | None = None) -> list[dict]:
         """Return stored program records.
@@ -228,6 +247,7 @@ class StorageBackend(ABC):
             TaskDefinition: Reconstructed task definition.
         """
         program_language = self.get_program_language(task_id=task_id)
+        group_id = self.get_task_group_id(task_id=task_id)
 
         program_dicts = self.get_programs(task_ids=(task_id,))
         program_dicts.sort(key=lambda prog: prog["program_index"])
@@ -258,6 +278,7 @@ class StorageBackend(ABC):
             program_language=program_language,
             programs=programs,
             subtasks=subtasks,
+            group_id=group_id,
         )
 
     def get_arguments(
@@ -515,6 +536,11 @@ class DictStorage(StorageBackend):
             "task_id": task_id,
             "program_language": task_definition.program_language,
             "creation_time": creation_time,
+            "group_id": (
+                str(task_definition.group_id)
+                if task_definition.group_id is not None
+                else None
+            ),
         }
         self._metadata["task_definitions"] = current_defs
 
@@ -572,6 +598,13 @@ class DictStorage(StorageBackend):
             KeyError: If `task_id` is not present.
         """
         return self._metadata["task_definitions"][task_id]["creation_time"]
+
+    def get_task_group_id(self, task_id: str) -> UUID | None:
+        """Return the QLAM group stored for a task definition."""
+        group_id = self._metadata["task_definitions"][task_id].get("group_id")
+        if group_id is None:
+            return None
+        return UUID(group_id)
 
     def get_programs(self, task_ids: tuple[str, ...] | None = None) -> list[dict]:
         """Return stored program records.
@@ -717,12 +750,17 @@ class SQLiteStorage(StorageBackend):
                 version_number TEXT PRIMARY KEY
             )
             """)
-        self.conn.execute(
-            """
-            INSERT OR IGNORE INTO bloqade_schema (version_number) VALUES (?)
-            """,
-            (_BloqadeSchemaVersion.version,),
-        )
+        schema_version_row = self.conn.execute(
+            "SELECT version_number FROM bloqade_schema"
+        ).fetchone()
+        if schema_version_row is None:
+            self.conn.execute(
+                "INSERT INTO bloqade_schema (version_number) VALUES (?)",
+                (_BloqadeSchemaVersion.version,),
+            )
+            stored_version = _BloqadeSchemaVersion.version
+        else:
+            stored_version = schema_version_row[0]
 
         self.conn.execute("""
             CREATE TABLE IF NOT EXISTS programs (
@@ -750,12 +788,34 @@ class SQLiteStorage(StorageBackend):
             CREATE TABLE IF NOT EXISTS task_definitions (
                 task_id TEXT PRIMARY KEY,
                 program_language TEXT NOT NULL,
-                creation_time TEXT NOT NULL
+                creation_time TEXT NOT NULL,
+                group_id TEXT
             )
             """)
 
-        cur = self.conn.execute("SELECT version_number FROM bloqade_schema")
-        (stored_version,) = cur.fetchone()
+        if stored_version == "0.1.0":
+            # One-way, additive upgrade: adds a nullable column and restamps
+            # the version. Older bloqade versions refuse the upgraded file.
+            logger.info(
+                f"Migrating bloqade storage schema in {db_file!r} from 0.1.0 "
+                f"to {_BloqadeSchemaVersion.version} (adds nullable "
+                "task_definitions.group_id; older bloqade versions will no "
+                "longer open this file)"
+            )
+            columns = {
+                row["name"]
+                for row in self.conn.execute("PRAGMA table_info(task_definitions)")
+            }
+            if "group_id" not in columns:
+                self.conn.execute(
+                    "ALTER TABLE task_definitions ADD COLUMN group_id TEXT"
+                )
+            self.conn.execute(
+                "UPDATE bloqade_schema SET version_number = ?",
+                (_BloqadeSchemaVersion.version,),
+            )
+            stored_version = _BloqadeSchemaVersion.version
+
         if stored_version != _BloqadeSchemaVersion.version:
             raise ValueError(
                 f"Schema version mismatch: expected {_BloqadeSchemaVersion.version}, found {stored_version}"
@@ -965,8 +1025,17 @@ class SQLiteStorage(StorageBackend):
 
         creation_time_str = self._datetime_to_sql_txt(creation_time)
         self.conn.execute(
-            "INSERT OR IGNORE INTO task_definitions (task_id, program_language, creation_time) VALUES (?, ?, ?)",
-            (task_id, task_definition.program_language, creation_time_str),
+            "INSERT OR IGNORE INTO task_definitions (task_id, program_language, creation_time, group_id) VALUES (?, ?, ?, ?)",
+            (
+                task_id,
+                task_definition.program_language,
+                creation_time_str,
+                (
+                    str(task_definition.group_id)
+                    if task_definition.group_id is not None
+                    else None
+                ),
+            ),
         )
 
         self.conn.commit()
@@ -1108,6 +1177,19 @@ class SQLiteStorage(StorageBackend):
             raise KeyError(task_id)
         else:
             return self._sql_txt_to_datetime(row[0])
+
+    def get_task_group_id(self, task_id: str) -> UUID | None:
+        """Return the QLAM group stored for a task definition."""
+        cursor = self.conn.execute(
+            "SELECT group_id FROM task_definitions WHERE task_id = (?)",
+            (task_id,),
+        )
+        row = cursor.fetchone()
+        if row is None:
+            raise KeyError(task_id)
+        if row[0] is None:
+            return None
+        return UUID(row[0])
 
     def __enter__(self):
         """Return this storage backend for use as a context manager.
