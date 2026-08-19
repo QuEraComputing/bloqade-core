@@ -274,6 +274,8 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             str | None: The configured group name or UUID string, or None
                 when the config does not set a group.
         """
+        if self.group is not None:
+            return self.group
         config = self.app_context.config
         plugin_config = config.get_plugin_config("tasks")
         group = plugin_config.group if plugin_config is not None else None
@@ -383,7 +385,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         self.authenticate()
 
         if task_definition.group_id is None:
-            group = self.group if self.group is not None else self._configured_group()
+            group = self._configured_group()
             if group is not None:
                 task_definition = task_definition.model_copy(
                     update={"group_id": self._resolve_group_id(group)}
