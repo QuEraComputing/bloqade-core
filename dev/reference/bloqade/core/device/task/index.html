@@ -353,12 +353,12 @@
     <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
     <span class=n>future_cls</span><span class=p>:</span> <span class=nb>type</span><span class=p>[</span><span class=n>FutureType</span><span class=p>]</span> <span class=o>=</span> <span class=n>Future</span>
 <span class=p>)</span>
-</code></pre></div> <div class="doc doc-contents "> <p class="doc doc-class-bases"> Bases: <code><span title=typing.Generic>Generic</span>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code>, <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">AuthMixin</span>
+</code></pre></div> <div class="doc doc-contents "> <p class="doc doc-class-bases"> Bases: <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">AuthMixin</span>
 
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.mixins.AuthMixin</code>)' href=../mixins/#bloqade.core.device.mixins.AuthMixin>AuthMixin</a></code>, <code><span title=abc.ABC>ABC</span></code></p> <div style="display: none"> <a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TaskABC</span>
+  </span> (<code>bloqade.core.device.mixins.AuthMixin</code>)' href=../mixins/#bloqade.core.device.mixins.AuthMixin>AuthMixin</a></code>, <code><span title=abc.ABC>ABC</span></code>, <code><span title=typing.Generic>Generic</span>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code></p> <div style="display: none"> <a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TaskABC</span>
 
 
   <span class="doc doc-labels">
@@ -599,19 +599,19 @@
     <span class=o>*</span><span class=p>,</span>
     <span class=n>dry_run</span><span class=p>:</span> <span class=n>Literal</span><span class=p>[</span><span class=kc>True</span><span class=p>],</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
-    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>()</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span>
 </code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class=nf>run_async</span><span class=p>(</span>
     <span class=o>*</span><span class=p>,</span>
     <span class=n>dry_run</span><span class=p>:</span> <span class=n>Literal</span><span class=p>[</span><span class=kc>False</span><span class=p>],</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
-    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>()</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span>
 </code></pre></div> </div> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>run_async</span><span class=p>(</span>
     <span class=o>*</span><span class=p>,</span>
     <span class=n>dry_run</span><span class=p>:</span> <span class=nb>bool</span><span class=p>,</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
-    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>()</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span> <span class=o>|</span> <span class=kc>None</span>
 </code></pre></div> <div class="doc doc-contents "> <p>Validate the task and either dry-run or submit it.</p> <p><span class=doc-section-title>Other Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>dry_run</code></td> <td> <code><span title=bool>bool</span></code> </td> <td> <div class=doc-md-description> <p>When True, print a summary and return None. When False, submit the task and return a future.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>storage</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a> | None</code> </td> <td> <div class=doc-md-description> <p>Storage backend that will receive the task definition and later fetched shots. When None, a fresh <code>DictStorage</code> is used (in-memory; not persisted across processes). Defaults to None.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>fetch_options</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ApiFetchOptions</span>
 
@@ -663,7 +663,7 @@
     <span class=o>*</span><span class=p>,</span>
     <span class=n>dry_run</span><span class=p>:</span> <span class=nb>bool</span><span class=p>,</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
-    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>(),</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Validate the task and either dry-run or submit it.</span>
 
@@ -767,7 +767,7 @@
     <span class=o>*</span><span class=p>,</span>
     <span class=n>task_definition</span><span class=p>:</span> <span class=n>TaskDefinition</span><span class=p>,</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
-    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>()</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span>
 </code></pre></div> <div class="doc doc-contents "> <p>Submit a prepared task definition and return a future.</p> <p>When the definition does not set a group ID, a task-level group name takes precedence over the <code>~/.qsh</code> config group (<code>plugins.tasks.group</code>, then <code>defaults.group</code>). The selected name is resolved before submission. When neither is set, the group is omitted and QLAM selects the backend default group.</p> <p><span class=doc-section-title>Other Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>task_definition</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Task definition to submit.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>storage</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a> | None</code> </td> <td> <div class=doc-md-description> <p>Storage backend that will receive the task definition. When None, a fresh <code>DictStorage</code> is used (in-memory; not persisted across processes). Defaults to None.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>fetch_options</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ApiFetchOptions</span>
 
@@ -843,7 +843,7 @@
     <span class=o>*</span><span class=p>,</span>
     <span class=n>task_definition</span><span class=p>:</span> <span class=n>TaskDefinition</span><span class=p>,</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
-    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>(),</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Submit a prepared task definition and return a future.</span>
 
