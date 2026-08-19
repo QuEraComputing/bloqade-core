@@ -1,4 +1,6 @@
+import sqlite3
 from datetime import datetime, timezone
+from uuid import UUID
 
 from qlam_core.plugins.tasks.api.tasks_models import (
     Subtask,
@@ -393,6 +395,16 @@ def test_storage_get_task_definition_round_trip(storage):
     assert storage.get_task_definition("task-1") == task_def
 
 
+def test_storage_preserves_task_definition_group_id(storage):
+    group_id = UUID("11111111-1111-1111-1111-111111111111")
+    task_def = remote.make_task_definition(group_id=group_id)
+
+    add_task_definition(storage, "task-1", task_def)
+
+    assert storage.get_task_group_id("task-1") == group_id
+    assert storage.get_task_definition("task-1").group_id == group_id
+
+
 def test_storage_get_task_definition_isolates_by_task_id(storage):
     task_def_1 = remote.make_task_definition(
         program_language="flair.v1",
@@ -483,3 +495,35 @@ def test_sqlite_storage_persists_data_across_connections(tmp_path):
         assert store.task_ids() == {"task-1"}
         assert_shots_equal(list(store.get_shots(shot_filter=None)), [shot])
         assert len(store.get_subtasks()) == 1
+
+
+def test_sqlite_storage_migrates_v0_1_schema(tmp_path):
+    db_path = tmp_path / "v0_1.sqlite"
+    with sqlite3.connect(db_path) as conn:
+        conn.execute("CREATE TABLE bloqade_schema (version_number TEXT PRIMARY KEY)")
+        conn.execute("INSERT INTO bloqade_schema VALUES ('0.1.0')")
+        conn.execute("""
+            CREATE TABLE task_definitions (
+                task_id TEXT PRIMARY KEY,
+                program_language TEXT NOT NULL,
+                creation_time TEXT NOT NULL
+            )
+            """)
+        conn.execute(
+            "INSERT INTO task_definitions VALUES (?, ?, ?)",
+            ("old-task", "squin.v0.1.0", CREATION_TIME.isoformat()),
+        )
+
+    with SQLiteStorage(str(db_path)) as store:
+        columns = {
+            row["name"]
+            for row in store.conn.execute("PRAGMA table_info(task_definitions)")
+        }
+        assert "group_id" in columns
+        assert store.get_task_group_id("old-task") is None
+        assert (
+            store.conn.execute("SELECT version_number FROM bloqade_schema").fetchone()[
+                0
+            ]
+            == "0.2.0"
+        )

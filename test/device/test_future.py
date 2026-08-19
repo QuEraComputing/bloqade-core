@@ -157,6 +157,7 @@ def test_from_task_id_fetches_definition_and_stores_it(monkeypatch):
     assert [p.content for p in stored_def.programs] == [
         p.content for p in task_definition_response.programs
     ]
+    assert stored_def.group_id == task_definition_response.group.id
     assert storage.get_task_creation_time("task-1") == CREATION_TIME
 
 

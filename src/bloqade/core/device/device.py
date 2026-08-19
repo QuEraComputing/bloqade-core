@@ -69,6 +69,7 @@ class Device(Generic[FutureType], AuthMixin):
         program_language: str = "squin",
         language_version: str = "0.1.0",
         kernel_serializer: KernelSerializer | None = None,
+        group: str | None = None,
     ) -> SingleKernelTask[FutureType]:
         """Create a task for one kernel.
 
@@ -87,6 +88,9 @@ class Device(Generic[FutureType], AuthMixin):
             kernel_serializer (KernelSerializer | None): Serializer for this
                 task's kernel. When None, the device's `kernel_serializer` is
                 used. Defaults to None.
+            group (str | None): Name of the QLAM group for this task
+                definition. When None, the configured group is used at
+                submission time.
 
         Returns:
             SingleKernelTask[FutureType]: A task object ready for dry-run or submission.
@@ -102,6 +106,7 @@ class Device(Generic[FutureType], AuthMixin):
             language_version=language_version,
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
+            group=group,
         )
 
     def batch_task(
@@ -113,6 +118,7 @@ class Device(Generic[FutureType], AuthMixin):
         program_language: str = "squin",
         language_version: str = "0.1.0",
         kernel_serializer: KernelSerializer | None = None,
+        group: str | None = None,
     ) -> KernelBatchTask[FutureType]:
         """Create a task containing one subtask per kernel.
 
@@ -131,6 +137,9 @@ class Device(Generic[FutureType], AuthMixin):
             kernel_serializer (KernelSerializer | None): Serializer for this
                 task's kernels. When None, the device's `kernel_serializer` is
                 used. Defaults to None.
+            group (str | None): Name of the QLAM group for this task
+                definition. When None, the configured group is used at
+                submission time.
 
         Returns:
             KernelBatchTask[FutureType]: A batch task object ready for dry-run or
@@ -147,6 +156,7 @@ class Device(Generic[FutureType], AuthMixin):
             language_version=language_version,
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
+            group=group,
         )
 
     def parameter_scan(
@@ -158,6 +168,7 @@ class Device(Generic[FutureType], AuthMixin):
         program_language: str = "squin",
         language_version: str = "0.1.0",
         kernel_serializer: KernelSerializer | None = None,
+        group: str | None = None,
     ) -> ParameterScanTask[FutureType]:
         """Create a parameter-scan task for one kernel.
 
@@ -175,6 +186,9 @@ class Device(Generic[FutureType], AuthMixin):
             kernel_serializer (KernelSerializer | None): Serializer for the
                 scanned kernel. When None, the device's `kernel_serializer` is
                 used. Defaults to None.
+            group (str | None): Name of the QLAM group for this task
+                definition. When None, the configured group is used at
+                submission time.
 
         Returns:
             ParameterScanTask[FutureType]: A parameter-scan task object ready for
@@ -191,4 +205,5 @@ class Device(Generic[FutureType], AuthMixin):
             language_version=language_version,
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
+            group=group,
         )

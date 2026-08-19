@@ -99,6 +99,34 @@ that runs multiple independent kernels in one task, or
 that runs one kernel against several argument sets. The downstream steps
 (`run_async`, `future.result`) are identical.
 
+## Groups
+
+QLAM groups organize task definitions and control who can access them. The
+group submitted with a task is resolved in this order, mirroring the qsh CLI:
+
+1. a task-level `group` name,
+2. the `~/.qsh` config group (`plugins.tasks.group`, then `defaults.group`),
+3. otherwise the group is omitted and the server decides according to its
+   configured submission mode.
+
+```python
+device = Device(context_name="my-context")
+group = "qec-experiments"
+
+task = device.task(bell, group=group)
+batch = device.batch_task([bell, bell], group=group)
+scan = device.parameter_scan(bell, arguments=[{}, {}], group=group)
+```
+
+Task-level and configured group values are resolved through QLAM before
+submission. The resolved group ID is recorded on task definitions, including
+definitions stored in `DictStorage` and `SQLiteStorage`. The group a task actually landed in is
+reported on every task response (`future.get_task().group`).
+
+Group membership is assigned by your tenant admin. Group administration
+(including discovery) is a qlam-core/qsh concern and is not exposed by
+bloqade.
+
 ## Persisting results
 
 `run_async` accepts a `storage` argument that controls where the task

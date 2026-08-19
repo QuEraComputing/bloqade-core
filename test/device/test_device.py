@@ -138,3 +138,20 @@ def test_device_kernel_serializer_override_wins_over_device_default():
         ).kernel_serializer
         is override_serializer
     )
+
+
+def test_device_group_is_passed_to_each_task_shape():
+    @basic_no_opt
+    def first():
+        return
+
+    @basic_no_opt
+    def second():
+        return
+
+    group = "qec-experiments"
+    device = Device(context_name="ctx")
+
+    assert device.task(first, group=group).group == group
+    assert device.batch_task([first, second], group=group).group == group
+    assert device.parameter_scan(first, arguments=[{}], group=group).group == group
