@@ -277,7 +277,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         config = self.app_context.config
         plugin_config = config.get_plugin_config("tasks")
         group = plugin_config.group if plugin_config is not None else None
-        if not group:
+        if group is None:
             defaults = config.current_context.defaults
             group = defaults.group if defaults is not None else None
         return group
