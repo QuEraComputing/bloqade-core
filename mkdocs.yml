@@ -12,7 +12,6 @@ nav:
     - index.md
     - Installation: install.md
     - Running kernels on a device: device_workflow.md
-    - Device design decisions: device_design.md
     - Contributing: contrib.md
 
   - API Reference:

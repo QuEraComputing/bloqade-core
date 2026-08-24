@@ -1,6 +1,8 @@
 import base64
+import inspect
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import TypeVar
 
 from kirin import ir
 from kirin.validation import ValidationSuite
@@ -11,8 +13,12 @@ from qlam_core.plugins.tasks.api.tasks_models import (
     TaskDefinition,
     TaskMetadata,
 )
+from typing_extensions import ParamSpec
 
 from .task import KernelSerializer
+
+CallArgs = ParamSpec("CallArgs")
+T = TypeVar("T")
 
 
 @dataclass(frozen=True)
@@ -28,8 +34,10 @@ class SubtaskValidationError(Exception):
     """Validation error if a subtask's arguments, shot count, or metadata are invalid."""
 
 
-class _Subtask(Subtask):
+@dataclass
+class _Subtask:
     kernel_name: str
+    qlam_subtask: Subtask
 
 
 class TaskFinalizeError(Exception):
@@ -60,6 +68,7 @@ class TaskBuilder:
     _programs: dict[ir.Method, int]
     _subtasks: list[_Subtask]
     _max_program_idx: int = 0
+    _kernel_name_counter: dict[str, int] = field(default_factory=dict)
 
     def summary(self) -> str:
         """Return a human-readable summary printed on dry-run.
@@ -71,7 +80,7 @@ class TaskBuilder:
         ret_str += "Task:\n"
 
         for idx, subtask in enumerate(self._subtasks):
-            subtask_str = f"{idx}. Subtask: {subtask.kernel_name}, program {subtask.program_index} -> {subtask.num_shots} shots"
+            subtask_str = f"{idx}. Subtask: {subtask.kernel_name}, program {subtask.qlam_subtask.program_index} -> {subtask.qlam_subtask.num_shots} shots"
             ret_str += subtask_str
 
         return ret_str
@@ -85,7 +94,7 @@ class TaskBuilder:
 
         ret_str += "\tSubtasks:\n"
         for subtask_idx, subtask in enumerate(self._subtasks):
-            ret_str += f"\t\t{subtask_idx}. Program {subtask.program_index}, Args {subtask.arguments} -> {subtask.num_shots} shots"
+            ret_str += f"\t\t{subtask_idx}. Program {subtask.qlam_subtask.program_index}, Args {subtask.qlam_subtask.arguments} -> {subtask.qlam_subtask.num_shots} shots"
 
         return ret_str
 
@@ -95,7 +104,7 @@ class TaskBuilder:
         # NOTE: kernel validation will be done in _finalize() per kernel depending on the validation pass we use
 
         # TODO: define a maximum number of shots we allow?
-        if subtask.num_shots < 0:
+        if subtask.qlam_subtask.num_shots < 0:
             raise ValueError("num_shots cannot be negative")
 
         # TODO: what other validation to do?
@@ -103,15 +112,24 @@ class TaskBuilder:
 
     def add_subtask(
         self,
-        kernel: ir.Method,
+        kernel: ir.Method[CallArgs, T],
         num_shots: int,
-        *,
         metadata: dict | None = None,
-        kernel_args: dict[str, float] | None = None,
+        *args: CallArgs.args,
+        **kernel_args: CallArgs.kwargs,
     ) -> int:
         # TODO: define equality? we COULD implement hashing on kirin kernels. as a first pass maybe it's OK to
         # just do exact object check
-        kernel_name = kernel.sym_name if kernel.sym_name is not None else ""
+        kernel_name = kernel.sym_name if kernel.sym_name is not None else "kernel"
+
+        if kernel_name in self._kernel_name_counter:
+            orig_kernel_name = kernel_name
+            kernel_name = f"{kernel_name}_{self._kernel_name_counter[kernel_name]}"
+            self._kernel_name_counter[orig_kernel_name] += 1
+        else:
+            self._kernel_name_counter[kernel_name] = 1
+        if metadata is not None and not isinstance(metadata, dict):
+            raise ValueError("expecting `metadata` to be a dictionary or None. ")
         if kernel in self._programs:
             program_idx = self._programs[kernel]
         else:
@@ -124,13 +142,24 @@ class TaskBuilder:
         else:
             subtask_metadata = None
 
-        new_subtask = _Subtask(
+        if kernel.py_func is None:
+            raise TypeError(
+                f"Cannot determine the argument names for kernel {kernel.sym_name!r}"
+            )
+
+        signature = inspect.signature(kernel.py_func)
+        bound = signature.bind(*args, **kernel_args)
+
+        arguments = dict(bound.arguments)
+
+        qlam_subtask = Subtask(
             program_index=program_idx,
             num_shots=num_shots,
-            arguments=kernel_args,
+            arguments=arguments,
             subtask_metadata=subtask_metadata,
-            kernel_name=kernel_name,
         )
+
+        new_subtask = _Subtask(kernel_name=kernel_name, qlam_subtask=qlam_subtask)
         try:
             self._validate_subtask(subtask=new_subtask)
         except ValueError as e:
@@ -155,29 +184,54 @@ class TaskBuilder:
         reports: list[str] = []
         results: dict[str, ValidationResult] = {}
 
-        for kernel, index in sorted(self._programs.items(), key=lambda x: x[1]):
-            label = f"program {index} ({kernel.sym_name or '<anonymous>'})"
-            problems: list[str] = []
+        if validation_suite is None:
 
-            if dialect_group is not None:
-                unsupported = kernel.dialects.data - dialect_group.data
+            def _validate(
+                method: ir.Method, problems_list: list[str], kernel_label: str
+            ):
+                return
+
+        else:
+
+            def _validate(
+                method: ir.Method, problems_list: list[str], kernel_label: str
+            ):
+                try:
+                    result = validation_suite.validate(method)
+                except Exception as exc:  # noqa: BLE001 — a pass itself blew up
+                    problems_list.append(
+                        f"validation suite raised {type(exc).__name__}: {exc}"
+                    )
+                else:
+                    results[kernel_label] = result
+                    if not result.is_valid:
+                        problems_list.extend(_format_validation_errors(result))
+
+        if dialect_group is None:
+
+            def _check_dialect_group(
+                method: ir.Method, problems_list: list[str], kernel_label: str
+            ):
+                return
+
+        else:
+
+            def _check_dialect_group(
+                method: ir.Method, problems_list: list[str], kernel_label: str
+            ):
+                unsupported = method.dialects.data - dialect_group.data
                 if unsupported:
-                    problems.append(
+                    problems_list.append(
                         "uses dialect(s) not supported by this device: "
                         + ", ".join(sorted(d.name for d in unsupported))
                     )
 
-            if validation_suite is not None:
-                try:
-                    result = validation_suite.validate(kernel)
-                except Exception as exc:  # noqa: BLE001 — a pass itself blew up
-                    problems.append(
-                        f"validation suite raised {type(exc).__name__}: {exc}"
-                    )
-                else:
-                    results[label] = result
-                    if not result.is_valid:
-                        problems.extend(_format_validation_errors(result))
+        for kernel, index in sorted(self._programs.items(), key=lambda x: x[1]):
+            label = f"program {index} ({kernel.sym_name or '<anonymous>'})"
+            problems: list[str] = []
+
+            _validate(kernel, problems, label)
+            _check_dialect_group(kernel, problems, label)
 
             if problems:
                 reports.append(
@@ -251,10 +305,10 @@ class TaskBuilder:
 
             subtasks.append(
                 Subtask(
-                    program_index=subtask.program_index,
-                    num_shots=subtask.num_shots,
-                    arguments=subtask.arguments,
-                    subtask_metadata=subtask.subtask_metadata,
+                    program_index=subtask.qlam_subtask.program_index,
+                    num_shots=subtask.qlam_subtask.num_shots,
+                    arguments=subtask.qlam_subtask.arguments,
+                    subtask_metadata=subtask.qlam_subtask.subtask_metadata,
                 )
             )
 
