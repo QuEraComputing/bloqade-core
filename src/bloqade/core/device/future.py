@@ -587,4 +587,5 @@ class Future(AuthMixin, Generic[ResultType]):
         return not full_subtask_page
 
 
+# NOTE: does Future[Result] make sense?
 FutureType = TypeVar("FutureType", bound=Future[Any], default=Future[Result])
