@@ -346,5 +346,6 @@ class TaskBuilder:
             _programs=dict(self._programs),
             _subtasks=list(self._subtasks),
             _max_program_idx=self._max_program_idx,
+            _kernel_name_counter=dict(self._kernel_name_counter),
             _is_finalized=self._is_finalized,
         )
