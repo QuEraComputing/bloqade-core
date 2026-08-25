@@ -13,7 +13,6 @@ from kirin.validation.validationpass import ValidationResult
 from bloqade.core.device.task import KernelSerializer
 from bloqade.core.device.task_builder import (
     FinalizeContext,
-    MutatingFinalizedTaskError,
     SubtaskValidationError,
     TaskBuilder,
     TaskFinalizeError,
@@ -80,7 +79,7 @@ def test_add_subtask_deduplicates_programs_and_binds_arguments():
     )
     other_index = builder.add_subtask(other, 2)
 
-    assert (first_index, reused_index, other_index) == (0, 0, 1)
+    assert (first_index, reused_index, other_index) == (0, 1, 2)
     assert len(builder._programs) == 2
     assert [s.qlam_subtask.arguments for s in builder._subtasks] == [
         {"x": 1.5, "y": 2.5},
@@ -99,6 +98,7 @@ def test_add_subtask_rejects_invalid_metadata_and_arguments():
 
     with pytest.raises(ValueError, match="dictionary or None"):
         builder.add_subtask(no_args, 1, metadata="bad")  # type: ignore[arg-type]
+    assert builder == TaskBuilder()
 
     with pytest.raises(TypeError, match="unexpected keyword argument 'unknown'"):
         builder.add_subtask(
@@ -108,6 +108,16 @@ def test_add_subtask_rejects_invalid_metadata_and_arguments():
             y=2.0,
             unknown=2.0,  # type: ignore[call-arg]
         )
+    assert builder == TaskBuilder()
+
+
+def test_add_subtask_rejects_non_json_metadata_without_mutating_builder():
+    builder = TaskBuilder()
+
+    with pytest.raises(TypeError, match="not JSON serializable"):
+        builder.add_subtask(no_args, 1, metadata={"value": object()})
+
+    assert builder == TaskBuilder()
 
 
 def test_add_subtask_requires_a_python_function(monkeypatch):
@@ -117,10 +127,19 @@ def test_add_subtask_requires_a_python_function(monkeypatch):
     with pytest.raises(TypeError, match="Cannot determine the argument names"):
         builder.add_subtask(no_args, 1)
 
+    assert builder == TaskBuilder()
 
-def test_negative_shots_raise_subtask_validation_error():
-    with pytest.raises(SubtaskValidationError, match="num_shots cannot be negative"):
-        TaskBuilder().add_subtask(no_args, -1)
+
+@pytest.mark.parametrize("num_shots", [-1, 0])
+def test_nonpositive_shots_raise_subtask_validation_error(num_shots):
+    builder = TaskBuilder()
+
+    with pytest.raises(SubtaskValidationError, match="num_shots must be at least 1"):
+        builder.add_subtask(no_args, num_shots)
+
+    assert builder == TaskBuilder()
+    assert builder.add_subtask(no_args, 1) == 0
+    assert builder._subtasks[0].kernel_name == "no_args"
 
 
 def test_kernel_names_are_unique_and_copy_preserves_the_counter(monkeypatch):
@@ -161,12 +180,13 @@ def test_summary_and_detailed_output_include_subtask_information():
     assert "Args {'x': 1.0, 'y': 2.0} -> 9 shots" in detailed
 
 
-def test_finalize_builds_plain_ordered_qlam_payload_and_freezes_builder(capsys):
+def test_finalize_builds_plain_ordered_payload_without_mutating_builder():
     serializer = RecordingSerializer()
     builder = TaskBuilder()
     builder.add_subtask(with_args, 3, {"run": 1}, 1.0, 2.0)
     builder.add_subtask(other, 5)
     builder.add_subtask(with_args, 7, None, 3.0, 4.0)
+    before_finalize = builder.copy()
 
     definition = builder._finalize(
         finalize_context(serializer=cast(KernelSerializer, serializer))
@@ -182,19 +202,17 @@ def test_finalize_builds_plain_ordered_qlam_payload_and_freezes_builder(capsys):
     assert [subtask.program_index for subtask in definition.subtasks] == [0, 1, 0]
     assert [subtask.num_shots for subtask in definition.subtasks] == [3, 5, 7]
     assert all(not hasattr(subtask, "kernel_name") for subtask in definition.subtasks)
+    assert builder == before_finalize
 
-    with pytest.raises(MutatingFinalizedTaskError, match="cannot be mutated"):
-        builder.add_subtask(other, 1)
-
-    assert (
-        builder._finalize(
-            finalize_context(serializer=cast(KernelSerializer, serializer))
-        ).model_dump()
-        == definition.model_dump()
+    repeated_definition = builder._finalize(
+        finalize_context(serializer=cast(KernelSerializer, serializer))
     )
-    builder.summary()
-    builder.print_detailed()
-    assert capsys.readouterr().out.count("TASK IS FINALIZED") == 2
+    assert repeated_definition.model_dump() == definition.model_dump()
+    assert builder == before_finalize
+
+    assert builder.add_subtask(no_args, 11) == 3
+    assert len(builder._subtasks) == 4
+    assert len(definition.subtasks) == 3
 
 
 @pytest.mark.parametrize(

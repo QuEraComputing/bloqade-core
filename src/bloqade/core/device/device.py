@@ -26,12 +26,17 @@ from .task_builder import FinalizeContext, TaskBuilder
 # NOTE: 'Device' is like the 'master class' for communicating with the server.
 @dataclass(kw_only=True)
 class Device(AuthMixin, Generic[FutureType]):
-    """Factory for tasks.
+    """Create legacy tasks and finalize or submit task builders.
 
-    The device does not submit work directly. Instead, it builds task objects
-    that can be dry-run or submitted asynchronously.
+    Legacy factory methods return task objects that submit themselves. For the
+    builder API, the device supplies serialization and validation context and
+    owns dry-run and submission through :meth:`run_async`.
 
     Attributes:
+        program_language (str): Language name placed on builder-generated task
+            definitions. Defaults to ``"squin"``.
+        language_version (str): Language version used when serializing builder
+            kernels. Defaults to ``"0.1.0"``.
         future_cls (type[FutureType]): Future class used by tasks created from
             this device. Defaults to `Future`.
         kernel_serializer (KernelSerializer): Default serializer passed to
@@ -46,7 +51,7 @@ class Device(AuthMixin, Generic[FutureType]):
     # FutureType TypeVar
     # TODO: need to add impl of GeminiLogicalDevice w/ these fields in bloqade-lanes.
     # NOTE: adding defaults here just in case for backwards compatibility
-    program_language: str = ""
+    program_language: str = "squin"
     language_version: str = "0.1.0"
     future_cls: type[FutureType] = Future  # type: ignore[assignment]
     kernel_serializer: KernelSerializer = field(default_factory=JSONSerializer)
@@ -69,7 +74,8 @@ class Device(AuthMixin, Generic[FutureType]):
         init=False,
     )
 
-    def _finalize_context(self):
+    def _finalize_context(self) -> FinalizeContext:
+        """Return the device-owned inputs needed to finalize a builder."""
         return FinalizeContext(
             program_language=self.program_language,
             language_version=self.language_version,
@@ -110,6 +116,31 @@ class Device(AuthMixin, Generic[FutureType]):
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
     ) -> FutureType | None:
+        """Validate and finalize a builder, optionally submitting it.
+
+        A dry run performs the same kernel validation and serialization as a
+        submission, prints the builder summary, and returns ``None`` without
+        authenticating, writing storage, or calling QLAM. Finalization does not
+        mutate the builder, so it remains editable after a dry run.
+
+        Args:
+            task_builder (TaskBuilder): Incrementally assembled task to
+                finalize.
+
+        Keyword Args:
+            dry_run (bool): When true, print a preview without submitting.
+                When false, submit and return a future.
+            group (str | None): Optional QLAM group name or UUID string for
+                this submission. Defaults to configured group precedence.
+            storage (StorageBackend | None): Storage for the submitted task
+                definition. Ignored during a dry run.
+            fetch_options (ApiFetchOptions): Fetch configuration attached to
+                the returned future. Ignored during a dry run.
+
+        Returns:
+            FutureType | None: ``None`` for a dry run; otherwise the future
+                associated with the submitted QLAM task.
+        """
         finalize_ctx = self._finalize_context()
         task_definition = task_builder._finalize(finalize_ctx)
         if dry_run:

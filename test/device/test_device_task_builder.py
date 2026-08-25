@@ -36,7 +36,9 @@ def make_builder() -> TaskBuilder:
     return builder
 
 
-def test_device_dry_run_finalizes_and_prints_without_submission(monkeypatch, capsys):
+def test_device_dry_run_prints_without_submission_and_keeps_builder_editable(
+    monkeypatch, capsys
+):
     device = Device(
         context_name="ctx",
         program_language="squin",
@@ -44,6 +46,7 @@ def test_device_dry_run_finalizes_and_prints_without_submission(monkeypatch, cap
         kernel_serializer=RecordingSerializer(),
     )
     builder = make_builder()
+    before_dry_run = builder.copy()
 
     def fail_if_submitted(**kwargs):
         raise AssertionError("a dry run must not submit")
@@ -52,8 +55,9 @@ def test_device_dry_run_finalizes_and_prints_without_submission(monkeypatch, cap
 
     assert device.run_async(builder, dry_run=True) is None
     output = capsys.readouterr().out
-    assert "TASK IS FINALIZED" in output
     assert "builder_kernel, program 0 -> 11 shots" in output
+    assert builder == before_dry_run
+    assert builder.add_subtask(builder_kernel, 3, value=2.5) == 1
 
 
 def test_device_run_async_passes_finalized_definition_to_submitter(monkeypatch):

@@ -34,10 +34,6 @@ class SubtaskValidationError(Exception):
     """Validation error if a subtask's arguments, shot count, or metadata are invalid."""
 
 
-class MutatingFinalizedTaskError(Exception):
-    """Validaton error if you attempt to mutate a task that is already finalized."""
-
-
 @dataclass
 class _Subtask:
     kernel_name: str
@@ -68,12 +64,12 @@ def _format_validation_errors(result: ValidationResult) -> list[str]:
 
 @dataclass
 class TaskBuilder:
+    """Incrementally assemble subtasks before finalizing them for a device."""
 
     _programs: dict[ir.Method, int] = field(default_factory=dict)
     _subtasks: list[_Subtask] = field(default_factory=list)
     _max_program_idx: int = 0
     _kernel_name_counter: dict[str, int] = field(default_factory=dict)
-    _is_finalized: bool = field(default=False)
 
     def __str__(self) -> str:
         return self.summary()
@@ -84,8 +80,6 @@ class TaskBuilder:
         Returns:
             str: Summary describing what would be submitted.
         """
-        if self._is_finalized:
-            print("======== TASK IS FINALIZED; CANNOT BE MUTATED FURTHER ========")
         ret_str = ""
         ret_str += "Task:\n"
 
@@ -96,8 +90,7 @@ class TaskBuilder:
         return ret_str
 
     def print_detailed(self) -> str:
-        if self._is_finalized:
-            print("======== TASK IS FINALIZED; CANNOT BE MUTATED FURTHER ========")
+        """Return a detailed summary containing program IR and subtask arguments."""
         ret_str = ""
         ret_str += "Task:\n"
         ret_str += "\tPrograms:\n"
@@ -116,8 +109,8 @@ class TaskBuilder:
         # NOTE: kernel validation will be done in _finalize() per kernel depending on the validation pass we use
 
         # TODO: define a maximum number of shots we allow?
-        if subtask.qlam_subtask.num_shots < 0:
-            raise ValueError("num_shots cannot be negative")
+        if subtask.qlam_subtask.num_shots <= 0:
+            raise ValueError("num_shots must be at least 1")
 
         # TODO: what other validation to do?
         return True
@@ -132,26 +125,23 @@ class TaskBuilder:
     ) -> int:
         # TODO: define equality? we COULD implement hashing on kirin kernels. as a first pass maybe it's OK to
         # just do exact object check
-        if self._is_finalized:
-            raise MutatingFinalizedTaskError(
-                "The task is finalized and cannot be mutated; cannot add more subtasks to this task."
-            )
-        kernel_name = kernel.sym_name if kernel.sym_name is not None else "kernel"
-
-        if kernel_name in self._kernel_name_counter:
-            orig_kernel_name = kernel_name
-            kernel_name = f"{kernel_name}_{self._kernel_name_counter[kernel_name]}"
-            self._kernel_name_counter[orig_kernel_name] += 1
-        else:
-            self._kernel_name_counter[kernel_name] = 1
         if metadata is not None and not isinstance(metadata, dict):
             raise ValueError("expecting `metadata` to be a dictionary or None. ")
+
+        base_kernel_name = kernel.sym_name if kernel.sym_name is not None else "kernel"
+        kernel_name_index = self._kernel_name_counter.get(base_kernel_name, 0)
+        kernel_name = (
+            base_kernel_name
+            if kernel_name_index == 0
+            else f"{base_kernel_name}_{kernel_name_index}"
+        )
+
         if kernel in self._programs:
             program_idx = self._programs[kernel]
+            is_new_program = False
         else:
-            self._programs[kernel] = self._max_program_idx
             program_idx = self._max_program_idx
-            self._max_program_idx += 1
+            is_new_program = True
 
         if metadata is not None:
             subtask_metadata = TaskMetadata(user_metadata=json.dumps(metadata))
@@ -181,8 +171,13 @@ class TaskBuilder:
         except ValueError as e:
             raise SubtaskValidationError(f"Error during subtask validation: {e}")
 
+        # Commit builder state only after every operation above has succeeded.
+        if is_new_program:
+            self._programs[kernel] = program_idx
+            self._max_program_idx += 1
+        self._kernel_name_counter[base_kernel_name] = kernel_name_index + 1
         self._subtasks.append(new_subtask)
-        return program_idx
+        return len(self._subtasks) - 1
 
         # does validation of the subtask added in terms of number of shots, metadata, ...
 
@@ -297,7 +292,10 @@ class TaskBuilder:
         return program_list
 
     def _finalize(self, ctx: FinalizeContext) -> TaskDefinition:
-        """Build a `TaskDefinition` from this task's kernels and subtasks.
+        """Build a `TaskDefinition` without mutating this builder.
+
+        Finalization validates and serializes the current builder contents. It
+        may be called repeatedly, and the builder remains editable afterward.
 
         Override this method directly if your use-case doesn't fit the API
         contract.
@@ -332,8 +330,6 @@ class TaskBuilder:
         program_language_with_version = (
             f"{ctx.program_language}.v{ctx.language_version.removeprefix('v')}"
         )
-        # TODO: finalize needs to FREEZE the builder.
-        self._is_finalized = True
         return TaskDefinition(
             program_language=program_language_with_version,
             programs=programs,
@@ -342,10 +338,10 @@ class TaskBuilder:
         )
 
     def copy(self) -> "TaskBuilder":
+        """Return a shallow, independently editable copy of this builder."""
         return TaskBuilder(
             _programs=dict(self._programs),
             _subtasks=list(self._subtasks),
             _max_program_idx=self._max_program_idx,
             _kernel_name_counter=dict(self._kernel_name_counter),
-            _is_finalized=self._is_finalized,
         )
