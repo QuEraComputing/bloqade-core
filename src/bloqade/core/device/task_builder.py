@@ -34,6 +34,10 @@ class SubtaskValidationError(Exception):
     """Validation error if a subtask's arguments, shot count, or metadata are invalid."""
 
 
+class MutatingFinalizedTaskError(Exception):
+    """Validaton error if you attempt to mutate a task that is already finalized."""
+
+
 @dataclass
 class _Subtask:
     kernel_name: str
@@ -65,10 +69,14 @@ def _format_validation_errors(result: ValidationResult) -> list[str]:
 @dataclass
 class TaskBuilder:
 
-    _programs: dict[ir.Method, int]
-    _subtasks: list[_Subtask]
+    _programs: dict[ir.Method, int] = field(default_factory=dict)
+    _subtasks: list[_Subtask] = field(default_factory=list)
     _max_program_idx: int = 0
     _kernel_name_counter: dict[str, int] = field(default_factory=dict)
+    _is_finalized: bool = field(default=False)
+
+    def __str__(self) -> str:
+        return self.summary()
 
     def summary(self) -> str:
         """Return a human-readable summary printed on dry-run.
@@ -76,25 +84,29 @@ class TaskBuilder:
         Returns:
             str: Summary describing what would be submitted.
         """
+        if self._is_finalized:
+            print("======== TASK IS FINALIZED; CANNOT BE MUTATED FURTHER ========")
         ret_str = ""
         ret_str += "Task:\n"
 
         for idx, subtask in enumerate(self._subtasks):
-            subtask_str = f"{idx}. Subtask: {subtask.kernel_name}, program {subtask.qlam_subtask.program_index} -> {subtask.qlam_subtask.num_shots} shots"
+            subtask_str = f"{idx}. Subtask: {subtask.kernel_name}, program {subtask.qlam_subtask.program_index} -> {subtask.qlam_subtask.num_shots} shots\n"
             ret_str += subtask_str
 
         return ret_str
 
     def print_detailed(self) -> str:
+        if self._is_finalized:
+            print("======== TASK IS FINALIZED; CANNOT BE MUTATED FURTHER ========")
         ret_str = ""
         ret_str += "Task:\n"
         ret_str += "\tPrograms:\n"
         for program, program_idx in sorted(self._programs.items(), key=lambda x: x[1]):
-            ret_str += f"\t\t{program_idx}. {program.print()}"
+            ret_str += f"\t\t{program_idx}. {program.print_str()}"
 
         ret_str += "\tSubtasks:\n"
         for subtask_idx, subtask in enumerate(self._subtasks):
-            ret_str += f"\t\t{subtask_idx}. Program {subtask.qlam_subtask.program_index}, Args {subtask.qlam_subtask.arguments} -> {subtask.qlam_subtask.num_shots} shots"
+            ret_str += f"\t\t{subtask_idx}. Program {subtask.qlam_subtask.program_index}, Args {subtask.qlam_subtask.arguments} -> {subtask.qlam_subtask.num_shots} shots\n"
 
         return ret_str
 
@@ -120,6 +132,10 @@ class TaskBuilder:
     ) -> int:
         # TODO: define equality? we COULD implement hashing on kirin kernels. as a first pass maybe it's OK to
         # just do exact object check
+        if self._is_finalized:
+            raise MutatingFinalizedTaskError(
+                "The task is finalized and cannot be mutated; cannot add more subtasks to this task."
+            )
         kernel_name = kernel.sym_name if kernel.sym_name is not None else "kernel"
 
         if kernel_name in self._kernel_name_counter:
@@ -316,6 +332,8 @@ class TaskBuilder:
         program_language_with_version = (
             f"{ctx.program_language}.v{ctx.language_version.removeprefix('v')}"
         )
+        # TODO: finalize needs to FREEZE the builder.
+        self._is_finalized = True
         return TaskDefinition(
             program_language=program_language_with_version,
             programs=programs,
@@ -328,4 +346,5 @@ class TaskBuilder:
             _programs=dict(self._programs),
             _subtasks=list(self._subtasks),
             _max_program_idx=self._max_program_idx,
+            _is_finalized=self._is_finalized,
         )

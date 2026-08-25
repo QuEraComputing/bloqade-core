@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Generic, cast
+from typing import Any, Generic, Literal, cast, overload
 from uuid import UUID
 
 from kirin import ir
@@ -79,15 +79,42 @@ class Device(AuthMixin, Generic[FutureType]):
             validation_suite=self.validation_suite,
         )
 
+    @overload
     def run_async(
         self,
         task_builder: TaskBuilder,
+        *,
+        dry_run: Literal[True],
         group: str | None = None,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
-    ):
+    ) -> None: ...
+
+    @overload
+    def run_async(
+        self,
+        task_builder: TaskBuilder,
+        *,
+        dry_run: Literal[False],
+        group: str | None = None,
+        storage: StorageBackend | None = None,
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
+    ) -> FutureType: ...
+
+    def run_async(
+        self,
+        task_builder: TaskBuilder,
+        *,
+        dry_run: bool,
+        group: str | None = None,
+        storage: StorageBackend | None = None,
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
+    ) -> FutureType | None:
         finalize_ctx = self._finalize_context()
         task_definition = task_builder._finalize(finalize_ctx)
+        if dry_run:
+            print(task_builder.summary())
+            return
         return self.submit_task_definition(
             task_definition=task_definition,
             storage=storage,
