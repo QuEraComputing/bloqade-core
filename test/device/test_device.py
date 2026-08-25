@@ -28,7 +28,6 @@ def test_device_task_builds_single_kernel_task_with_device_defaults():
 
     task = device.task(
         kernel,
-        num_shots=17,
         arguments={"theta": 1.5},
         metadata={"label": "calibration"},
         program_language="flair.v1",
@@ -38,7 +37,7 @@ def test_device_task_builds_single_kernel_task_with_device_defaults():
     assert task.context_name == "ctx"
     assert task.future_cls is CustomFuture
     assert task.kernel is kernel
-    assert task.num_shots == 17
+    assert not hasattr(task, "num_shots")
     assert task.arguments == {"theta": 1.5}
     assert task.metadata == {"label": "calibration"}
     assert task.program_language == "flair.v1"
@@ -61,7 +60,6 @@ def test_device_batch_task_builds_kernel_batch_task():
         kernels,
         arguments=[{"alpha": 0.25}, {"alpha": 0.5}],
         metadata=[{"name": "a"}, {"name": "b"}],
-        num_shots=[3, 5],
         program_language="squin",
     )
 
@@ -71,7 +69,7 @@ def test_device_batch_task_builds_kernel_batch_task():
     assert task.kernels == kernels
     assert task.arguments == [{"alpha": 0.25}, {"alpha": 0.5}]
     assert task.metadata == [{"name": "a"}, {"name": "b"}]
-    assert task.num_shots == [3, 5]
+    assert not hasattr(task, "num_shots")
     assert task.program_language == "squin"
     assert task.kernel_serializer is device.kernel_serializer
 
@@ -88,7 +86,6 @@ def test_device_parameter_scan_builds_parameter_scan_task():
         kernel,
         arguments=[{"detuning": -1.0}, {"detuning": 1.0}],
         metadata=[{"point": "left"}, {"point": "right"}],
-        num_shots=11,
         program_language="flair.v2",
     )
 
@@ -98,7 +95,7 @@ def test_device_parameter_scan_builds_parameter_scan_task():
     assert task.kernel is kernel
     assert task.arguments == [{"detuning": -1.0}, {"detuning": 1.0}]
     assert task.metadata == [{"point": "left"}, {"point": "right"}]
-    assert task.num_shots == 11
+    assert not hasattr(task, "num_shots")
     assert task.program_language == "flair.v2"
     assert task.kernel_serializer is device.kernel_serializer
 

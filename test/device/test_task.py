@@ -62,10 +62,9 @@ def test_single_kernel_task_creates_task_definition_with_arguments_and_metadata(
         kernel=main,
         arguments={"theta": 1.5},
         metadata={"purpose": "unit-test"},
-        num_shots=23,
     )
 
-    task_definition = task.create_task_definition()
+    task_definition = task.create_task_definition(num_shots=23)
 
     assert task_definition.program_language == "flair.v1"
     assert len(task_definition.subtasks) == 1
@@ -79,18 +78,28 @@ def test_single_kernel_task_creates_task_definition_with_arguments_and_metadata(
     )
 
 
+def test_create_task_definition_requires_shot_count():
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+    )
+
+    with pytest.raises(TypeError, match="num_shots"):
+        task.create_task_definition()  # type: ignore[call-arg]
+
+
 def test_single_kernel_task_omits_arguments_and_metadata_when_unset():
     task = SingleKernelTask(
         context_name="ctx",
         program_language="squin",
         kernel=main,
-        num_shots=1,
     )
 
     assert task.get_arguments() is None
     assert task.get_metadata() is None
 
-    subtask = task.create_task_definition().subtasks[0]
+    subtask = task.create_task_definition(num_shots=1).subtasks[0]
     assert subtask.arguments is None
     assert subtask.subtask_metadata is None
 
@@ -100,10 +109,9 @@ def test_single_kernel_task_serializes_kernel_with_json_by_default():
         context_name="ctx",
         program_language="squin",
         kernel=main,
-        num_shots=1,
     )
 
-    content = task.create_task_definition().programs[0].content
+    content = task.create_task_definition(num_shots=1).programs[0].content
     encoded_module = main.dialects.encode(main, version=task.program_language_version)
 
     assert content == JSONSerializer().encode(encoded_module)
@@ -115,11 +123,10 @@ def test_single_kernel_task_base64_encodes_binary_serializer_output():
         context_name="ctx",
         program_language="flair",
         kernel=main,
-        num_shots=1,
         kernel_serializer=CompressedBSONSerializer(),
     )
 
-    content = task.create_task_definition().programs[0].content
+    content = task.create_task_definition(num_shots=1).programs[0].content
     decoded_module = CompressedBSONSerializer().decode(
         base64.b64decode(content, validate=True)
     )
@@ -137,7 +144,6 @@ def test_single_kernel_task_rejects_non_string_serializer_output():
         context_name="ctx",
         program_language="squin",
         kernel=main,
-        num_shots=1,
         kernel_serializer=cast(KernelSerializer, DictSerializer()),
     )
 
@@ -152,10 +158,9 @@ def test_parameter_scan_reuses_one_program_for_all_argument_sets():
         kernel=scan,
         arguments=[{"x": 1.0}, {"x": 2.0}, {"x": 3.0}],
         metadata=[{"i": 0}, {"i": 1}, {"i": 2}],
-        num_shots=7,
     )
 
-    task_definition = task.create_task_definition()
+    task_definition = task.create_task_definition(num_shots=7)
 
     assert [subtask.program_index for subtask in task_definition.subtasks] == [0, 0, 0]
     assert [subtask.num_shots for subtask in task_definition.subtasks] == [7, 7, 7]
@@ -177,10 +182,9 @@ def test_kernel_batch_task_maps_each_kernel_to_its_own_program():
         program_language="squin",
         kernels=[first, second],
         arguments=[{"x": 1.0}, {"x": 2.0}],
-        num_shots=[3, 5],
     )
 
-    task_definition = task.create_task_definition()
+    task_definition = task.create_task_definition(num_shots=[3, 5])
 
     assert [subtask.program_index for subtask in task_definition.subtasks] == [0, 1]
     assert [subtask.num_shots for subtask in task_definition.subtasks] == [3, 5]
@@ -197,23 +201,21 @@ def test_validate_arguments_rejects_metadata_length_mismatch():
         kernel=scan,
         arguments=[{"x": 1.0}, {"x": 2.0}],
         metadata=[{"only": "one"}],
-        num_shots=7,
     )
 
     with pytest.raises(ValueError, match="1 sets of metadata for 2 subtasks"):
         task.validate_arguments()
 
 
-def test_validate_arguments_rejects_shot_count_length_mismatch():
+def test_create_task_definition_rejects_shot_count_length_mismatch():
     task = KernelBatchTask(
         context_name="ctx",
         program_language="squin",
         kernels=[first, second],
-        num_shots=[3],
     )
 
     with pytest.raises(ValueError, match="1 shot counts for 2 subtasks"):
-        task.validate_arguments()
+        task.create_task_definition(num_shots=[3])
 
 
 def test_run_async_dry_run_prints_summary_and_does_not_submit(monkeypatch, capsys):
@@ -221,7 +223,6 @@ def test_run_async_dry_run_prints_summary_and_does_not_submit(monkeypatch, capsy
         context_name="ctx",
         program_language="squin",
         kernel=main,
-        num_shots=1,
     )
 
     def fail_if_submitted(**kwargs):
@@ -236,12 +237,131 @@ def test_run_async_dry_run_prints_summary_and_does_not_submit(monkeypatch, capsy
     assert "main(" in output
 
 
+def test_run_async_defaults_to_dry_run_with_one_shot(monkeypatch, capsys):
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+    )
+
+    monkeypatch.setattr(
+        task,
+        "submit_task_definition",
+        lambda **kwargs: pytest.fail("dry runs should not submit"),
+    )
+
+    assert task.run_async() is None
+    assert "1 shots" in capsys.readouterr().out
+
+
+def test_run_async_defaults_to_one_shot_on_submission(monkeypatch):
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+    )
+    submitted = {}
+    sentinel = object()
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
+
+    assert task.run_async(dry_run=False) is sentinel
+    assert submitted["task_definition"].subtasks[0].num_shots == 1
+
+
+def test_run_async_submits_unconfigured_task_with_shots(monkeypatch):
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+    )
+    submitted = {}
+    sentinel = object()
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
+
+    assert task.run_async(dry_run=False, shots=17) is sentinel
+    assert submitted["task_definition"].subtasks[0].num_shots == 17
+
+
+def test_run_async_dry_run_summary_uses_shot_override(monkeypatch, capsys):
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        arguments={"theta": 1.5},
+    )
+
+    monkeypatch.setattr(
+        task,
+        "submit_task_definition",
+        lambda **kwargs: pytest.fail("dry runs should not submit"),
+    )
+
+    assert task.run_async(dry_run=True, shots=17) is None
+
+    output = capsys.readouterr().out
+    assert "theta=1.5" in output
+    assert "17 shots" in output
+    assert "1 shots" in task.summary()
+
+
+def test_parameter_scan_dry_run_uses_default_summary_for_task_definition(
+    monkeypatch, capsys
+):
+    task = ParameterScanTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=scan,
+        arguments=[{"x": 1.0}, {"x": 2.0}],
+    )
+
+    monkeypatch.setattr(
+        task,
+        "submit_task_definition",
+        lambda **kwargs: pytest.fail("dry runs should not submit"),
+    )
+
+    assert task.run_async(dry_run=True, shots=[17, 19]) is None
+
+    assert "parameter sets" in capsys.readouterr().out
+
+
+def test_batch_task_dry_run_summary_uses_per_subtask_shot_override(monkeypatch, capsys):
+    task = KernelBatchTask(
+        context_name="ctx",
+        program_language="squin",
+        kernels=[first, second],
+        arguments=[{"theta": 1.5}, {"phi": 0.5}],
+    )
+
+    monkeypatch.setattr(
+        task,
+        "submit_task_definition",
+        lambda **kwargs: pytest.fail("dry runs should not submit"),
+    )
+
+    assert task.run_async(dry_run=True, shots=[17, 19]) is None
+
+    output = capsys.readouterr().out
+    assert "17 shots" in output
+    assert "19 shots" in output
+    assert "1 shots" in task.summary()
+
+
 def test_run_async_submits_created_task_definition(monkeypatch):
     task = SingleKernelTask(
         context_name="ctx",
         program_language="squin",
         kernel=main,
-        num_shots=1,
     )
     storage = DictStorage()
     fetch_options = ApiFetchOptions(shots_per_fetch=5)
@@ -257,6 +377,7 @@ def test_run_async_submits_created_task_definition(monkeypatch):
     assert (
         task.run_async(
             dry_run=False,
+            shots=1,
             storage=storage,
             fetch_options=fetch_options,
         )
@@ -266,17 +387,125 @@ def test_run_async_submits_created_task_definition(monkeypatch):
     assert submitted["fetch_options"] is fetch_options
 
 
+def test_run_async_default_shots_broadcast_to_every_batch_subtask(monkeypatch):
+    task = KernelBatchTask(
+        context_name="ctx",
+        program_language="squin",
+        kernels=[first, second],
+    )
+    submitted = {}
+    sentinel = object()
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
+
+    assert task.run_async(dry_run=False) is sentinel
+    assert [subtask.num_shots for subtask in submitted["task_definition"].subtasks] == [
+        1,
+        1,
+    ]
+
+
+def test_run_async_default_shots_broadcast_to_every_parameter_scan_subtask(
+    monkeypatch,
+):
+    task = ParameterScanTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=scan,
+        arguments=[{"x": 1.0}, {"x": 2.0}],
+    )
+    submitted = {}
+    sentinel = object()
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
+
+    assert task.run_async(dry_run=False) is sentinel
+    assert [subtask.num_shots for subtask in submitted["task_definition"].subtasks] == [
+        1,
+        1,
+    ]
+
+
+def test_run_async_supports_create_task_definition_override(monkeypatch):
+    class CustomSingleKernelTask(SingleKernelTask):
+        def create_task_definition(self, *, num_shots: int | list[int]):
+            return super().create_task_definition(num_shots=num_shots)
+
+    task = CustomSingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+    )
+    submitted = {}
+    sentinel = object()
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
+
+    assert task.run_async(dry_run=False, shots=17) is sentinel
+    assert submitted["task_definition"].subtasks[0].num_shots == 17
+
+
+def test_run_async_accepts_per_subtask_shot_counts(monkeypatch):
+    task = KernelBatchTask(
+        context_name="ctx",
+        program_language="squin",
+        kernels=[first, second],
+    )
+    submitted = {}
+    sentinel = object()
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
+
+    assert task.run_async(dry_run=False, shots=[17, 19]) is sentinel
+    assert [subtask.num_shots for subtask in submitted["task_definition"].subtasks] == [
+        17,
+        19,
+    ]
+
+
+def test_run_async_rejects_shot_override_length_mismatch(monkeypatch):
+    task = KernelBatchTask(
+        context_name="ctx",
+        program_language="squin",
+        kernels=[first, second],
+    )
+
+    monkeypatch.setattr(
+        task,
+        "submit_task_definition",
+        lambda **kwargs: pytest.fail("invalid overrides should not submit"),
+    )
+
+    with pytest.raises(ValueError, match="1 shot counts for 2 subtasks"):
+        task.run_async(dry_run=False, shots=[17])
+
+
 def test_submit_task_definition_stores_definition_and_returns_future(monkeypatch):
     task = SingleKernelTask(
         context_name="ctx",
         program_language="squin",
         kernel=main,
-        num_shots=1,
         future_cls=RecordingFuture,  # type: ignore
     )
     storage = DictStorage()
     fetch_options = ApiFetchOptions(subtasks_per_fetch=2)
-    task_definition = task.create_task_definition()
+    task_definition = task.create_task_definition(num_shots=1)
     calls = {"authenticated": False}
 
     created_task = remote.make_task(
@@ -313,7 +542,6 @@ def test_run_async_defaults_storage_to_fresh_dict_storage(monkeypatch):
         context_name="ctx",
         program_language="squin",
         kernel=main,
-        num_shots=1,
     )
     submitted = {}
     sentinel = object()
@@ -324,7 +552,7 @@ def test_run_async_defaults_storage_to_fresh_dict_storage(monkeypatch):
 
     monkeypatch.setattr(task, "submit_task_definition", submit_task_definition)
 
-    assert task.run_async(dry_run=False) is sentinel
+    assert task.run_async(dry_run=False, shots=1) is sentinel
     assert submitted["storage"] is None
 
 
@@ -333,10 +561,9 @@ def test_submit_task_definition_defaults_to_fresh_dict_storage(monkeypatch):
         context_name="ctx",
         program_language="squin",
         kernel=main,
-        num_shots=1,
         future_cls=RecordingFuture,  # type: ignore
     )
-    task_definition = task.create_task_definition()
+    task_definition = task.create_task_definition(num_shots=1)
 
     created_task = remote.make_task(
         id="task-created",
@@ -360,7 +587,6 @@ def test_submit_task_definition_rejects_missing_created_task_id(monkeypatch):
         context_name="ctx",
         program_language="squin",
         kernel=main,
-        num_shots=1,
     )
 
     created_task = remote.make_task(
@@ -375,7 +601,7 @@ def test_submit_task_definition_rejects_missing_created_task_id(monkeypatch):
 
     with pytest.raises(ValueError, match="Couldn't get id of created task"):
         task.submit_task_definition(
-            task_definition=task.create_task_definition(),
+            task_definition=task.create_task_definition(num_shots=1),
             storage=DictStorage(),
         )
 
@@ -385,10 +611,9 @@ def test_submit_task_definition_retries_on_403_after_refresh(monkeypatch):
         context_name="ctx",
         program_language="squin",
         kernel=main,
-        num_shots=1,
         future_cls=RecordingFuture,  # type: ignore
     )
-    task_definition = task.create_task_definition()
+    task_definition = task.create_task_definition(num_shots=1)
     created_task = remote.make_task(
         id="task-x",
         task_status=TaskStatus.CREATED,
