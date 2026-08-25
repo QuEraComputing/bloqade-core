@@ -9,3 +9,4 @@ from .local_storage import (
 from .log_info import set_logging as set_logging
 from .result import Result as Result
 from .task import KernelSerializer as KernelSerializer
+from .task_builder import TaskBuilder as TaskBuilder
