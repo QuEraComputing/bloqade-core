@@ -227,7 +227,7 @@ class Device(AuthMixin, Generic[FutureType]):
         task_request = TaskCreationRequest(root=task_definition)
         with TasksClient(self.app_context) as tasks_client:
             created_task = self.call_with_auth_refresh(
-                lambda: tasks_client.create(body=task_request)
+                lambda: tasks_client.create(body=task_request, qpu_mode=self.qpu_mode)
             )
 
         task_id = created_task.id
@@ -246,6 +246,7 @@ class Device(AuthMixin, Generic[FutureType]):
             fetch_options=fetch_options,
             storage=storage,
             context_name=self.context_name,
+            qpu_mode=self.qpu_mode,
         )
 
     def _resolve_kernel_serializer(

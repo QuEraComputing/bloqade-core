@@ -137,6 +137,37 @@ def test_device_submit_resolves_group_stores_definition_and_returns_future(
     assert tasks_client.calls[0][1]["body"].root.group_id == group_id
 
 
+def test_device_submit_task_definition_passes_explicit_qpu_mode(monkeypatch):
+    created_task = remote.make_task(
+        id="builder-task",
+        task_status=TaskStatus.CREATED,
+        created_date=local.CREATION_TIME,
+    )
+    tasks_client = remote.FakeTasksClient(create_return=created_task)
+    device = Device(
+        context_name="ctx",
+        qpu_mode="squin-256q",
+        program_language="squin",
+        kernel_serializer=RecordingSerializer(),
+        future_cls=RecordingFuture,  # type: ignore[arg-type]
+    )
+    task_definition = remote.make_task_definition(
+        group_id=UUID("33333333-3333-3333-3333-333333333333")
+    )
+
+    monkeypatch.setattr(device, "authenticate", lambda: None)
+    monkeypatch.setattr(device_mod, "TasksClient", lambda app_context: tasks_client)
+
+    future = device.submit_task_definition(task_definition=task_definition)
+
+    assert len(tasks_client.calls) == 1
+    name, kwargs = tasks_client.calls[0]
+    assert name == "create"
+    assert kwargs["qpu_mode"] == "squin-256q"
+    assert kwargs["body"].root == task_definition
+    assert future.qpu_mode == "squin-256q"
+
+
 def test_device_configured_group_uses_task_plugin_before_defaults(
     write_qsh_config,
 ):
