@@ -168,3 +168,20 @@ def test_device_passes_qpu_mode_to_all_task_shapes():
         device.parameter_scan(first, arguments=[{"theta": 0.5}]).qpu_mode
         == "squin-256q"
     )
+
+
+def test_device_group_is_passed_to_each_task_shape():
+    @basic_no_opt
+    def first():
+        return
+
+    @basic_no_opt
+    def second():
+        return
+
+    group = "qec-experiments"
+    device = Device(context_name="ctx")
+
+    assert device.task(first, group=group).group == group
+    assert device.batch_task([first, second], group=group).group == group
+    assert device.parameter_scan(first, arguments=[{}], group=group).group == group

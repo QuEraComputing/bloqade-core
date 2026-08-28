@@ -6,7 +6,7 @@ NOTE: requires bloqade-circuit[qasm2] to be installed.
 from dataclasses import dataclass, field
 
 from bloqade.qasm2.emit import QASM2
-from kirin.ir.method import Method as Method
+from kirin.ir.method import Method
 
 from bloqade import qasm2
 from bloqade.core.device import Device, Future, Result, SQLiteStorage

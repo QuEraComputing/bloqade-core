@@ -9,8 +9,8 @@ this fixture should switch to importing it.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import datetime, timezone
-from typing import Iterable
 
 import numpy as np
 import pytest

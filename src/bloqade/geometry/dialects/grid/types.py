@@ -1,7 +1,8 @@
 import dataclasses
+from collections.abc import Sequence
 from functools import cached_property
-from itertools import chain, product
-from typing import Any, Generic, Literal, Sequence, TypeVar, overload
+from itertools import chain, pairwise, product
+from typing import Any, Generic, Literal, TypeVar, overload
 
 from kirin import ir, types
 from kirin.dialects import ilist
@@ -37,7 +38,7 @@ def get_indices(size: int, index: Any) -> ilist.IList[int, Any]:
 
     normalized = [_normalize_index(size, i) for i in index.data]
 
-    if any(a >= b for a, b in zip(normalized[:-1], normalized[1:])):
+    if any(a >= b for a, b in pairwise(normalized)):
         raise ValueError("Subgrid indices must be in strictly ascending order")
     return ilist.IList(normalized)
 
@@ -314,7 +315,7 @@ class Grid(ir.Data["Grid"], Generic[NumX, NumY]):
     def __hash__(self) -> int:
         return hash((self.x_spacing, self.y_spacing, self.x_init, self.y_init))
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         return (
             isinstance(other, Grid)
             and self.x_spacing == other.x_spacing
@@ -612,7 +613,7 @@ class SubGrid(Grid[NumX, NumY]):
     def __hash__(self):
         return super().__hash__()
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         return super().__eq__(other)
 
     def __repr__(self):

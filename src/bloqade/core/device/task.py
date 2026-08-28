@@ -3,9 +3,11 @@ import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Generic, Literal, Protocol, overload
+from uuid import UUID
 
 from kirin import ir
 from kirin.serialization import JSONSerializer
+from qlam_core.plugins.groups.api.client import GroupsClient
 from qlam_core.plugins.tasks.api.client import TasksClient
 from qlam_core.plugins.tasks.api.tasks_models import (
     Program,
@@ -15,7 +17,7 @@ from qlam_core.plugins.tasks.api.tasks_models import (
     TaskMetadata,
 )
 
-from .future import ApiFetchOptions, Future, FutureType
+from .future import DEFAULT_FETCH_OPTIONS, ApiFetchOptions, Future, FutureType
 from .local_storage import DictStorage, StorageBackend
 from .log_info import logger
 from .mixins import AuthMixin
@@ -30,7 +32,7 @@ class KernelSerializer(Protocol):
 
 
 @dataclass(kw_only=True)
-class TaskABC(Generic[FutureType], AuthMixin, ABC):
+class TaskABC(AuthMixin, ABC, Generic[FutureType]):
     """Abstract base class for kernel tasks.
 
     A task collects one or more kernels and per-subtask metadata into a
@@ -55,11 +57,17 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             `kirin.serialization.JSONSerializer`.
         future_cls (type[FutureType]): Future class used to construct the
             return value of `submit_task_definition`. Defaults to `Future`.
+        group (str | None): Name of the QLAM group for the task definition.
+            When None,
+            the `~/.qsh` config group (`plugins.tasks.group`, then
+            `defaults.group`) is applied at submission time; when that is also
+            unset, QLAM selects the backend default group. Defaults to None.
     """
 
     program_language: str
     language_version: str = "0.1.0"
     kernel_serializer: KernelSerializer = field(default_factory=JSONSerializer)
+    group: str | None = None
 
     # NOTE: bound to subclasses of future, so need to ignore the typing issue here
     future_cls: type[FutureType] = Future  # type: ignore
@@ -231,7 +239,6 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         arguments = self.get_arguments()
         metadata = self.get_metadata()
         for i in range(self.num_subtasks):
-
             if arguments is not None:
                 args = arguments[i]
             else:
@@ -256,7 +263,33 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             program_language=program_language_with_version,
             programs=programs,
             subtasks=subtasks,
+            group_id=None,
         )
+
+    def _configured_group(self) -> str | None:
+        """Return the configured group reference for submissions, if set.
+
+        Mirrors the qsh CLI precedence for submission commands:
+        `plugins.tasks.group` first, then `defaults.group`.
+
+        Returns:
+            str | None: The configured group name or UUID string, or None
+                when the config does not set a group.
+        """
+        if self.group is not None:
+            return self.group
+        config = self.app_context.config
+        plugin_config = config.get_plugin_config("tasks")
+        group = plugin_config.group if plugin_config is not None else None
+        if group is None:
+            defaults = config.current_context.defaults
+            group = defaults.group if defaults is not None else None
+        return group
+
+    def _resolve_group_id(self, group: str) -> UUID:
+        """Resolve a configured or task-level group name to its UUID."""
+        with GroupsClient(self.app_context) as groups_client:
+            return self.call_with_auth_refresh(lambda: groups_client.resolve_id(group))
 
     @overload
     def run_async(
@@ -264,7 +297,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         *,
         dry_run: Literal[True],
         storage: StorageBackend | None = None,
-        fetch_options: ApiFetchOptions = ApiFetchOptions(),
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
     ) -> None: ...
 
     @overload
@@ -273,7 +306,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         *,
         dry_run: Literal[False],
         storage: StorageBackend | None = None,
-        fetch_options: ApiFetchOptions = ApiFetchOptions(),
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
     ) -> FutureType: ...
 
     def run_async(
@@ -281,7 +314,7 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         *,
         dry_run: bool,
         storage: StorageBackend | None = None,
-        fetch_options: ApiFetchOptions = ApiFetchOptions(),
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
     ) -> FutureType | None:
         """Validate the task and either dry-run or submit it.
 
@@ -323,9 +356,15 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
         *,
         task_definition: TaskDefinition,
         storage: StorageBackend | None = None,
-        fetch_options: ApiFetchOptions = ApiFetchOptions(),
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
     ) -> FutureType:
         """Submit a prepared task definition and return a future.
+
+        When the definition does not set a group ID, a task-level group name
+        takes precedence over the `~/.qsh` config group (`plugins.tasks.group`,
+        then `defaults.group`). The selected name is resolved before
+        submission. When neither is set, the group is omitted and QLAM selects
+        the backend default group.
 
         Keyword Args:
             task_definition (TaskDefinition): Task definition to submit.
@@ -346,6 +385,13 @@ class TaskABC(Generic[FutureType], AuthMixin, ABC):
             storage = DictStorage()
 
         self.authenticate()
+
+        if task_definition.group_id is None:
+            group = self._configured_group()
+            if group is not None:
+                task_definition = task_definition.model_copy(
+                    update={"group_id": self._resolve_group_id(group)}
+                )
 
         task_request = TaskCreationRequest(root=task_definition)
         with TasksClient(self.app_context) as tasks_client:

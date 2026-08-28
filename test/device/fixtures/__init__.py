@@ -15,10 +15,10 @@ module exists to prevent. Sample JSON dumps captured from the live API live
 under `examples/` for reference.
 
 The remote builders and the `examples/` dumps were verified against
-qlam-core v0.2.0. If you bump that pin, re-capture the examples and re-check
+qlam-core v0.6.x. If you bump that pin, re-capture the examples and re-check
 the builders against the new wire shapes.
 """
 
 from . import local, remote
 
-__all__ = ["remote", "local"]
+__all__ = ["local", "remote"]

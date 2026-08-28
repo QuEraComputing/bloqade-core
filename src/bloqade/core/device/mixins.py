@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, TypeVar
+from typing import TypeVar
 
 from qlam_core.auth.client import AuthClient
 from qlam_core.common import AppContext

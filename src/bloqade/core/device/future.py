@@ -10,6 +10,7 @@ from qlam_core.plugins.results.api.client import ResultsClient
 from qlam_core.plugins.tasks.api.client import TasksClient
 from qlam_core.plugins.tasks.api.tasks_models import (
     Task,
+    TaskDefinition,
     TaskStatus,
 )
 from typing_extensions import Self, TypeVar
@@ -47,6 +48,9 @@ class ApiFetchOptions:
     poll_interval_initial: float = 0.5  # seconds before first retry
     poll_interval_max: float = 30.0  # cap for backoff
     poll_interval_factor: float = 2.0  # multiplier per iteration
+
+
+DEFAULT_FETCH_OPTIONS = ApiFetchOptions()
 
 
 @dataclass(kw_only=True)
@@ -147,7 +151,7 @@ class Future(AuthMixin, Generic[ResultType]):
             while not done:
                 done = self.call_with_auth_refresh(
                     lambda page=subtask_page: self._fetch_subtask_page(
-                        client=client,  # type: ignore
+                        client=client,
                         subtask_page=page,
                     )
                 )
@@ -182,16 +186,15 @@ class Future(AuthMixin, Generic[ResultType]):
         self.authenticate()
         with TasksClient(self.app_context) as client:
             try:
-                # NOTE: typing issue because client is seen as BaseClient instead of TaskClient
                 return self.call_with_auth_refresh(
                     lambda: client.cancel(  # type: ignore
                         qpu_mode=self.qpu_mode,
                         id=self.task_id,
                     )
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 warn(
-                    f"Exception encountered when trying to cancel task with ID {self.task_id}: {str(repr(e))}"
+                    f"Exception encountered when trying to cancel task with ID {self.task_id}: {repr(e)!s}"
                 )
 
     def cancelled(self) -> bool:
@@ -336,7 +339,7 @@ class Future(AuthMixin, Generic[ResultType]):
         storage: StorageBackend,
         new_storage: StorageBackend | None = None,
         task_id: str | None = None,
-        fetch_options: ApiFetchOptions = ApiFetchOptions(),
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
         context_name: str | None = None,
         qpu_mode: str | None = None,
     ) -> Self:
@@ -406,7 +409,7 @@ class Future(AuthMixin, Generic[ResultType]):
         *,
         task_id: str,
         storage: StorageBackend | None = None,
-        fetch_options: ApiFetchOptions = ApiFetchOptions(),
+        fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
         context_name: str | None = None,
         qpu_mode: str | None = None,
     ) -> Self:
@@ -453,16 +456,25 @@ class Future(AuthMixin, Generic[ResultType]):
             )
 
         # fetch subtasks for metadata
-        with DefinitionsClient(auth.app_context) as client:
+        with DefinitionsClient(auth.app_context) as definitions_client:
             task_def = auth.call_with_auth_refresh(
-                lambda: client.get(  # type: ignore
+                lambda: definitions_client.get(  # type: ignore
                     qpu_mode=qpu_mode,
                     id=task.definition_id,
                 )
             )
 
         storage.add_task_definition(
-            task_id, task_definition=task_def, creation_time=task.created_date
+            task_id,
+            task_definition=TaskDefinition.model_validate(
+                {
+                    **task_def.model_dump(
+                        include={"program_language", "programs", "subtasks"}
+                    ),
+                    "group_id": task_def.group.id,
+                }
+            ),
+            creation_time=task.created_date,
         )
 
         return cls(
@@ -611,4 +623,5 @@ class Future(AuthMixin, Generic[ResultType]):
         return not full_subtask_page
 
 
+# NOTE: does Future[Result] make sense?
 FutureType = TypeVar("FutureType", bound=Future[Any], default=Future[Result])
