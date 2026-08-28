@@ -5,6 +5,7 @@
     <span class=n>program_language</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
     <span class=n>language_version</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>&quot;0.1.0&quot;</span><span class=p>,</span>
     <span class=n>kernel_serializer</span><span class=p>:</span> <span class=n>KernelSerializer</span> <span class=o>=</span> <span class=n>JSONSerializer</span><span class=p>(),</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
     <span class=n>future_cls</span><span class=p>:</span> <span class=nb>type</span><span class=p>[</span><span class=n>FutureType</span><span class=p>]</span> <span class=o>=</span> <span class=n>Future</span><span class=p>,</span>
     <span class=n>kernels</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=n>Method</span><span class=p>],</span>
     <span class=n>arguments</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
@@ -67,43 +68,43 @@
               });
             </script> <p>Task that runs multiple kernels, one subtask per kernel.</p> <p><span class=doc-section-title>Attributes:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.KernelBatchTask.kernels>kernels</span></code></td> <td> <code><span title=list>list</span>[<span title=kirin.ir.Method>Method</span>]</code> </td> <td> <div class=doc-md-description> <p>Kernels to execute.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.KernelBatchTask.arguments>arguments</span></code></td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>Per-kernel argument dictionaries. Defaults to None.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.KernelBatchTask.num_shots>num_shots</span></code></td> <td> <code><span title=int>int</span> | <span title=list>list</span>[<span title=int>int</span>]</code> </td> <td> <div class=doc-md-description> <p>Shot count per kernel, or one value broadcast to every kernel.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.KernelBatchTask.metadata>metadata</span></code></td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>Per-kernel metadata. Defaults to None.</p> </div> </td> </tr> </tbody> </table> <div class="doc doc-children"> <div class="doc doc-object doc-attribute"> <h3 id=bloqade.core.device.task.KernelBatchTask.num_subtasks class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code> <span class="doc doc-object-name doc-attribute-name">num_subtasks</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-property"><code>property</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=n>num_subtasks</span><span class=p>:</span> <span class=nb>int</span>
 </code></pre></div> <div class="doc doc-contents "> <p>Number of subtasks in this task's definition.</p> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.KernelBatchTask.get_arguments class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_arguments</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_arguments</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask argument dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One argument dictionary per subtask, or None when no arguments are set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>512</span>
-<span class=normal>513</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_arguments</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask argument dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One argument dictionary per subtask, or None when no arguments are set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>558</span>
+<span class=normal>559</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_arguments</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>arguments</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.KernelBatchTask.get_kernels class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_kernels</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_kernels</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the kernels used to build the task's programs.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=kirin.ir.Method>Method</span>]</code> </td> <td> <div class=doc-md-description> <p>list[ir.Method]: Kernels in program-index order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>509</span>
-<span class=normal>510</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_kernels</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>]:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the kernels used to build the task's programs.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=kirin.ir.Method>Method</span>]</code> </td> <td> <div class=doc-md-description> <p>list[ir.Method]: Kernels in program-index order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>555</span>
+<span class=normal>556</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_kernels</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>]:</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>kernels</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.KernelBatchTask.get_metadata class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_metadata</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_metadata</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask metadata dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One metadata dictionary per subtask, or None when no metadata is set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>520</span>
-<span class=normal>521</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_metadata</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask metadata dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One metadata dictionary per subtask, or None when no metadata is set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>566</span>
+<span class=normal>567</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_metadata</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>metadata</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.KernelBatchTask.get_num_shots class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_num_shots</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_num_shots</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the per-subtask shot counts.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=int>int</span>]</code> </td> <td> <div class=doc-md-description> <p>list[int]: Shot count for each subtask, in subtask order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>515</span>
-<span class=normal>516</span>
-<span class=normal>517</span>
-<span class=normal>518</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_num_shots</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the per-subtask shot counts.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=int>int</span>]</code> </td> <td> <div class=doc-md-description> <p>list[int]: Shot count for each subtask, in subtask order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>561</span>
+<span class=normal>562</span>
+<span class=normal>563</span>
+<span class=normal>564</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_num_shots</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]:</span>
     <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>num_shots</span><span class=p>,</span> <span class=nb>int</span><span class=p>):</span>
         <span class=k>return</span> <span class=p>[</span><span class=bp>self</span><span class=o>.</span><span class=n>num_shots</span><span class=p>]</span> <span class=o>*</span> <span class=bp>self</span><span class=o>.</span><span class=n>num_subtasks</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>num_shots</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.KernelBatchTask.summary class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">summary</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>summary</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>str</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return a human-readable summary printed on dry-run.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Summary describing what would be submitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>523</span>
-<span class=normal>524</span>
-<span class=normal>525</span>
-<span class=normal>526</span>
-<span class=normal>527</span>
-<span class=normal>528</span>
-<span class=normal>529</span>
-<span class=normal>530</span>
-<span class=normal>531</span>
-<span class=normal>532</span>
-<span class=normal>533</span>
-<span class=normal>534</span>
-<span class=normal>535</span>
-<span class=normal>536</span>
-<span class=normal>537</span>
-<span class=normal>538</span>
-<span class=normal>539</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>summary</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return a human-readable summary printed on dry-run.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Summary describing what would be submitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>569</span>
+<span class=normal>570</span>
+<span class=normal>571</span>
+<span class=normal>572</span>
+<span class=normal>573</span>
+<span class=normal>574</span>
+<span class=normal>575</span>
+<span class=normal>576</span>
+<span class=normal>577</span>
+<span class=normal>578</span>
+<span class=normal>579</span>
+<span class=normal>580</span>
+<span class=normal>581</span>
+<span class=normal>582</span>
+<span class=normal>583</span>
+<span class=normal>584</span>
+<span class=normal>585</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>summary</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
     <span class=n>msg</span> <span class=o>=</span> <span class=s2>&quot;=&quot;</span> <span class=o>*</span> <span class=mi>60</span> <span class=o>+</span> <span class=s2>&quot;</span><span class=se>\n</span><span class=s2>&quot;</span>
     <span class=n>msg</span> <span class=o>+=</span> <span class=s2>&quot;DRY RUN -- NO PROGRAM WAS ACTUALLY SUBMITTED FOR EXECUTION</span><span class=se>\n</span><span class=s2>&quot;</span>
     <span class=n>msg</span> <span class=o>+=</span> <span class=sa>f</span><span class=s2>&quot;Would now submit a task containing </span><span class=si>{</span><span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>kernels</span><span class=p>)</span><span class=si>}</span><span class=s2> programs:</span><span class=se>\n</span><span class=s2>&quot;</span>
@@ -138,9 +139,9 @@
                 }
               });
             </script> <p>Structural interface for kernel serializers.</p> <div class="doc doc-children"> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.KernelSerializer.encode class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">encode</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>encode</span><span class=p>(</span><span class=n>encoded_module</span><span class=p>:</span> <span class=n>Any</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span> <span class=o>|</span> <span class=nb>bytes</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Encode a Kirin serialization module for <code>Program.content</code>.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>27</span>
-<span class=normal>28</span>
-<span class=normal>29</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>encode</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>encoded_module</span><span class=p>:</span> <span class=n>Any</span><span class=p>,</span> <span class=o>/</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span> <span class=o>|</span> <span class=nb>bytes</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Encode a Kirin serialization module for <code>Program.content</code>.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>29</span>
+<span class=normal>30</span>
+<span class=normal>31</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>encode</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>encoded_module</span><span class=p>:</span> <span class=n>Any</span><span class=p>,</span> <span class=o>/</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span> <span class=o>|</span> <span class=nb>bytes</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Encode a Kirin serialization module for `Program.content`.&quot;&quot;&quot;</span>
     <span class=o>...</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> </div> </div> </div> <div class="doc doc-object doc-class"> <h2 id=bloqade.core.device.task.ParameterScanTask class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code> <span class="doc doc-object-name doc-class-name">ParameterScanTask</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small> </span> </h2> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>ParameterScanTask</span><span class=p>(</span>
@@ -150,6 +151,7 @@
     <span class=n>program_language</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
     <span class=n>language_version</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>&quot;0.1.0&quot;</span><span class=p>,</span>
     <span class=n>kernel_serializer</span><span class=p>:</span> <span class=n>KernelSerializer</span> <span class=o>=</span> <span class=n>JSONSerializer</span><span class=p>(),</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
     <span class=n>future_cls</span><span class=p>:</span> <span class=nb>type</span><span class=p>[</span><span class=n>FutureType</span><span class=p>]</span> <span class=o>=</span> <span class=n>Future</span><span class=p>,</span>
     <span class=n>kernel</span><span class=p>:</span> <span class=n>Method</span><span class=p>,</span>
     <span class=n>arguments</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>],</span>
@@ -212,38 +214,38 @@
               });
             </script> <p>Task that runs one kernel against multiple argument sets.</p> <p>Each entry in <code>arguments</code> becomes a subtask. The same program is reused for every subtask.</p> <p><span class=doc-section-title>Attributes:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.ParameterScanTask.kernel>kernel</span></code></td> <td> <code><span title=kirin.ir.Method>Method</span></code> </td> <td> <div class=doc-md-description> <p>Kernel executed for each parameter set.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.ParameterScanTask.arguments>arguments</span></code></td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>Argument dictionaries, one per subtask.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.ParameterScanTask.num_shots>num_shots</span></code></td> <td> <code><span title=int>int</span> | <span title=list>list</span>[<span title=int>int</span>]</code> </td> <td> <div class=doc-md-description> <p>Shot count per subtask, or one value broadcast to every subtask.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.ParameterScanTask.metadata>metadata</span></code></td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>Per-subtask metadata. Defaults to None.</p> </div> </td> </tr> </tbody> </table> <div class="doc doc-children"> <div class="doc doc-object doc-attribute"> <h3 id=bloqade.core.device.task.ParameterScanTask.num_subtasks class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code> <span class="doc doc-object-name doc-attribute-name">num_subtasks</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-property"><code>property</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=n>num_subtasks</span><span class=p>:</span> <span class=nb>int</span>
 </code></pre></div> <div class="doc doc-contents "> <p>Number of subtasks in this task's definition.</p> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.ParameterScanTask.get_arguments class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_arguments</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_arguments</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask argument dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One argument dictionary per subtask, or None when no arguments are set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>408</span>
-<span class=normal>409</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_arguments</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask argument dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One argument dictionary per subtask, or None when no arguments are set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>454</span>
+<span class=normal>455</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_arguments</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]:</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>arguments</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.ParameterScanTask.get_kernels class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_kernels</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_kernels</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the kernels used to build the task's programs.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=kirin.ir.Method>Method</span>]</code> </td> <td> <div class=doc-md-description> <p>list[ir.Method]: Kernels in program-index order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>405</span>
-<span class=normal>406</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_kernels</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>]:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the kernels used to build the task's programs.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=kirin.ir.Method>Method</span>]</code> </td> <td> <div class=doc-md-description> <p>list[ir.Method]: Kernels in program-index order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>451</span>
+<span class=normal>452</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_kernels</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>]:</span>
     <span class=k>return</span> <span class=p>[</span><span class=bp>self</span><span class=o>.</span><span class=n>kernel</span><span class=p>]</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.ParameterScanTask.get_metadata class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_metadata</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_metadata</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask metadata dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One metadata dictionary per subtask, or None when no metadata is set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>416</span>
-<span class=normal>417</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_metadata</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask metadata dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One metadata dictionary per subtask, or None when no metadata is set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>462</span>
+<span class=normal>463</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_metadata</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>metadata</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.ParameterScanTask.get_num_shots class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_num_shots</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_num_shots</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the per-subtask shot counts.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=int>int</span>]</code> </td> <td> <div class=doc-md-description> <p>list[int]: Shot count for each subtask, in subtask order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>411</span>
-<span class=normal>412</span>
-<span class=normal>413</span>
-<span class=normal>414</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_num_shots</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the per-subtask shot counts.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=int>int</span>]</code> </td> <td> <div class=doc-md-description> <p>list[int]: Shot count for each subtask, in subtask order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>457</span>
+<span class=normal>458</span>
+<span class=normal>459</span>
+<span class=normal>460</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_num_shots</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]:</span>
     <span class=k>if</span> <span class=nb>isinstance</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>num_shots</span><span class=p>,</span> <span class=nb>int</span><span class=p>):</span>
         <span class=k>return</span> <span class=p>[</span><span class=bp>self</span><span class=o>.</span><span class=n>num_shots</span><span class=p>]</span> <span class=o>*</span> <span class=bp>self</span><span class=o>.</span><span class=n>num_subtasks</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>num_shots</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.ParameterScanTask.program_index_for_subtask class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">program_index_for_subtask</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>program_index_for_subtask</span><span class=p>(</span><span class=n>i</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>int</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the program index used by subtask <code>i</code>.</p> <p>The default implementation maps each subtask to its own program. Parameter-scan tasks override this to reuse a single program.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>i</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Subtask index.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>int</code></td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Program index.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>419</span>
-<span class=normal>420</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>program_index_for_subtask</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>i</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>int</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the program index used by subtask <code>i</code>.</p> <p>The default implementation maps each subtask to its own program. Parameter-scan tasks override this to reuse a single program.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>i</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Subtask index.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>int</code></td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Program index.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>465</span>
+<span class=normal>466</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>program_index_for_subtask</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>i</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>int</span><span class=p>:</span>
     <span class=k>return</span> <span class=mi>0</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.ParameterScanTask.summary class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">summary</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>summary</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>str</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return a human-readable summary printed on dry-run.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Summary describing what would be submitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>422</span>
-<span class=normal>423</span>
-<span class=normal>424</span>
-<span class=normal>425</span>
-<span class=normal>426</span>
-<span class=normal>427</span>
-<span class=normal>428</span>
-<span class=normal>429</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>summary</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return a human-readable summary printed on dry-run.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Summary describing what would be submitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>468</span>
+<span class=normal>469</span>
+<span class=normal>470</span>
+<span class=normal>471</span>
+<span class=normal>472</span>
+<span class=normal>473</span>
+<span class=normal>474</span>
+<span class=normal>475</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>summary</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
     <span class=n>msg</span> <span class=o>=</span> <span class=s2>&quot;=&quot;</span> <span class=o>*</span> <span class=mi>60</span> <span class=o>+</span> <span class=s2>&quot;</span><span class=se>\n</span><span class=s2>&quot;</span>
     <span class=n>msg</span> <span class=o>+=</span> <span class=s2>&quot;DRY RUN -- NO PROGRAM WAS ACTUALLY SUBMITTED FOR EXECUTION</span><span class=se>\n</span><span class=s2>&quot;</span>
     <span class=n>msg</span> <span class=o>+=</span> <span class=sa>f</span><span class=s2>&quot;Would now submit a task containing </span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>num_subtasks</span><span class=si>}</span><span class=s2> subtasks.</span><span class=se>\n</span><span class=s2>&quot;</span>
@@ -258,6 +260,7 @@
     <span class=n>program_language</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
     <span class=n>language_version</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>&quot;0.1.0&quot;</span><span class=p>,</span>
     <span class=n>kernel_serializer</span><span class=p>:</span> <span class=n>KernelSerializer</span> <span class=o>=</span> <span class=n>JSONSerializer</span><span class=p>(),</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
     <span class=n>future_cls</span><span class=p>:</span> <span class=nb>type</span><span class=p>[</span><span class=n>FutureType</span><span class=p>]</span> <span class=o>=</span> <span class=n>Future</span><span class=p>,</span>
     <span class=n>kernel</span><span class=p>:</span> <span class=n>Method</span><span class=p>,</span>
     <span class=n>arguments</span><span class=p>:</span> <span class=nb>dict</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
@@ -320,42 +323,42 @@
               });
             </script> <p>Task that runs a single kernel with one set of arguments.</p> <p><span class=doc-section-title>Attributes:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.SingleKernelTask.kernel>kernel</span></code></td> <td> <code><span title=kirin.ir.Method>Method</span></code> </td> <td> <div class=doc-md-description> <p>Kernel to execute.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.SingleKernelTask.arguments>arguments</span></code></td> <td> <code><span title=dict>dict</span> | None</code> </td> <td> <div class=doc-md-description> <p>Arguments for the kernel. Defaults to None.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.SingleKernelTask.num_shots>num_shots</span></code></td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Shot count for the kernel.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.SingleKernelTask.metadata>metadata</span></code></td> <td> <code><span title=dict>dict</span> | None</code> </td> <td> <div class=doc-md-description> <p>Metadata for the single subtask. Defaults to None.</p> </div> </td> </tr> </tbody> </table> <div class="doc doc-children"> <div class="doc doc-object doc-attribute"> <h3 id=bloqade.core.device.task.SingleKernelTask.num_subtasks class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code> <span class="doc doc-object-name doc-attribute-name">num_subtasks</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-property"><code>property</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=n>num_subtasks</span><span class=p>:</span> <span class=nb>int</span>
 </code></pre></div> <div class="doc doc-contents "> <p>Number of subtasks in this task's definition.</p> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.SingleKernelTask.get_arguments class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_arguments</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_arguments</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask argument dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One argument dictionary per subtask, or None when no arguments are set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>457</span>
-<span class=normal>458</span>
-<span class=normal>459</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_arguments</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask argument dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One argument dictionary per subtask, or None when no arguments are set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>503</span>
+<span class=normal>504</span>
+<span class=normal>505</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_arguments</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
     <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>arguments</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
         <span class=k>return</span> <span class=p>[</span><span class=bp>self</span><span class=o>.</span><span class=n>arguments</span><span class=p>]</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.SingleKernelTask.get_kernels class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_kernels</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_kernels</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the kernels used to build the task's programs.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=kirin.ir.Method>Method</span>]</code> </td> <td> <div class=doc-md-description> <p>list[ir.Method]: Kernels in program-index order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>454</span>
-<span class=normal>455</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_kernels</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>]:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the kernels used to build the task's programs.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=kirin.ir.Method>Method</span>]</code> </td> <td> <div class=doc-md-description> <p>list[ir.Method]: Kernels in program-index order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>500</span>
+<span class=normal>501</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_kernels</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>]:</span>
     <span class=k>return</span> <span class=p>[</span><span class=bp>self</span><span class=o>.</span><span class=n>kernel</span><span class=p>]</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.SingleKernelTask.get_metadata class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_metadata</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_metadata</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask metadata dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One metadata dictionary per subtask, or None when no metadata is set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>464</span>
-<span class=normal>465</span>
-<span class=normal>466</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_metadata</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask metadata dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One metadata dictionary per subtask, or None when no metadata is set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>510</span>
+<span class=normal>511</span>
+<span class=normal>512</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_metadata</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
     <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>metadata</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
         <span class=k>return</span> <span class=p>[</span><span class=bp>self</span><span class=o>.</span><span class=n>metadata</span><span class=p>]</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.SingleKernelTask.get_num_shots class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_num_shots</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_num_shots</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the per-subtask shot counts.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=int>int</span>]</code> </td> <td> <div class=doc-md-description> <p>list[int]: Shot count for each subtask, in subtask order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>461</span>
-<span class=normal>462</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_num_shots</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the per-subtask shot counts.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=int>int</span>]</code> </td> <td> <div class=doc-md-description> <p>list[int]: Shot count for each subtask, in subtask order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>507</span>
+<span class=normal>508</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_num_shots</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]:</span>
     <span class=k>return</span> <span class=p>[</span><span class=bp>self</span><span class=o>.</span><span class=n>num_shots</span><span class=p>]</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.SingleKernelTask.summary class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">summary</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>summary</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>str</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return a human-readable summary printed on dry-run.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Summary describing what would be submitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>468</span>
-<span class=normal>469</span>
-<span class=normal>470</span>
-<span class=normal>471</span>
-<span class=normal>472</span>
-<span class=normal>473</span>
-<span class=normal>474</span>
-<span class=normal>475</span>
-<span class=normal>476</span>
-<span class=normal>477</span>
-<span class=normal>478</span>
-<span class=normal>479</span>
-<span class=normal>480</span>
-<span class=normal>481</span>
-<span class=normal>482</span>
-<span class=normal>483</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>summary</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return a human-readable summary printed on dry-run.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Summary describing what would be submitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>514</span>
+<span class=normal>515</span>
+<span class=normal>516</span>
+<span class=normal>517</span>
+<span class=normal>518</span>
+<span class=normal>519</span>
+<span class=normal>520</span>
+<span class=normal>521</span>
+<span class=normal>522</span>
+<span class=normal>523</span>
+<span class=normal>524</span>
+<span class=normal>525</span>
+<span class=normal>526</span>
+<span class=normal>527</span>
+<span class=normal>528</span>
+<span class=normal>529</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>summary</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
     <span class=n>msg</span> <span class=o>=</span> <span class=s2>&quot;=&quot;</span> <span class=o>*</span> <span class=mi>60</span> <span class=o>+</span> <span class=s2>&quot;</span><span class=se>\n</span><span class=s2>&quot;</span>
     <span class=n>msg</span> <span class=o>+=</span> <span class=s2>&quot;DRY RUN -- NO PROGRAM WAS ACTUALLY SUBMITTED FOR EXECUTION</span><span class=se>\n</span><span class=s2>&quot;</span>
     <span class=n>msg</span> <span class=o>+=</span> <span class=s2>&quot;Would now submit a task containing a single subtask for the kernel:</span><span class=se>\n</span><span class=s2>&quot;</span>
@@ -378,14 +381,15 @@
     <span class=n>program_language</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
     <span class=n>language_version</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>&quot;0.1.0&quot;</span><span class=p>,</span>
     <span class=n>kernel_serializer</span><span class=p>:</span> <span class=n>KernelSerializer</span> <span class=o>=</span> <span class=n>JSONSerializer</span><span class=p>(),</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
     <span class=n>future_cls</span><span class=p>:</span> <span class=nb>type</span><span class=p>[</span><span class=n>FutureType</span><span class=p>]</span> <span class=o>=</span> <span class=n>Future</span>
 <span class=p>)</span>
-</code></pre></div> <div class="doc doc-contents "> <p class="doc doc-class-bases"> Bases: <code><span title=typing.Generic>Generic</span>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code>, <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">AuthMixin</span>
+</code></pre></div> <div class="doc doc-contents "> <p class="doc doc-class-bases"> Bases: <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">AuthMixin</span>
 
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.mixins.AuthMixin</code>)' href=../mixins/#bloqade.core.device.mixins.AuthMixin>AuthMixin</a></code>, <code><span title=abc.ABC>ABC</span></code></p> <div style="display: none"> <a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TaskABC</span>
+  </span> (<code>bloqade.core.device.mixins.AuthMixin</code>)' href=../mixins/#bloqade.core.device.mixins.AuthMixin>AuthMixin</a></code>, <code><span title=abc.ABC>ABC</span></code>, <code><span title=typing.Generic>Generic</span>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code></p> <div style="display: none"> <a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TaskABC</span>
 
 
   <span class="doc doc-labels">
@@ -425,18 +429,10 @@
                   return '';
                 }
               });
-            </script> <p>Abstract base class for kernel tasks.</p> <p>A task collects one or more kernels and per-subtask metadata into a <code>TaskDefinition</code> that can be dry-run or submitted to the backend.</p> <p><span class=doc-section-title>Attributes:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.TaskABC.qpu_mode>qpu_mode</span></code></td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Explicit qlam QPU mode used for task submission. When None, qlam-core resolves it from configuration.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.TaskABC.program_language>program_language</span></code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Program language identifier stored on the task definition and used when serializing kernels.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.TaskABC.language_version>language_version</span></code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Program language version stored on the task definition and used when serializing kernels. Must be a semantic version. Set this directly for a static version, or override the <code>program_language_version</code> property if the version needs additional logic. Defaults to "0.1.0".</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.TaskABC.kernel_serializer>kernel_serializer</span></code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">KernelSerializer</span> (<code>bloqade.core.device.task.KernelSerializer</code>)' href=#bloqade.core.device.task.KernelSerializer>KernelSerializer</a></code> </td> <td> <div class=doc-md-description> <p>Serializer used by the default <code>serialize_kernel</code> implementation. It must provide an <code>encode</code> method compatible with the value returned by <code>kernel.dialects.encode(...)</code>. If <code>encode</code> returns bytes, the bytes are base64-encoded before being stored in <code>Program.content</code>; if it returns str, the value is used unchanged. Defaults to <code>kirin.serialization.JSONSerializer</code>.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.TaskABC.future_cls>future_cls</span></code></td> <td> <code><span title=type>type</span>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code> </td> <td> <div class=doc-md-description> <p>Future class used to construct the return value of <code>submit_task_definition</code>. Defaults to <code>Future</code>.</p> </div> </td> </tr> </tbody> </table> <div class="doc doc-children"> <div class="doc doc-object doc-attribute"> <h3 id=bloqade.core.device.task.TaskABC.num_subtasks class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code> <span class="doc doc-object-name doc-attribute-name">num_subtasks</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small> <small class="doc doc-label doc-label-property"><code>property</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=n>num_subtasks</span><span class=p>:</span> <span class=nb>int</span>
+            </script> <p>Abstract base class for kernel tasks.</p> <p>A task collects one or more kernels and per-subtask metadata into a <code>TaskDefinition</code> that can be dry-run or submitted to the backend.</p> <p><span class=doc-section-title>Attributes:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.TaskABC.qpu_mode>qpu_mode</span></code></td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Explicit qlam QPU mode used for task submission. When None, qlam-core resolves it from configuration.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.TaskABC.program_language>program_language</span></code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Program language identifier stored on the task definition and used when serializing kernels.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.TaskABC.language_version>language_version</span></code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Program language version stored on the task definition and used when serializing kernels. Must be a semantic version. Set this directly for a static version, or override the <code>program_language_version</code> property if the version needs additional logic. Defaults to "0.1.0".</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.TaskABC.kernel_serializer>kernel_serializer</span></code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">KernelSerializer</span> (<code>bloqade.core.device.task.KernelSerializer</code>)' href=#bloqade.core.device.task.KernelSerializer>KernelSerializer</a></code> </td> <td> <div class=doc-md-description> <p>Serializer used by the default <code>serialize_kernel</code> implementation. It must provide an <code>encode</code> method compatible with the value returned by <code>kernel.dialects.encode(...)</code>. If <code>encode</code> returns bytes, the bytes are base64-encoded before being stored in <code>Program.content</code>; if it returns str, the value is used unchanged. Defaults to <code>kirin.serialization.JSONSerializer</code>.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.TaskABC.future_cls>future_cls</span></code></td> <td> <code><span title=type>type</span>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code> </td> <td> <div class=doc-md-description> <p>Future class used to construct the return value of <code>submit_task_definition</code>. Defaults to <code>Future</code>.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.task.TaskABC.group>group</span></code></td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Name of the QLAM group for the task definition. When None, the <code>~/.qsh</code> config group (<code>plugins.tasks.group</code>, then <code>defaults.group</code>) is applied at submission time; when that is also unset, QLAM selects the backend default group. Defaults to None.</p> </div> </td> </tr> </tbody> </table> <div class="doc doc-children"> <div class="doc doc-object doc-attribute"> <h3 id=bloqade.core.device.task.TaskABC.num_subtasks class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code> <span class="doc doc-object-name doc-attribute-name">num_subtasks</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small> <small class="doc doc-label doc-label-property"><code>property</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=n>num_subtasks</span><span class=p>:</span> <span class=nb>int</span>
 </code></pre></div> <div class="doc doc-contents "> <p>Number of subtasks in this task's definition.</p> </div> </div> <div class="doc doc-object doc-attribute"> <h3 id=bloqade.core.device.task.TaskABC.program_language_version class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code> <span class="doc doc-object-name doc-attribute-name">program_language_version</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-property"><code>property</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=n>program_language_version</span><span class=p>:</span> <span class=nb>str</span>
 </code></pre></div> <div class="doc doc-contents "> <p>Program language version recorded when serializing kernels.</p> <p>Defaults to the <code>language_version</code> attribute. Override this property in a subclass if the version needs to be computed with additional logic. The value must be a semantic version.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Semantic version string.</p> </div> </td> </tr> </tbody> </table> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.TaskABC.create_task_definition class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">create_task_definition</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>create_task_definition</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=n>TaskDefinition</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Build a <code>TaskDefinition</code> from this task's kernels and subtasks.</p> <p>Override this method directly if your use-case doesn't fit the API contract.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>TaskDefinition</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Definition ready to be submitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>217</span>
-<span class=normal>218</span>
-<span class=normal>219</span>
-<span class=normal>220</span>
-<span class=normal>221</span>
-<span class=normal>222</span>
-<span class=normal>223</span>
-<span class=normal>224</span>
-<span class=normal>225</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Build a <code>TaskDefinition</code> from this task's kernels and subtasks.</p> <p>Override this method directly if your use-case doesn't fit the API contract.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>TaskDefinition</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Definition ready to be submitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>225</span>
 <span class=normal>226</span>
 <span class=normal>227</span>
 <span class=normal>228</span>
@@ -470,7 +466,15 @@
 <span class=normal>256</span>
 <span class=normal>257</span>
 <span class=normal>258</span>
-<span class=normal>259</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>create_task_definition</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>TaskDefinition</span><span class=p>:</span>
+<span class=normal>259</span>
+<span class=normal>260</span>
+<span class=normal>261</span>
+<span class=normal>262</span>
+<span class=normal>263</span>
+<span class=normal>264</span>
+<span class=normal>265</span>
+<span class=normal>266</span>
+<span class=normal>267</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>create_task_definition</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>TaskDefinition</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Build a `TaskDefinition` from this task&#39;s kernels and subtasks.</span>
 
 <span class=sd>    Override this method directly if your use-case doesn&#39;t fit the API</span>
@@ -487,7 +491,6 @@
     <span class=n>arguments</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>get_arguments</span><span class=p>()</span>
     <span class=n>metadata</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>get_metadata</span><span class=p>()</span>
     <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>num_subtasks</span><span class=p>):</span>
-
         <span class=k>if</span> <span class=n>arguments</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
             <span class=n>args</span> <span class=o>=</span> <span class=n>arguments</span><span class=p>[</span><span class=n>i</span><span class=p>]</span>
         <span class=k>else</span><span class=p>:</span>
@@ -512,17 +515,18 @@
         <span class=n>program_language</span><span class=o>=</span><span class=n>program_language_with_version</span><span class=p>,</span>
         <span class=n>programs</span><span class=o>=</span><span class=n>programs</span><span class=p>,</span>
         <span class=n>subtasks</span><span class=o>=</span><span class=n>subtasks</span><span class=p>,</span>
+        <span class=n>group_id</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span>
     <span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.TaskABC.get_arguments class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_arguments</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_arguments</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask argument dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One argument dictionary per subtask, or None when no arguments are set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>161</span>
-<span class=normal>162</span>
-<span class=normal>163</span>
-<span class=normal>164</span>
-<span class=normal>165</span>
-<span class=normal>166</span>
-<span class=normal>167</span>
-<span class=normal>168</span>
-<span class=normal>169</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask argument dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One argument dictionary per subtask, or None when no arguments are set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>169</span>
+<span class=normal>170</span>
+<span class=normal>171</span>
+<span class=normal>172</span>
+<span class=normal>173</span>
+<span class=normal>174</span>
+<span class=normal>175</span>
+<span class=normal>176</span>
+<span class=normal>177</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>get_arguments</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return per-subtask argument dictionaries.</span>
 
@@ -532,14 +536,14 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=o>...</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.TaskABC.get_kernels class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_kernels</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_kernels</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the kernels used to build the task's programs.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=kirin.ir.Method>Method</span>]</code> </td> <td> <div class=doc-md-description> <p>list[ir.Method]: Kernels in program-index order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>152</span>
-<span class=normal>153</span>
-<span class=normal>154</span>
-<span class=normal>155</span>
-<span class=normal>156</span>
-<span class=normal>157</span>
-<span class=normal>158</span>
-<span class=normal>159</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the kernels used to build the task's programs.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=kirin.ir.Method>Method</span>]</code> </td> <td> <div class=doc-md-description> <p>list[ir.Method]: Kernels in program-index order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>160</span>
+<span class=normal>161</span>
+<span class=normal>162</span>
+<span class=normal>163</span>
+<span class=normal>164</span>
+<span class=normal>165</span>
+<span class=normal>166</span>
+<span class=normal>167</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>get_kernels</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the kernels used to build the task&#39;s programs.</span>
 
@@ -548,15 +552,15 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=o>...</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.TaskABC.get_metadata class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_metadata</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_metadata</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask metadata dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One metadata dictionary per subtask, or None when no metadata is set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>171</span>
-<span class=normal>172</span>
-<span class=normal>173</span>
-<span class=normal>174</span>
-<span class=normal>175</span>
-<span class=normal>176</span>
-<span class=normal>177</span>
-<span class=normal>178</span>
-<span class=normal>179</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return per-subtask metadata dictionaries.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>list[dict] | None: One metadata dictionary per subtask, or None when no metadata is set.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>179</span>
+<span class=normal>180</span>
+<span class=normal>181</span>
+<span class=normal>182</span>
+<span class=normal>183</span>
+<span class=normal>184</span>
+<span class=normal>185</span>
+<span class=normal>186</span>
+<span class=normal>187</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>get_metadata</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return per-subtask metadata dictionaries.</span>
 
@@ -566,14 +570,14 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=o>...</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.TaskABC.get_num_shots class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_num_shots</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_num_shots</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the per-subtask shot counts.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=int>int</span>]</code> </td> <td> <div class=doc-md-description> <p>list[int]: Shot count for each subtask, in subtask order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>181</span>
-<span class=normal>182</span>
-<span class=normal>183</span>
-<span class=normal>184</span>
-<span class=normal>185</span>
-<span class=normal>186</span>
-<span class=normal>187</span>
-<span class=normal>188</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the per-subtask shot counts.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=int>int</span>]</code> </td> <td> <div class=doc-md-description> <p>list[int]: Shot count for each subtask, in subtask order.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>189</span>
+<span class=normal>190</span>
+<span class=normal>191</span>
+<span class=normal>192</span>
+<span class=normal>193</span>
+<span class=normal>194</span>
+<span class=normal>195</span>
+<span class=normal>196</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@abstractmethod</span>
 <span class=k>def</span><span class=w> </span><span class=nf>get_num_shots</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the per-subtask shot counts.</span>
 
@@ -582,19 +586,19 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=o>...</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.TaskABC.program_index_for_subtask class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">program_index_for_subtask</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>program_index_for_subtask</span><span class=p>(</span><span class=n>i</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>int</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return the program index used by subtask <code>i</code>.</p> <p>The default implementation maps each subtask to its own program. Parameter-scan tasks override this to reuse a single program.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>i</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Subtask index.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>int</code></td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Program index.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>203</span>
-<span class=normal>204</span>
-<span class=normal>205</span>
-<span class=normal>206</span>
-<span class=normal>207</span>
-<span class=normal>208</span>
-<span class=normal>209</span>
-<span class=normal>210</span>
-<span class=normal>211</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the program index used by subtask <code>i</code>.</p> <p>The default implementation maps each subtask to its own program. Parameter-scan tasks override this to reuse a single program.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>i</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Subtask index.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>int</code></td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Program index.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>211</span>
 <span class=normal>212</span>
 <span class=normal>213</span>
 <span class=normal>214</span>
-<span class=normal>215</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>program_index_for_subtask</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>i</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>int</span><span class=p>:</span>
+<span class=normal>215</span>
+<span class=normal>216</span>
+<span class=normal>217</span>
+<span class=normal>218</span>
+<span class=normal>219</span>
+<span class=normal>220</span>
+<span class=normal>221</span>
+<span class=normal>222</span>
+<span class=normal>223</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>program_index_for_subtask</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>i</span><span class=p>:</span> <span class=nb>int</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>int</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return the program index used by subtask `i`.</span>
 
 <span class=sd>    The default implementation maps each subtask to its own program.</span>
@@ -608,18 +612,18 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=k>return</span> <span class=n>i</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.TaskABC.programs class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">programs</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>programs</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>Program</span><span class=p>]</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Build the program list for the task definition.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=qlam_core.plugins.tasks.api.tasks_models.Program>Program</span>]</code> </td> <td> <div class=doc-md-description> <p>list[Program]: One <code>Program</code> per kernel returned by <code>get_kernels</code>, serialized via <code>serialize_kernel</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>190</span>
-<span class=normal>191</span>
-<span class=normal>192</span>
-<span class=normal>193</span>
-<span class=normal>194</span>
-<span class=normal>195</span>
-<span class=normal>196</span>
-<span class=normal>197</span>
-<span class=normal>198</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Build the program list for the task definition.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=list>list</span>[<span title=qlam_core.plugins.tasks.api.tasks_models.Program>Program</span>]</code> </td> <td> <div class=doc-md-description> <p>list[Program]: One <code>Program</code> per kernel returned by <code>get_kernels</code>, serialized via <code>serialize_kernel</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>198</span>
 <span class=normal>199</span>
 <span class=normal>200</span>
-<span class=normal>201</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>programs</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>Program</span><span class=p>]:</span>
+<span class=normal>201</span>
+<span class=normal>202</span>
+<span class=normal>203</span>
+<span class=normal>204</span>
+<span class=normal>205</span>
+<span class=normal>206</span>
+<span class=normal>207</span>
+<span class=normal>208</span>
+<span class=normal>209</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>programs</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>list</span><span class=p>[</span><span class=n>Program</span><span class=p>]:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Build the program list for the task definition.</span>
 
 <span class=sd>    Returns:</span>
@@ -635,71 +639,71 @@
     <span class=o>*</span><span class=p>,</span>
     <span class=n>dry_run</span><span class=p>:</span> <span class=n>Literal</span><span class=p>[</span><span class=kc>True</span><span class=p>],</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
-    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>()</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span>
 </code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class=nf>run_async</span><span class=p>(</span>
     <span class=o>*</span><span class=p>,</span>
     <span class=n>dry_run</span><span class=p>:</span> <span class=n>Literal</span><span class=p>[</span><span class=kc>False</span><span class=p>],</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
-    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>()</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span>
 </code></pre></div> </div> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>run_async</span><span class=p>(</span>
     <span class=o>*</span><span class=p>,</span>
     <span class=n>dry_run</span><span class=p>:</span> <span class=nb>bool</span><span class=p>,</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
-    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>()</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span> <span class=o>|</span> <span class=kc>None</span>
 </code></pre></div> <div class="doc doc-contents "> <p>Validate the task and either dry-run or submit it.</p> <p><span class=doc-section-title>Other Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>dry_run</code></td> <td> <code><span title=bool>bool</span></code> </td> <td> <div class=doc-md-description> <p>When True, print a summary and return None. When False, submit the task and return a future.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>storage</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a> | None</code> </td> <td> <div class=doc-md-description> <p>Storage backend that will receive the task definition and later fetched shots. When None, a fresh <code>DictStorage</code> is used (in-memory; not persisted across processes). Defaults to None.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>fetch_options</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ApiFetchOptions</span>
 
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=../future/#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a></code> </td> <td> <div class=doc-md-description> <p>Pagination and polling options attached to the returned future. Defaults to <code>ApiFetchOptions()</code>.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=bloqade.core.device.future.FutureType>FutureType</span> | None</code> </td> <td> <div class=doc-md-description> <p>FutureType | None: Future attached to the submitted task when <code>dry_run</code> is False; otherwise None.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If argument or metadata lengths do not match <code>num_subtasks</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>279</span>
-<span class=normal>280</span>
-<span class=normal>281</span>
-<span class=normal>282</span>
-<span class=normal>283</span>
-<span class=normal>284</span>
-<span class=normal>285</span>
-<span class=normal>286</span>
-<span class=normal>287</span>
-<span class=normal>288</span>
-<span class=normal>289</span>
-<span class=normal>290</span>
-<span class=normal>291</span>
-<span class=normal>292</span>
-<span class=normal>293</span>
-<span class=normal>294</span>
-<span class=normal>295</span>
-<span class=normal>296</span>
-<span class=normal>297</span>
-<span class=normal>298</span>
-<span class=normal>299</span>
-<span class=normal>300</span>
-<span class=normal>301</span>
-<span class=normal>302</span>
-<span class=normal>303</span>
-<span class=normal>304</span>
-<span class=normal>305</span>
-<span class=normal>306</span>
-<span class=normal>307</span>
-<span class=normal>308</span>
-<span class=normal>309</span>
-<span class=normal>310</span>
-<span class=normal>311</span>
-<span class=normal>312</span>
+  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=../future/#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a></code> </td> <td> <div class=doc-md-description> <p>Pagination and polling options attached to the returned future. Defaults to <code>ApiFetchOptions()</code>.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=bloqade.core.device.future.FutureType>FutureType</span> | None</code> </td> <td> <div class=doc-md-description> <p>FutureType | None: Future attached to the submitted task when <code>dry_run</code> is False; otherwise None.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If argument or metadata lengths do not match <code>num_subtasks</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>312</span>
 <span class=normal>313</span>
 <span class=normal>314</span>
 <span class=normal>315</span>
 <span class=normal>316</span>
 <span class=normal>317</span>
 <span class=normal>318</span>
-<span class=normal>319</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>run_async</span><span class=p>(</span>
+<span class=normal>319</span>
+<span class=normal>320</span>
+<span class=normal>321</span>
+<span class=normal>322</span>
+<span class=normal>323</span>
+<span class=normal>324</span>
+<span class=normal>325</span>
+<span class=normal>326</span>
+<span class=normal>327</span>
+<span class=normal>328</span>
+<span class=normal>329</span>
+<span class=normal>330</span>
+<span class=normal>331</span>
+<span class=normal>332</span>
+<span class=normal>333</span>
+<span class=normal>334</span>
+<span class=normal>335</span>
+<span class=normal>336</span>
+<span class=normal>337</span>
+<span class=normal>338</span>
+<span class=normal>339</span>
+<span class=normal>340</span>
+<span class=normal>341</span>
+<span class=normal>342</span>
+<span class=normal>343</span>
+<span class=normal>344</span>
+<span class=normal>345</span>
+<span class=normal>346</span>
+<span class=normal>347</span>
+<span class=normal>348</span>
+<span class=normal>349</span>
+<span class=normal>350</span>
+<span class=normal>351</span>
+<span class=normal>352</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>run_async</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
     <span class=n>dry_run</span><span class=p>:</span> <span class=nb>bool</span><span class=p>,</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
-    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>(),</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Validate the task and either dry-run or submit it.</span>
 
@@ -736,15 +740,7 @@
         <span class=n>fetch_options</span><span class=o>=</span><span class=n>fetch_options</span><span class=p>,</span>
     <span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.TaskABC.serialize_kernel class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">serialize_kernel</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>serialize_kernel</span><span class=p>(</span><span class=n>kernel</span><span class=p>:</span> <span class=n>Method</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Serialize a kernel into content suitable for the backend.</p> <p>The default implementation first converts the kernel to a Kirin serialization module using <code>program_language_version</code>, then passes that module to <code>kernel_serializer.encode</code>. Binary serializer output is base64-encoded so it can travel through the API's string-valued <code>Program.content</code> field. String serializer output is returned as produced by the serializer.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>kernel</code> </td> <td> <code><span title=kirin.ir.Method>Method</span></code> </td> <td> <div class=doc-md-description> <p>Kernel to serialize.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Serialized kernel content for the submitted <code>Program</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 80</span>
-<span class=normal> 81</span>
-<span class=normal> 82</span>
-<span class=normal> 83</span>
-<span class=normal> 84</span>
-<span class=normal> 85</span>
-<span class=normal> 86</span>
-<span class=normal> 87</span>
-<span class=normal> 88</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Serialize a kernel into content suitable for the backend.</p> <p>The default implementation first converts the kernel to a Kirin serialization module using <code>program_language_version</code>, then passes that module to <code>kernel_serializer.encode</code>. Binary serializer output is base64-encoded so it can travel through the API's string-valued <code>Program.content</code> field. String serializer output is returned as produced by the serializer.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>kernel</code> </td> <td> <code><span title=kirin.ir.Method>Method</span></code> </td> <td> <div class=doc-md-description> <p>Kernel to serialize.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Serialized kernel content for the submitted <code>Program</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 88</span>
 <span class=normal> 89</span>
 <span class=normal> 90</span>
 <span class=normal> 91</span>
@@ -767,7 +763,15 @@
 <span class=normal>108</span>
 <span class=normal>109</span>
 <span class=normal>110</span>
-<span class=normal>111</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>serialize_kernel</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>kernel</span><span class=p>:</span> <span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
+<span class=normal>111</span>
+<span class=normal>112</span>
+<span class=normal>113</span>
+<span class=normal>114</span>
+<span class=normal>115</span>
+<span class=normal>116</span>
+<span class=normal>117</span>
+<span class=normal>118</span>
+<span class=normal>119</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>serialize_kernel</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>kernel</span><span class=p>:</span> <span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Serialize a kernel into content suitable for the backend.</span>
 
 <span class=sd>    The default implementation first converts the kernel to a Kirin</span>
@@ -803,47 +807,14 @@
     <span class=o>*</span><span class=p>,</span>
     <span class=n>task_definition</span><span class=p>:</span> <span class=n>TaskDefinition</span><span class=p>,</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
-    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>()</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Submit a prepared task definition and return a future.</p> <p><span class=doc-section-title>Other Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>task_definition</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Task definition to submit.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>storage</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a> | None</code> </td> <td> <div class=doc-md-description> <p>Storage backend that will receive the task definition. When None, a fresh <code>DictStorage</code> is used (in-memory; not persisted across processes). Defaults to None.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>fetch_options</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ApiFetchOptions</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Submit a prepared task definition and return a future.</p> <p>When the definition does not set a group ID, a task-level group name takes precedence over the <code>~/.qsh</code> config group (<code>plugins.tasks.group</code>, then <code>defaults.group</code>). The selected name is resolved before submission. When neither is set, the group is omitted and QLAM selects the backend default group.</p> <p><span class=doc-section-title>Other Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>task_definition</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Task definition to submit.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>storage</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a> | None</code> </td> <td> <div class=doc-md-description> <p>Storage backend that will receive the task definition. When None, a fresh <code>DictStorage</code> is used (in-memory; not persisted across processes). Defaults to None.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>fetch_options</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ApiFetchOptions</span>
 
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=../future/#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a></code> </td> <td> <div class=doc-md-description> <p>Pagination and polling options attached to the returned future. Defaults to <code>ApiFetchOptions()</code>.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>FutureType</code></td> <td> <code><span title=bloqade.core.device.future.FutureType>FutureType</span></code> </td> <td> <div class=doc-md-description> <p>Future attached to the created task ID.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If the backend response is missing a task ID.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>321</span>
-<span class=normal>322</span>
-<span class=normal>323</span>
-<span class=normal>324</span>
-<span class=normal>325</span>
-<span class=normal>326</span>
-<span class=normal>327</span>
-<span class=normal>328</span>
-<span class=normal>329</span>
-<span class=normal>330</span>
-<span class=normal>331</span>
-<span class=normal>332</span>
-<span class=normal>333</span>
-<span class=normal>334</span>
-<span class=normal>335</span>
-<span class=normal>336</span>
-<span class=normal>337</span>
-<span class=normal>338</span>
-<span class=normal>339</span>
-<span class=normal>340</span>
-<span class=normal>341</span>
-<span class=normal>342</span>
-<span class=normal>343</span>
-<span class=normal>344</span>
-<span class=normal>345</span>
-<span class=normal>346</span>
-<span class=normal>347</span>
-<span class=normal>348</span>
-<span class=normal>349</span>
-<span class=normal>350</span>
-<span class=normal>351</span>
-<span class=normal>352</span>
-<span class=normal>353</span>
-<span class=normal>354</span>
+  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=../future/#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a></code> </td> <td> <div class=doc-md-description> <p>Pagination and polling options attached to the returned future. Defaults to <code>ApiFetchOptions()</code>.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>FutureType</code></td> <td> <code><span title=bloqade.core.device.future.FutureType>FutureType</span></code> </td> <td> <div class=doc-md-description> <p>Future attached to the created task ID.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If the backend response is missing a task ID.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>354</span>
 <span class=normal>355</span>
 <span class=normal>356</span>
 <span class=normal>357</span>
@@ -865,14 +836,66 @@
 <span class=normal>373</span>
 <span class=normal>374</span>
 <span class=normal>375</span>
-<span class=normal>376</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>submit_task_definition</span><span class=p>(</span>
+<span class=normal>376</span>
+<span class=normal>377</span>
+<span class=normal>378</span>
+<span class=normal>379</span>
+<span class=normal>380</span>
+<span class=normal>381</span>
+<span class=normal>382</span>
+<span class=normal>383</span>
+<span class=normal>384</span>
+<span class=normal>385</span>
+<span class=normal>386</span>
+<span class=normal>387</span>
+<span class=normal>388</span>
+<span class=normal>389</span>
+<span class=normal>390</span>
+<span class=normal>391</span>
+<span class=normal>392</span>
+<span class=normal>393</span>
+<span class=normal>394</span>
+<span class=normal>395</span>
+<span class=normal>396</span>
+<span class=normal>397</span>
+<span class=normal>398</span>
+<span class=normal>399</span>
+<span class=normal>400</span>
+<span class=normal>401</span>
+<span class=normal>402</span>
+<span class=normal>403</span>
+<span class=normal>404</span>
+<span class=normal>405</span>
+<span class=normal>406</span>
+<span class=normal>407</span>
+<span class=normal>408</span>
+<span class=normal>409</span>
+<span class=normal>410</span>
+<span class=normal>411</span>
+<span class=normal>412</span>
+<span class=normal>413</span>
+<span class=normal>414</span>
+<span class=normal>415</span>
+<span class=normal>416</span>
+<span class=normal>417</span>
+<span class=normal>418</span>
+<span class=normal>419</span>
+<span class=normal>420</span>
+<span class=normal>421</span>
+<span class=normal>422</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>submit_task_definition</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
     <span class=n>task_definition</span><span class=p>:</span> <span class=n>TaskDefinition</span><span class=p>,</span>
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
-    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>(),</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span><span class=p>,</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Submit a prepared task definition and return a future.</span>
+
+<span class=sd>    When the definition does not set a group ID, a task-level group name</span>
+<span class=sd>    takes precedence over the `~/.qsh` config group (`plugins.tasks.group`,</span>
+<span class=sd>    then `defaults.group`). The selected name is resolved before</span>
+<span class=sd>    submission. When neither is set, the group is omitted and QLAM selects</span>
+<span class=sd>    the backend default group.</span>
 
 <span class=sd>    Keyword Args:</span>
 <span class=sd>        task_definition (TaskDefinition): Task definition to submit.</span>
@@ -893,6 +916,13 @@
         <span class=n>storage</span> <span class=o>=</span> <span class=n>DictStorage</span><span class=p>()</span>
 
     <span class=bp>self</span><span class=o>.</span><span class=n>authenticate</span><span class=p>()</span>
+
+    <span class=k>if</span> <span class=n>task_definition</span><span class=o>.</span><span class=n>group_id</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>group</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_configured_group</span><span class=p>()</span>
+        <span class=k>if</span> <span class=n>group</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=n>task_definition</span> <span class=o>=</span> <span class=n>task_definition</span><span class=o>.</span><span class=n>model_copy</span><span class=p>(</span>
+                <span class=n>update</span><span class=o>=</span><span class=p>{</span><span class=s2>&quot;group_id&quot;</span><span class=p>:</span> <span class=bp>self</span><span class=o>.</span><span class=n>_resolve_group_id</span><span class=p>(</span><span class=n>group</span><span class=p>)}</span>
+            <span class=p>)</span>
 
     <span class=n>task_request</span> <span class=o>=</span> <span class=n>TaskCreationRequest</span><span class=p>(</span><span class=n>root</span><span class=o>=</span><span class=n>task_definition</span><span class=p>)</span>
     <span class=k>with</span> <span class=n>TasksClient</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>tasks_client</span><span class=p>:</span>
@@ -922,13 +952,13 @@
         <span class=n>qpu_mode</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>qpu_mode</span><span class=p>,</span>
     <span class=p>)</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.TaskABC.summary class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">summary</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>summary</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>str</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Return a human-readable summary printed on dry-run.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Summary describing what would be submitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>119</span>
-<span class=normal>120</span>
-<span class=normal>121</span>
-<span class=normal>122</span>
-<span class=normal>123</span>
-<span class=normal>124</span>
-<span class=normal>125</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>summary</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return a human-readable summary printed on dry-run.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>str</code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Summary describing what would be submitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>127</span>
+<span class=normal>128</span>
+<span class=normal>129</span>
+<span class=normal>130</span>
+<span class=normal>131</span>
+<span class=normal>132</span>
+<span class=normal>133</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>summary</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>str</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Return a human-readable summary printed on dry-run.</span>
 
 <span class=sd>    Returns:</span>
@@ -936,15 +966,7 @@
 <span class=sd>    &quot;&quot;&quot;</span>
     <span class=k>return</span> <span class=sa>f</span><span class=s2>&quot;Would now submit </span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>num_subtasks</span><span class=si>}</span><span class=s2> subtasks&quot;</span>
 </code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.task.TaskABC.validate_arguments class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">validate_arguments</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>validate_arguments</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Validate that argument and metadata lengths match subtask count.</p> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If arguments or metadata length differs from <code>num_subtasks</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>127</span>
-<span class=normal>128</span>
-<span class=normal>129</span>
-<span class=normal>130</span>
-<span class=normal>131</span>
-<span class=normal>132</span>
-<span class=normal>133</span>
-<span class=normal>134</span>
-<span class=normal>135</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Validate that argument and metadata lengths match subtask count.</p> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If arguments or metadata length differs from <code>num_subtasks</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/task.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>135</span>
 <span class=normal>136</span>
 <span class=normal>137</span>
 <span class=normal>138</span>
@@ -959,7 +981,15 @@
 <span class=normal>147</span>
 <span class=normal>148</span>
 <span class=normal>149</span>
-<span class=normal>150</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>validate_arguments</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
+<span class=normal>150</span>
+<span class=normal>151</span>
+<span class=normal>152</span>
+<span class=normal>153</span>
+<span class=normal>154</span>
+<span class=normal>155</span>
+<span class=normal>156</span>
+<span class=normal>157</span>
+<span class=normal>158</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>validate_arguments</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
 <span class=w>    </span><span class=sd>&quot;&quot;&quot;Validate that argument and metadata lengths match subtask count.</span>
 
 <span class=sd>    Raises:</span>

@@ -8,6 +8,7 @@
             * [mixins](bloqade/core/device/mixins.md)
             * [result](bloqade/core/device/result.md)
             * [task](bloqade/core/device/task.md)
+            * [task_builder](bloqade/core/device/task_builder.md)
     * [geometry](bloqade/geometry/index.md)
         * [dialects](bloqade/geometry/dialects/index.md)
             * [filled](bloqade/geometry/dialects/filled/index.md)
