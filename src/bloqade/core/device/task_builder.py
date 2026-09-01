@@ -82,9 +82,13 @@ class TaskBuilder:
         """
         ret_str = ""
         ret_str += "Task:\n"
+        ret_str += "\tPrograms:\n"
+        for program, program_idx in sorted(self._programs.items(), key=lambda x: x[1]):
+            ret_str += f"\t\t{program_idx}. {program.sym_name}\n"
 
+        ret_str += "\tSubtasks:\n"
         for idx, subtask in enumerate(self._subtasks):
-            subtask_str = f"{idx}. Subtask: {subtask.kernel_name}, program {subtask.qlam_subtask.program_index} -> {subtask.qlam_subtask.num_shots} shots\n"
+            subtask_str = f"\t\t{idx}. Subtask: {subtask.kernel_name}, program {subtask.qlam_subtask.program_index} -> {subtask.qlam_subtask.num_shots} shots\n"
             ret_str += subtask_str
 
         return ret_str
