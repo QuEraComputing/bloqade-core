@@ -169,18 +169,21 @@ def test_kernel_names_are_unique_and_copy_preserves_the_counter(monkeypatch):
 
 def test_summary_and_detailed_output_include_subtask_information():
     builder = TaskBuilder()
-    builder.add_subtask(with_args, 9, None, 1.0, 2.0)
+    builder.add_subtask(with_args, 9, {"kind": "test"}, 1.0, 2.0)
+    builder.add_subtask(other, 1)
 
     assert str(builder) == builder.summary()
     assert (
         "0. Subtask: with_args, Program 0, Args {'x': 1.0, 'y': 2.0}, "
-        "Metadata None -> 9 shots"
+        "Metadata {'kind': 'test'} -> 9 shots"
     ) in builder.summary()
+    assert "Metadata None -> 1 shots" in builder.summary()
 
     detailed = builder.print_detailed()
     assert "Programs:" in detailed
     assert "Subtasks:" in detailed
-    assert "Args {'x': 1.0, 'y': 2.0}, Metadata None -> 9 shots" in detailed
+    assert "Args {'x': 1.0, 'y': 2.0}, Metadata {'kind': 'test'} -> 9 shots" in detailed
+    assert "Metadata None -> 1 shots" in detailed
 
 
 def test_finalize_builds_plain_ordered_payload_without_mutating_builder():

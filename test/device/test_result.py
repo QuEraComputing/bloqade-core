@@ -304,6 +304,47 @@ def test_result_group_shots_by_metadata_requires_metadata_to_match_merged_tasks(
         )
 
 
+@pytest.mark.parametrize(
+    ("subtask_metadata", "error_type", "match"),
+    [
+        (None, ValueError, "has no user metadata"),
+        (
+            remote.make_task_metadata(user_metadata="not JSON"),
+            ValueError,
+            "has invalid JSON user metadata",
+        ),
+        (
+            remote.make_task_metadata(user_metadata=json.dumps(["X"])),
+            TypeError,
+            "user metadata must be a JSON object",
+        ),
+        (make_metadata({"other": "X"}), ValueError, "is missing metadata keys"),
+        (make_metadata({"basis": ["X"]}), ValueError, "must be hashable"),
+    ],
+)
+def test_result_group_shots_by_metadata_rejects_invalid_metadata(
+    subtask_metadata,
+    error_type,
+    match,
+):
+    storage = DictStorage()
+    add_task(
+        storage,
+        "task-1",
+        [remote.make_subtask(subtask_metadata=subtask_metadata)],
+    )
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1",)),
+    )
+
+    with pytest.raises(error_type, match=match):
+        result.group_shots_by_metadata(
+            shots=[["shot"]],
+            metadata_keys=("basis",),
+        )
+
+
 def test_result_where_methods_return_narrowed_results():
     storage = DictStorage()
     add_task(
