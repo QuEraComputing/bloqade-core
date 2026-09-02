@@ -55,7 +55,10 @@ def test_device_dry_run_prints_without_submission_and_keeps_builder_editable(
 
     assert device.run_async(builder, dry_run=True) is None
     output = capsys.readouterr().out
-    assert "builder_kernel, program 0 -> 11 shots" in output
+    assert (
+        "builder_kernel, Program 0, Args {'value': 1.25}, "
+        "Metadata {'kind': 'test'} -> 11 shots"
+    ) in output
     assert builder == before_dry_run
     assert builder.add_subtask(builder_kernel, 3, value=2.5) == 1
 
