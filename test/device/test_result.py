@@ -234,6 +234,76 @@ def test_result_full_views_and_task_ids_respect_filter_scope():
     ]
 
 
+def test_result_group_shots_by_metadata_aggregates_full_subtask_shots():
+    storage = DictStorage()
+    add_task(
+        storage,
+        "task-1",
+        [
+            remote.make_subtask(
+                subtask_metadata=make_metadata({"basis": "X", "cycle": 0})
+            ),
+            remote.make_subtask(
+                subtask_metadata=make_metadata({"basis": "X", "cycle": 1})
+            ),
+            remote.make_subtask(
+                subtask_metadata=make_metadata({"basis": "Y", "cycle": 0})
+            ),
+        ],
+    )
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1",)),
+    )
+
+    grouped = result.group_shots_by_metadata(
+        shots=[["x0"], ["x1a", "x1b"], ["y0"]],
+        metadata_keys=("basis",),
+    )
+
+    assert grouped == {
+        ("X",): ["x0", "x1a", "x1b"],
+        ("Y",): ["y0"],
+    }
+
+
+def test_result_group_shots_by_metadata_requires_merged_subtask_alignment():
+    storage = DictStorage()
+    add_task(
+        storage,
+        "task-1",
+        [remote.make_subtask(subtask_metadata=make_metadata({"basis": "X"}))],
+    )
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1",)),
+    )
+
+    with pytest.raises(ValueError, match="one sequence per selected merged subtask"):
+        result.group_shots_by_metadata(shots=[], metadata_keys=("basis",))
+
+
+def test_result_group_shots_by_metadata_requires_metadata_to_match_merged_tasks():
+    storage = DictStorage()
+    for task_id, basis in (("task-1", "X"), ("task-2", "Y")):
+        add_task(
+            storage,
+            task_id,
+            [remote.make_subtask(subtask_metadata=make_metadata({"basis": basis}))],
+        )
+
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1", "task-2")),
+    )
+
+    with pytest.raises(ValueError, match="disagree on metadata values"):
+        result.group_shots_by_metadata(
+            shots=[["merged-shot"]],
+            metadata_keys=("basis",),
+        )
+
+
 def test_result_where_methods_return_narrowed_results():
     storage = DictStorage()
     add_task(
