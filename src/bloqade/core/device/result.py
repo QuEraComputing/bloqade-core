@@ -16,6 +16,16 @@ def _default_shot_filter() -> ShotFilter:
     return ShotFilter(frame_type="DETECTED")
 
 
+def _shot_identity(shot: ShotResult) -> tuple[str, int, int, int]:
+    """Return the storage identity shared by a shot's frame records."""
+    return (
+        shot.task_id,
+        shot.subtask_index,
+        shot.subtask_shot_index,
+        shot.shot_index,
+    )
+
+
 @dataclass(kw_only=True)
 class Result:
     """Result view over stored shots.
@@ -112,19 +122,30 @@ class Result:
         self._is_valid = True
 
     def _shot_results_for_subtasks(self, subtasks: list[dict]) -> list[np.ndarray]:
-        shot_results = []
+        shot_results = self._raw_shot_results_for_subtasks(subtasks)
+
+        return [
+            np.array([shot_result.bitstring for shot_result in subtask_shots])
+            for subtask_shots in shot_results
+        ]
+
+    def _raw_shot_results_for_subtasks(
+        self, subtasks: list[dict]
+    ) -> list[list[ShotResult]]:
+        """Return raw storage rows grouped by an already-selected subtask list.
+
+        Each group uses the corresponding merged ``subtask_index``. Rows are
+        sorted by ``(task_id, subtask_index, subtask_shot_index, shot_index)``.
+        """
+        shot_results: list[list[ShotResult]] = []
         for subtask in subtasks:
             shot_filter = replace(
                 self.shot_filter, subtask_indices=(subtask["subtask_index"],)
             )
-            shot_results.append(self.storage.get_shots(shot_filter=shot_filter))
+            storage_shots = self.storage.get_shots(shot_filter=shot_filter)
+            shot_results.append(sorted(storage_shots, key=_shot_identity))
 
-        shots_per_subtask = [
-            np.array([shot_result.bitstring for shot_result in shot_results[i]])
-            for i in range(len(shot_results))
-        ]
-
-        return shots_per_subtask
+        return shot_results
 
     def shot_results(self, verify: bool = True) -> list[np.ndarray]:
         """Return physical shot bitstrings grouped by merged subtask.
@@ -143,6 +164,31 @@ class Result:
         """
         subtasks = self.subtasks(verify=verify)
         return self._shot_results_for_subtasks(subtasks)
+
+    def raw_shot_results(self, verify: bool = True) -> list[list[ShotResult]]:
+        """Return raw :class:`ShotResult` objects grouped by merged subtask.
+
+        Unlike :meth:`shot_results`, this preserves each row's task ID, shot
+        indexes, frame type, and bitstring. A group contains all selected task
+        IDs that contribute to its merged ``subtask_index``. Rows within each
+        group are sorted by ``(task_id, subtask_index, subtask_shot_index,
+        shot_index)``.
+
+        Args:
+            verify: Whether to validate that selected task IDs can be merged
+                before reading shots. Defaults to True.
+
+        Returns:
+            One list of raw shot rows per merged subtask, ordered by subtask
+            index. Rows within each list are ordered by their storage identity:
+            ``(task_id, subtask_index, subtask_shot_index, shot_index)``.
+
+        Raises:
+            ValueError: If ``verify`` is True and selected task IDs cannot be
+                merged.
+        """
+        subtasks = self.subtasks(verify=verify)
+        return self._raw_shot_results_for_subtasks(subtasks)
 
     def arguments(self, verify: bool = True) -> list[dict | None]:
         """Return subtask arguments after merging selected task IDs.

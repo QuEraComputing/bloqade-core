@@ -59,6 +59,14 @@ def add_compatible_tasks(storage: DictStorage):
     )
     storage.add_shots(
         [
+            # Intentionally add this before task-1's equivalent local shot;
+            # raw results must still use the total storage-identity order.
+            make_shot(
+                task_id="task-2",
+                shot_index=0,
+                subtask_index=0,
+                bitstring=(True, True),
+            ),
             make_shot(task_id="task-1", shot_index=0, subtask_index=0),
             make_shot(
                 task_id="task-1",
@@ -70,12 +78,6 @@ def add_compatible_tasks(storage: DictStorage):
                 task_id="task-1",
                 shot_index=2,
                 subtask_index=1,
-                bitstring=(True, True),
-            ),
-            make_shot(
-                task_id="task-2",
-                shot_index=0,
-                subtask_index=0,
                 bitstring=(True, True),
             ),
             make_shot(
@@ -171,6 +173,38 @@ def test_result_shot_results_returns_bitstrings_grouped_by_subtask():
             ]
         ),
     )
+
+
+def test_result_raw_shot_results_returns_rows_grouped_by_merged_subtask(storage):
+    add_compatible_tasks(storage)
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1", "task-2"), frame_type="DETECTED"),
+    )
+
+    raw_shots = result.raw_shot_results()
+
+    assert len(raw_shots) == 2
+    assert all(
+        isinstance(shot, local.ShotResult)
+        for subtask_shots in raw_shots
+        for shot in subtask_shots
+    )
+    assert [
+        (shot.task_id, shot.subtask_index, shot.subtask_shot_index, shot.shot_index)
+        for shot in raw_shots[0]
+    ] == [
+        ("task-1", 0, 0, 0),
+        ("task-1", 0, 0, 1),
+        ("task-2", 0, 0, 0),
+    ]
+    assert [
+        (shot.task_id, shot.subtask_index, shot.subtask_shot_index, shot.shot_index)
+        for shot in raw_shots[1]
+    ] == [
+        ("task-1", 1, 0, 2),
+        ("task-2", 1, 0, 1),
+    ]
 
 
 @pytest.mark.parametrize(
