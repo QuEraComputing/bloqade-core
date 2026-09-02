@@ -84,7 +84,14 @@ class TaskBuilder:
         ret_str += "Task:\n"
 
         for idx, subtask in enumerate(self._subtasks):
-            subtask_str = f"{idx}. Subtask: {subtask.kernel_name}, program {subtask.qlam_subtask.program_index} -> {subtask.qlam_subtask.num_shots} shots\n"
+            subtask_metadata = subtask.qlam_subtask.subtask_metadata
+            if subtask_metadata is not None:
+                user_metadata = subtask_metadata.user_metadata
+                if user_metadata is not None:
+                    user_metadata = json.loads(user_metadata)
+            else:
+                user_metadata = None
+            subtask_str = f"{idx}. Subtask: {subtask.kernel_name}, Program {subtask.qlam_subtask.program_index}, Args {subtask.qlam_subtask.arguments}, Metadata {user_metadata} -> {subtask.qlam_subtask.num_shots} shots\n"
             ret_str += subtask_str
 
         return ret_str
@@ -99,7 +106,14 @@ class TaskBuilder:
 
         ret_str += "\tSubtasks:\n"
         for subtask_idx, subtask in enumerate(self._subtasks):
-            ret_str += f"\t\t{subtask_idx}. Program {subtask.qlam_subtask.program_index}, Args {subtask.qlam_subtask.arguments} -> {subtask.qlam_subtask.num_shots} shots\n"
+            subtask_metadata = subtask.qlam_subtask.subtask_metadata
+            if subtask_metadata is not None:
+                user_metadata = subtask_metadata.user_metadata
+                if user_metadata is not None:
+                    user_metadata = json.loads(user_metadata)
+            else:
+                user_metadata = None
+            ret_str += f"\t\t{subtask_idx}. Subtask: {subtask.kernel_name}, Program {subtask.qlam_subtask.program_index}, Args {subtask.qlam_subtask.arguments}, Metadata {user_metadata} -> {subtask.qlam_subtask.num_shots} shots\n"
 
         return ret_str
 
