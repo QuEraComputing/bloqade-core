@@ -1,0 +1,748 @@
+<!doctype html><html lang=en class=no-js> <head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Bloqade-Core: core building blocks for the Bloqade ecosystem"><link href=https://github.com/QuEraComputing/bloqade-core/v0.6.10/reference/bloqade/core/device/future/ rel=canonical><link href=../task/ rel=prev><link href=../result/ rel=next><link rel=icon href=../../../../../assets/images/favicon.png><meta name=generator content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7"><title>Future - bloqade-core</title><link rel=stylesheet href=../../../../../assets/stylesheets/main.ec1eaa64.min.css><link rel=stylesheet href=../../../../../assets/stylesheets/palette.ab4e12ef.min.css><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback"><style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style><link rel=stylesheet href=../../../../../assets/_mkdocstrings.css><link rel=stylesheet href=../../../../../stylesheets/extra.css><link rel=stylesheet href=https://unpkg.com/katex@0/dist/katex.min.css><script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script></head> <body dir=ltr data-md-color-scheme=default data-md-color-primary=custom data-md-color-accent=custom> <input class=md-toggle data-md-toggle=drawer type=checkbox id=__drawer autocomplete=off> <input class=md-toggle data-md-toggle=search type=checkbox id=__search autocomplete=off> <label class=md-overlay for=__drawer></label> <div data-md-component=skip> <a href=#bloqade.core.device.future class=md-skip> Skip to content </a> </div> <div data-md-component=announce> </div> <div data-md-color-scheme=default data-md-component=outdated hidden> </div> <header class=md-header data-md-component=header> <nav class="md-header__inner md-grid" aria-label=Header> <a href=../../../../.. title=bloqade-core class="md-header__button md-logo" aria-label=bloqade-core data-md-component=logo> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg> </a> <label class="md-header__button md-icon" for=__drawer> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg> </label> <div class=md-header__title data-md-component=header-title> <div class=md-header__ellipsis> <div class=md-header__topic> <span class=md-ellipsis> bloqade-core </span> </div> <div class=md-header__topic data-md-component=header-topic> <span class=md-ellipsis> Future </span> </div> </div> </div> <form class=md-header__option data-md-component=palette> <input class=md-option data-md-color-media data-md-color-scheme=default data-md-color-primary=custom data-md-color-accent=custom aria-label="Switch to dark mode" type=radio name=__palette id=__palette_0> <label class="md-header__button md-icon" title="Switch to dark mode" for=__palette_1 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg> </label> <input class=md-option data-md-color-media data-md-color-scheme=slate data-md-color-primary=custom data-md-color-accent=custom aria-label="Switch to light mode" type=radio name=__palette id=__palette_1> <label class="md-header__button md-icon" title="Switch to light mode" for=__palette_0 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg> </label> </form> <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script> <label class="md-header__button md-icon" for=__search> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg> </label> <div class=md-search data-md-component=search role=dialog> <label class=md-search__overlay for=__search></label> <div class=md-search__inner role=search> <form class=md-search__form name=search> <input type=text class=md-search__input name=query aria-label=Search placeholder=Search autocapitalize=off autocorrect=off autocomplete=off spellcheck=false data-md-component=search-query required> <label class="md-search__icon md-icon" for=__search> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg> </label> <nav class=md-search__options aria-label=Search> <button type=reset class="md-search__icon md-icon" title=Clear aria-label=Clear tabindex=-1> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> </button> </nav> <div class=md-search__suggest data-md-component=search-suggest></div> </form> <div class=md-search__output> <div class=md-search__scrollwrap tabindex=0 data-md-scrollfix> <div class=md-search-result data-md-component=search-result> <div class=md-search-result__meta> Initializing search </div> <ol class=md-search-result__list role=presentation></ol> </div> </div> </div> </div> </div> <div class=md-header__source> <a href=https://github.com/QuEraComputing/bloqade-core title="Go to repository" class=md-source data-md-component=source> <div class="md-source__icon md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg> </div> <div class=md-source__repository> bloqade-core </div> </a> </div> </nav> </header> <div class=md-container data-md-component=container> <nav class=md-tabs aria-label=Tabs data-md-component=tabs> <div class=md-grid> <ul class=md-tabs__list> <li class=md-tabs__item> <a href=../../../../.. class=md-tabs__link> Home </a> </li> <li class="md-tabs__item md-tabs__item--active"> <a href=../device/ class=md-tabs__link> API Reference </a> </li> </ul> </div> </nav> <main class=md-main data-md-component=main> <div class="md-main__inner md-grid"> <div class="md-sidebar md-sidebar--primary" data-md-component=sidebar data-md-type=navigation> <div class=md-sidebar__scrollwrap> <div class=md-sidebar__inner> <nav class="md-nav md-nav--primary md-nav--lifted" aria-label=Navigation data-md-level=0> <label class=md-nav__title for=__drawer> <a href=../../../../.. title=bloqade-core class="md-nav__button md-logo" aria-label=bloqade-core data-md-component=logo> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg> </a> bloqade-core </label> <div class=md-nav__source> <a href=https://github.com/QuEraComputing/bloqade-core title="Go to repository" class=md-source data-md-component=source> <div class="md-source__icon md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg> </div> <div class=md-source__repository> bloqade-core </div> </a> </div> <ul class=md-nav__list data-md-scrollfix> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_1> <div class="md-nav__link md-nav__container"> <a href=../../../../.. class="md-nav__link "> <span class=md-ellipsis> Home </span> </a> <label class="md-nav__link " for=__nav_1 id=__nav_1_label tabindex=0> <span class="md-nav__icon md-icon"></span> </label> </div> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_1_label aria-expanded=false> <label class=md-nav__title for=__nav_1> <span class="md-nav__icon md-icon"></span> Home </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../../../../install/ class=md-nav__link> <span class=md-ellipsis> Installation </span> </a> </li> <li class=md-nav__item> <a href=../../../../../device_workflow/ class=md-nav__link> <span class=md-ellipsis> Running kernels on a device </span> </a> </li> <li class=md-nav__item> <a href=../../../../../contrib/ class=md-nav__link> <span class=md-ellipsis> Contributing </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2 checked> <label class=md-nav__link for=__nav_2 id=__nav_2_label tabindex> <span class=md-ellipsis> API Reference </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_2_label aria-expanded=true> <label class=md-nav__title for=__nav_2> <span class="md-nav__icon md-icon"></span> API Reference </label> <ul class=md-nav__list data-md-scrollfix> <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2_1 checked> <label class=md-nav__link for=__nav_2_1 id=__nav_2_1_label tabindex> <span class=md-ellipsis> Device </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=2 aria-labelledby=__nav_2_1_label aria-expanded=true> <label class=md-nav__title for=__nav_2_1> <span class="md-nav__icon md-icon"></span> Device </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../device/ class=md-nav__link> <span class=md-ellipsis> Device </span> </a> </li> <li class=md-nav__item> <a href=../task/ class=md-nav__link> <span class=md-ellipsis> Task </span> </a> </li> <li class="md-nav__item md-nav__item--active"> <input class="md-nav__toggle md-toggle" type=checkbox id=__toc> <label class="md-nav__link md-nav__link--active" for=__toc> <span class=md-ellipsis> Future </span> <span class="md-nav__icon md-icon"></span> </label> <a href=./ class="md-nav__link md-nav__link--active"> <span class=md-ellipsis> Future </span> </a> <nav class="md-nav md-nav--secondary" aria-label="Table of contents"> <label class=md-nav__title for=__toc> <span class="md-nav__icon md-icon"></span> Table of contents </label> <ul class=md-nav__list data-md-component=toc data-md-scrollfix> <li class=md-nav__item> <a href=#bloqade.core.device.future class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;future </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.ApiFetchOptions class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ApiFetchOptions </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Future </span> </a> <nav class=md-nav aria-label= Future> <ul class=md-nav__list> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.cancel class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;cancel </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.cancelled class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;cancelled </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.done class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;done </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.export_to class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;export_to </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.fetch class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;fetch </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.fetch_and_export_to class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;fetch_and_export_to </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.from_storage class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;from_storage </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.from_task_id class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;from_task_id </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.get_compilation class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_compilation </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.get_task class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_task </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.partial_result class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;partial_result </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.result class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;result </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.results_from_storage class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;results_from_storage </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.status class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;status </span> </a> </li> </ul> </nav> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=../result/ class=md-nav__link> <span class=md-ellipsis> Result </span> </a> </li> <li class=md-nav__item> <a href=../local_storage/ class=md-nav__link> <span class=md-ellipsis> Local storage </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--section md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2_2> <label class=md-nav__link for=__nav_2_2 id=__nav_2_2_label tabindex> <span class=md-ellipsis> Geometry dialect groups </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=2 aria-labelledby=__nav_2_2_label aria-expanded=false> <label class=md-nav__title for=__nav_2_2> <span class="md-nav__icon md-icon"></span> Geometry dialect groups </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../../geometry/prelude/ class=md-nav__link> <span class=md-ellipsis> Kernel decorator </span> </a> </li> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2_2_2> <label class=md-nav__link for=__nav_2_2_2 id=__nav_2_2_2_label tabindex=0> <span class=md-ellipsis> Dialects </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=3 aria-labelledby=__nav_2_2_2_label aria-expanded=false> <label class=md-nav__title for=__nav_2_2_2> <span class="md-nav__icon md-icon"></span> Dialects </label> <ul class=md-nav__list data-md-scrollfix> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2_2_2_1> <label class=md-nav__link for=__nav_2_2_2_1 id=__nav_2_2_2_1_label tabindex=0> <span class=md-ellipsis> grid </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=4 aria-labelledby=__nav_2_2_2_1_label aria-expanded=false> <label class=md-nav__title for=__nav_2_2_2_1> <span class="md-nav__icon md-icon"></span> grid </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../../geometry/dialects/grid/_interface/ class=md-nav__link> <span class=md-ellipsis> statements </span> </a> </li> <li class=md-nav__item> <a href=../../../geometry/dialects/grid/types/ class=md-nav__link> <span class=md-ellipsis> types </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2_2_2_2> <label class=md-nav__link for=__nav_2_2_2_2 id=__nav_2_2_2_2_label tabindex=0> <span class=md-ellipsis> filled </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=4 aria-labelledby=__nav_2_2_2_2_label aria-expanded=false> <label class=md-nav__title for=__nav_2_2_2_2> <span class="md-nav__icon md-icon"></span> filled </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../../geometry/dialects/filled/_interface/ class=md-nav__link> <span class=md-ellipsis> statements </span> </a> </li> <li class=md-nav__item> <a href=../../../geometry/dialects/filled/types/ class=md-nav__link> <span class=md-ellipsis> types </span> </a> </li> </ul> </nav> </li> </ul> </nav> </li> </ul> </nav> </li> </ul> </nav> </li> </ul> </nav> </div> </div> </div> <div class="md-sidebar md-sidebar--secondary" data-md-component=sidebar data-md-type=toc> <div class=md-sidebar__scrollwrap> <div class=md-sidebar__inner> <nav class="md-nav md-nav--secondary" aria-label="Table of contents"> <label class=md-nav__title for=__toc> <span class="md-nav__icon md-icon"></span> Table of contents </label> <ul class=md-nav__list data-md-component=toc data-md-scrollfix> <li class=md-nav__item> <a href=#bloqade.core.device.future class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;future </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.ApiFetchOptions class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ApiFetchOptions </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Future </span> </a> <nav class=md-nav aria-label= Future> <ul class=md-nav__list> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.cancel class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;cancel </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.cancelled class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;cancelled </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.done class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;done </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.export_to class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;export_to </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.fetch class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;fetch </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.fetch_and_export_to class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;fetch_and_export_to </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.from_storage class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;from_storage </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.from_task_id class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;from_task_id </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.get_compilation class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_compilation </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.get_task class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_task </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.partial_result class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;partial_result </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.result class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;result </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.results_from_storage class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;results_from_storage </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.future.Future.status class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;status </span> </a> </li> </ul> </nav> </li> </ul> </nav> </div> </div> </div> <div class=md-content data-md-component=content> <article class="md-content__inner md-typeset"> <a href=https://github.com/QuEraComputing/bloqade-core/edit/main/src/bloqade/core/device/future.py title="Edit this page" class="md-content__button md-icon" rel=edit> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg> </a> <a href=https://github.com/QuEraComputing/bloqade-core/raw/main/src/bloqade/core/device/future.py title="View source of this page" class="md-content__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg> </a> <h1>Future</h1> <div class="doc doc-object doc-module"> <a id=bloqade.core.device.future></a> <div class="doc doc-contents first"> <div class="doc doc-children"> <div class="doc doc-object doc-class"> <h2 id=bloqade.core.device.future.ApiFetchOptions class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code> <span class="doc doc-object-name doc-class-name">ApiFetchOptions</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small> </span> </h2> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>ApiFetchOptions</span><span class=p>(</span>
+    <span class=n>subtasks_per_fetch</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>10</span><span class=p>,</span>
+    <span class=n>shots_per_fetch</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>100</span><span class=p>,</span>
+    <span class=n>poll_interval_initial</span><span class=p>:</span> <span class=nb>float</span> <span class=o>=</span> <span class=mf>0.5</span><span class=p>,</span>
+    <span class=n>poll_interval_max</span><span class=p>:</span> <span class=nb>float</span> <span class=o>=</span> <span class=mf>30.0</span><span class=p>,</span>
+    <span class=n>poll_interval_factor</span><span class=p>:</span> <span class=nb>float</span> <span class=o>=</span> <span class=mf>2.0</span><span class=p>,</span>
+<span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Options controlling task polling and result pagination.</p> <p><span class=doc-section-title>Attributes:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.future.ApiFetchOptions.subtasks_per_fetch>subtasks_per_fetch</span></code></td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Number of subtasks to request per results page. Defaults to 10.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.future.ApiFetchOptions.shots_per_fetch>shots_per_fetch</span></code></td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Number of shots to request per subtask shot page. Defaults to 100.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.future.ApiFetchOptions.poll_interval_initial>poll_interval_initial</span></code></td> <td> <code><span title=float>float</span></code> </td> <td> <div class=doc-md-description> <p>Initial delay, in seconds, between status polls. Defaults to 0.5.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.future.ApiFetchOptions.poll_interval_max>poll_interval_max</span></code></td> <td> <code><span title=float>float</span></code> </td> <td> <div class=doc-md-description> <p>Maximum polling delay, in seconds. Defaults to 30.0.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.future.ApiFetchOptions.poll_interval_factor>poll_interval_factor</span></code></td> <td> <code><span title=float>float</span></code> </td> <td> <div class=doc-md-description> <p>Multiplier applied to the polling delay after each non-terminal status. Defaults to 2.0.</p> </div> </td> </tr> </tbody> </table> <div class="doc doc-children"> </div> </div> </div> <div class="doc doc-object doc-class"> <h2 id=bloqade.core.device.future.Future class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code> <span class="doc doc-object-name doc-class-name">Future</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small> </span> </h2> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>Future</span><span class=p>(</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>context_name</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
+    <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>=</span> <span class=n>DictStorage</span><span class=p>(),</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>ApiFetchOptions</span><span class=p>(),</span>
+    <span class=n>result_cls</span><span class=p>:</span> <span class=nb>type</span><span class=p>[</span><span class=n>ResultType</span><span class=p>]</span> <span class=o>=</span> <span class=n>Result</span>
+<span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p class="doc doc-class-bases"> Bases: <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">AuthMixin</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.mixins.AuthMixin</code>)' href=../mixins/#bloqade.core.device.mixins.AuthMixin>AuthMixin</a></code>, <code><span title=typing.Generic>Generic</span>[<span title=bloqade.core.device.result.ResultType>ResultType</span>]</code></p> <div style="display: none"> <a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Future</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.future.Future</code>)' href=#bloqade.core.device.future.Future id=mermaid-link-bloqade.core.device.future.Future></a> <a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">AuthMixin</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.mixins.AuthMixin</code>)' href=../mixins/#bloqade.core.device.mixins.AuthMixin id=mermaid-link-bloqade.core.device.mixins.AuthMixin></a> </div> <pre class=mermaid><code id=mermaid-diagram-bloqade.core.device.future.Future>
+              flowchart TD
+              bloqade.core.device.future.Future[Future]
+              bloqade.core.device.mixins.AuthMixin[AuthMixin]
+
+                              bloqade.core.device.mixins.AuthMixin --> bloqade.core.device.future.Future
+                
+
+
+              click bloqade.core.device.future.Future href "" "bloqade.core.device.future.Future"
+              click bloqade.core.device.mixins.AuthMixin href "" "bloqade.core.device.mixins.AuthMixin"
+            </code></pre> <script>
+              var diagram = document.getElementById('mermaid-diagram-bloqade.core.device.future.Future');
+              diagram.innerHTML = diagram.innerHTML.replace(/click ([\w.]+) href "" "\1"/g, function(match, nodeID, offset) {
+                try {
+                  const link = document.getElementById("mermaid-link-" + nodeID).href;
+                  return `click ${nodeID} href "${link}" "${nodeID}"`
+                } catch (e) {
+                  return '';
+                }
+              });
+            </script> <p>Future for a submitted task.</p> <p>A future can poll task status, fetch available shot results into storage, and construct result views over that storage using <code>result_cls</code>.</p> <p><span class=doc-section-title>Attributes:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.future.Future.task_id>task_id</span></code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.future.Future.storage>storage</span></code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a></code> </td> <td> <div class=doc-md-description> <p>Storage backend used for fetched shots and task metadata. Defaults to a fresh <code>DictStorage</code> (in-memory; not persisted across processes).</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.future.Future.fetch_options>fetch_options</span></code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ApiFetchOptions</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a></code> </td> <td> <div class=doc-md-description> <p>Pagination and polling options.</p> </div> </td> </tr> </tbody> </table> <div class="doc doc-children"> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.cancel class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">cancel</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>cancel</span><span class=p>()</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Attempt to cancel the execution of the task.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> </td> <td> <div class=doc-md-description> <p>The backend cancellation response when cancellation is submitted;</p> </div> </td> </tr> <tr class=doc-section-item> <td> </td> <td> <div class=doc-md-description> <p>otherwise None if cancellation raises and a warning is emitted.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>164</span>
+<span class=normal>165</span>
+<span class=normal>166</span>
+<span class=normal>167</span>
+<span class=normal>168</span>
+<span class=normal>169</span>
+<span class=normal>170</span>
+<span class=normal>171</span>
+<span class=normal>172</span>
+<span class=normal>173</span>
+<span class=normal>174</span>
+<span class=normal>175</span>
+<span class=normal>176</span>
+<span class=normal>177</span>
+<span class=normal>178</span>
+<span class=normal>179</span>
+<span class=normal>180</span>
+<span class=normal>181</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>cancel</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+<span class=w>    </span><span class=sd>"""Attempt to cancel the execution of the task.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        The backend cancellation response when cancellation is submitted;</span>
+<span class=sd>        otherwise None if cancellation raises and a warning is emitted.</span>
+<span class=sd>    """</span>
+
+    <span class=bp>self</span><span class=o>.</span><span class=n>authenticate</span><span class=p>()</span>
+    <span class=k>with</span> <span class=n>TasksClient</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>client</span><span class=p>:</span>
+        <span class=k>try</span><span class=p>:</span>
+            <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span>
+                <span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>cancel</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>task_id</span><span class=p>)</span>
+            <span class=p>)</span>
+        <span class=k>except</span> <span class=ne>Exception</span> <span class=k>as</span> <span class=n>e</span><span class=p>:</span>  <span class=c1># noqa: BLE001</span>
+            <span class=n>warn</span><span class=p>(</span>
+                <span class=sa>f</span><span class=s2>"Exception encountered when trying to cancel task with ID </span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>task_id</span><span class=si>}</span><span class=s2>: </span><span class=si>{</span><span class=nb>repr</span><span class=p>(</span><span class=n>e</span><span class=p>)</span><span class=si>!s}</span><span class=s2>"</span>
+            <span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.cancelled class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">cancelled</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>cancelled</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>bool</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return whether the task was cancelled.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>bool</code></td> <td> <code><span title=bool>bool</span></code> </td> <td> <div class=doc-md-description> <p><code>True</code> if the task status is <code>CANCELLED</code>.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>183</span>
+<span class=normal>184</span>
+<span class=normal>185</span>
+<span class=normal>186</span>
+<span class=normal>187</span>
+<span class=normal>188</span>
+<span class=normal>189</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>cancelled</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>bool</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>"""Return whether the task was cancelled.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        bool: `True` if the task status is `CANCELLED`.</span>
+<span class=sd>    """</span>
+    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>status</span><span class=p>()</span> <span class=o>==</span> <span class=n>TaskStatus</span><span class=o>.</span><span class=n>CANCELLED</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.done class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">done</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>done</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=nb>bool</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return whether the task has reached a terminal status.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>bool</code></td> <td> <code><span title=bool>bool</span></code> </td> <td> <div class=doc-md-description> <p><code>True</code> if the task status is one of <code>EXIT_STATUS</code> (completed, cancelled, failed, or payload processing error).</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>147</span>
+<span class=normal>148</span>
+<span class=normal>149</span>
+<span class=normal>150</span>
+<span class=normal>151</span>
+<span class=normal>152</span>
+<span class=normal>153</span>
+<span class=normal>154</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>done</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=nb>bool</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>"""Return whether the task has reached a terminal status.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        bool: `True` if the task status is one of `EXIT_STATUS`</span>
+<span class=sd>            (completed, cancelled, failed, or payload processing error).</span>
+<span class=sd>    """</span>
+    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>status</span><span class=p>()</span> <span class=ow>in</span> <span class=bp>self</span><span class=o>.</span><span class=n>EXIT_STATUS</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.export_to class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">export_to</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>export_to</span><span class=p>(</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span><span class=p>,</span>
+    <span class=n>chunk_size</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1000</span><span class=p>,</span>
+    <span class=n>shot_filter</span><span class=p>:</span> <span class=n>ShotFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Copy stored shots and task definitions to another storage backend.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>storage</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a></code> </td> <td> <div class=doc-md-description> <p>Destination storage backend.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>chunk_size</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Maximum number of shots to write per batch. Defaults to 1000.</p> </div> </td> <td> <code>1000</code> </td> </tr> <tr class=doc-section-item> <td> <code>shot_filter</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ShotFilter</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.local_storage.ShotFilter</code>)' href=../local_storage/#bloqade.core.device.local_storage.ShotFilter>ShotFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Optional shot filter. When the filter includes <code>task_ids</code>, only those task definitions are copied. Otherwise, all task definitions from this future's storage are copied. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>247</span>
+<span class=normal>248</span>
+<span class=normal>249</span>
+<span class=normal>250</span>
+<span class=normal>251</span>
+<span class=normal>252</span>
+<span class=normal>253</span>
+<span class=normal>254</span>
+<span class=normal>255</span>
+<span class=normal>256</span>
+<span class=normal>257</span>
+<span class=normal>258</span>
+<span class=normal>259</span>
+<span class=normal>260</span>
+<span class=normal>261</span>
+<span class=normal>262</span>
+<span class=normal>263</span>
+<span class=normal>264</span>
+<span class=normal>265</span>
+<span class=normal>266</span>
+<span class=normal>267</span>
+<span class=normal>268</span>
+<span class=normal>269</span>
+<span class=normal>270</span>
+<span class=normal>271</span>
+<span class=normal>272</span>
+<span class=normal>273</span>
+<span class=normal>274</span>
+<span class=normal>275</span>
+<span class=normal>276</span>
+<span class=normal>277</span>
+<span class=normal>278</span>
+<span class=normal>279</span>
+<span class=normal>280</span>
+<span class=normal>281</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>export_to</span><span class=p>(</span>
+    <span class=bp>self</span><span class=p>,</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span><span class=p>,</span>
+    <span class=n>chunk_size</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1000</span><span class=p>,</span>
+    <span class=n>shot_filter</span><span class=p>:</span> <span class=n>ShotFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>):</span>
+<span class=w>    </span><span class=sd>"""Copy stored shots and task definitions to another storage backend.</span>
+
+<span class=sd>    Args:</span>
+<span class=sd>        storage (StorageBackend): Destination storage backend.</span>
+<span class=sd>        chunk_size (int): Maximum number of shots to write per batch.</span>
+<span class=sd>            Defaults to 1000.</span>
+<span class=sd>        shot_filter (ShotFilter | None): Optional shot filter. When the</span>
+<span class=sd>            filter includes `task_ids`, only those task definitions are</span>
+<span class=sd>            copied. Otherwise, all task definitions from this future's</span>
+<span class=sd>            storage are copied. Defaults to None.</span>
+<span class=sd>    """</span>
+    <span class=n>chunk</span> <span class=o>=</span> <span class=p>[]</span>
+    <span class=k>for</span> <span class=n>shot</span> <span class=ow>in</span> <span class=bp>self</span><span class=o>.</span><span class=n>storage</span><span class=o>.</span><span class=n>get_shots</span><span class=p>(</span><span class=n>shot_filter</span><span class=o>=</span><span class=n>shot_filter</span><span class=p>):</span>
+        <span class=n>chunk</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>shot</span><span class=p>)</span>
+        <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=n>chunk</span><span class=p>)</span> <span class=o>&gt;=</span> <span class=n>chunk_size</span><span class=p>:</span>
+            <span class=n>storage</span><span class=o>.</span><span class=n>add_shots</span><span class=p>(</span><span class=n>chunk</span><span class=p>)</span>
+            <span class=n>chunk</span> <span class=o>=</span> <span class=p>[]</span>
+    <span class=k>if</span> <span class=n>chunk</span><span class=p>:</span>
+        <span class=n>storage</span><span class=o>.</span><span class=n>add_shots</span><span class=p>(</span><span class=n>chunk</span><span class=p>)</span>
+
+    <span class=k>if</span> <span class=n>shot_filter</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span> <span class=ow>and</span> <span class=n>shot_filter</span><span class=o>.</span><span class=n>task_ids</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>task_ids</span> <span class=o>=</span> <span class=n>shot_filter</span><span class=o>.</span><span class=n>task_ids</span>
+    <span class=k>else</span><span class=p>:</span>
+        <span class=n>task_ids</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>storage</span><span class=o>.</span><span class=n>task_ids</span><span class=p>()</span>
+
+    <span class=k>for</span> <span class=n>task_id</span> <span class=ow>in</span> <span class=n>task_ids</span><span class=p>:</span>
+        <span class=n>task_def</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>storage</span><span class=o>.</span><span class=n>get_task_definition</span><span class=p>(</span><span class=n>task_id</span><span class=p>)</span>
+        <span class=n>creation_time</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>storage</span><span class=o>.</span><span class=n>get_task_creation_time</span><span class=p>(</span><span class=n>task_id</span><span class=p>)</span>
+        <span class=n>storage</span><span class=o>.</span><span class=n>add_task_definition</span><span class=p>(</span><span class=n>task_id</span><span class=p>,</span> <span class=n>task_def</span><span class=p>,</span> <span class=n>creation_time</span><span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.fetch class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">fetch</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>fetch</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=kc>None</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Fetch currently available shot results into this future's storage.</p> <p>Results are requested from the first known incomplete subtask page and paginated by both subtask and shot page. Repeated calls are safe because storage backends de-duplicate rows by task ID, shot index, and frame type.</p> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>124</span>
+<span class=normal>125</span>
+<span class=normal>126</span>
+<span class=normal>127</span>
+<span class=normal>128</span>
+<span class=normal>129</span>
+<span class=normal>130</span>
+<span class=normal>131</span>
+<span class=normal>132</span>
+<span class=normal>133</span>
+<span class=normal>134</span>
+<span class=normal>135</span>
+<span class=normal>136</span>
+<span class=normal>137</span>
+<span class=normal>138</span>
+<span class=normal>139</span>
+<span class=normal>140</span>
+<span class=normal>141</span>
+<span class=normal>142</span>
+<span class=normal>143</span>
+<span class=normal>144</span>
+<span class=normal>145</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>fetch</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>"""Fetch currently available shot results into this future's storage.</span>
+
+<span class=sd>    Results are requested from the first known incomplete subtask page and</span>
+<span class=sd>    paginated by both subtask and shot page. Repeated calls are safe because</span>
+<span class=sd>    storage backends de-duplicate rows by task ID, shot index, and frame</span>
+<span class=sd>    type.</span>
+<span class=sd>    """</span>
+    <span class=bp>self</span><span class=o>.</span><span class=n>authenticate</span><span class=p>()</span>
+    <span class=n>subtask_page</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_first_incomplete_subtask_page</span>
+    <span class=n>done</span> <span class=o>=</span> <span class=kc>False</span>
+
+    <span class=k>with</span> <span class=n>ResultsClient</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>client</span><span class=p>:</span>
+        <span class=k>while</span> <span class=ow>not</span> <span class=n>done</span><span class=p>:</span>
+            <span class=n>done</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span>
+                <span class=k>lambda</span> <span class=n>page</span><span class=o>=</span><span class=n>subtask_page</span><span class=p>:</span> <span class=bp>self</span><span class=o>.</span><span class=n>_fetch_subtask_page</span><span class=p>(</span>
+                    <span class=n>client</span><span class=o>=</span><span class=n>client</span><span class=p>,</span>
+                    <span class=n>subtask_page</span><span class=o>=</span><span class=n>page</span><span class=p>,</span>
+                <span class=p>)</span>
+            <span class=p>)</span>
+
+            <span class=n>subtask_page</span> <span class=o>+=</span> <span class=mi>1</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.fetch_and_export_to class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">fetch_and_export_to</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>fetch_and_export_to</span><span class=p>(</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span><span class=p>,</span> <span class=n>chunk_size</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1000</span>
+<span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Fetch available results and export this future's storage.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>storage</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a></code> </td> <td> <div class=doc-md-description> <p>Destination storage backend.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>chunk_size</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Maximum number of shots to write per batch. Defaults to 1000.</p> </div> </td> <td> <code>1000</code> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>283</span>
+<span class=normal>284</span>
+<span class=normal>285</span>
+<span class=normal>286</span>
+<span class=normal>287</span>
+<span class=normal>288</span>
+<span class=normal>289</span>
+<span class=normal>290</span>
+<span class=normal>291</span>
+<span class=normal>292</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>fetch_and_export_to</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span><span class=p>,</span> <span class=n>chunk_size</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1000</span><span class=p>):</span>
+<span class=w>    </span><span class=sd>"""Fetch available results and export this future's storage.</span>
+
+<span class=sd>    Args:</span>
+<span class=sd>        storage (StorageBackend): Destination storage backend.</span>
+<span class=sd>        chunk_size (int): Maximum number of shots to write per batch.</span>
+<span class=sd>            Defaults to 1000.</span>
+<span class=sd>    """</span>
+    <span class=bp>self</span><span class=o>.</span><span class=n>fetch</span><span class=p>()</span>
+    <span class=bp>self</span><span class=o>.</span><span class=n>export_to</span><span class=p>(</span><span class=n>storage</span><span class=p>,</span> <span class=n>chunk_size</span><span class=o>=</span><span class=n>chunk_size</span><span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.from_storage class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">from_storage</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>from_storage</span><span class=p>(</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span><span class=p>,</span>
+    <span class=n>new_storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span><span class=p>,</span>
+    <span class=n>context_name</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>Self</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Create a future from task metadata already present in storage.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>storage</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a></code> </td> <td> <div class=doc-md-description> <p>Storage used to discover and validate the task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>new_storage</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a> | None</code> </td> <td> <div class=doc-md-description> <p>Storage backend to attach to the returned future. When None, <code>storage</code> is reused. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Task ID to attach to. Required when <code>storage</code> contains more than one task ID. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> <tr class=doc-section-item> <td> <code>fetch_options</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ApiFetchOptions</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a></code> </td> <td> <div class=doc-md-description> <p>Pagination and polling options. Defaults to <code>ApiFetchOptions()</code>.</p> </div> </td> <td> <code><span title=bloqade.core.device.future.DEFAULT_FETCH_OPTIONS>DEFAULT_FETCH_OPTIONS</span></code> </td> </tr> <tr class=doc-section-item> <td> <code>context_name</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Name of the qlam context to attach to the returned future. When None, the class-level default on <code>cls</code> is used. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>Self</code></td> <td> <code><span title=typing_extensions.Self>Self</span></code> </td> <td> <div class=doc-md-description> <p>A future attached to the selected task ID.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If storage has no task IDs, the requested task ID is not present, multiple task IDs are present without an explicit <code>task_id</code>, or <code>context_name</code> is None and <code>cls</code> has no class-level default.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>318</span>
+<span class=normal>319</span>
+<span class=normal>320</span>
+<span class=normal>321</span>
+<span class=normal>322</span>
+<span class=normal>323</span>
+<span class=normal>324</span>
+<span class=normal>325</span>
+<span class=normal>326</span>
+<span class=normal>327</span>
+<span class=normal>328</span>
+<span class=normal>329</span>
+<span class=normal>330</span>
+<span class=normal>331</span>
+<span class=normal>332</span>
+<span class=normal>333</span>
+<span class=normal>334</span>
+<span class=normal>335</span>
+<span class=normal>336</span>
+<span class=normal>337</span>
+<span class=normal>338</span>
+<span class=normal>339</span>
+<span class=normal>340</span>
+<span class=normal>341</span>
+<span class=normal>342</span>
+<span class=normal>343</span>
+<span class=normal>344</span>
+<span class=normal>345</span>
+<span class=normal>346</span>
+<span class=normal>347</span>
+<span class=normal>348</span>
+<span class=normal>349</span>
+<span class=normal>350</span>
+<span class=normal>351</span>
+<span class=normal>352</span>
+<span class=normal>353</span>
+<span class=normal>354</span>
+<span class=normal>355</span>
+<span class=normal>356</span>
+<span class=normal>357</span>
+<span class=normal>358</span>
+<span class=normal>359</span>
+<span class=normal>360</span>
+<span class=normal>361</span>
+<span class=normal>362</span>
+<span class=normal>363</span>
+<span class=normal>364</span>
+<span class=normal>365</span>
+<span class=normal>366</span>
+<span class=normal>367</span>
+<span class=normal>368</span>
+<span class=normal>369</span>
+<span class=normal>370</span>
+<span class=normal>371</span>
+<span class=normal>372</span>
+<span class=normal>373</span>
+<span class=normal>374</span>
+<span class=normal>375</span>
+<span class=normal>376</span>
+<span class=normal>377</span>
+<span class=normal>378</span>
+<span class=normal>379</span>
+<span class=normal>380</span>
+<span class=normal>381</span>
+<span class=normal>382</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@classmethod</span>
+<span class=k>def</span><span class=w> </span><span class=nf>from_storage</span><span class=p>(</span>
+    <span class=bp>cls</span><span class=p>,</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span><span class=p>,</span>
+    <span class=n>new_storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span><span class=p>,</span>
+    <span class=n>context_name</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>Self</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>"""Create a future from task metadata already present in storage.</span>
+
+<span class=sd>    Args:</span>
+<span class=sd>        storage (StorageBackend): Storage used to discover and validate the</span>
+<span class=sd>            task ID.</span>
+<span class=sd>        new_storage (StorageBackend | None): Storage backend to attach to</span>
+<span class=sd>            the returned future. When None, `storage` is reused. Defaults to</span>
+<span class=sd>            None.</span>
+<span class=sd>        task_id (str | None): Task ID to attach to. Required when `storage`</span>
+<span class=sd>            contains more than one task ID. Defaults to None.</span>
+<span class=sd>        fetch_options (ApiFetchOptions): Pagination and polling options.</span>
+<span class=sd>            Defaults to `ApiFetchOptions()`.</span>
+<span class=sd>        context_name (str | None): Name of the qlam context to attach to</span>
+<span class=sd>            the returned future. When None, the class-level default on</span>
+<span class=sd>            `cls` is used. Defaults to None.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        Self: A future attached to the selected task ID.</span>
+
+<span class=sd>    Raises:</span>
+<span class=sd>        ValueError: If storage has no task IDs, the requested task ID is not</span>
+<span class=sd>            present, multiple task IDs are present without an explicit</span>
+<span class=sd>            `task_id`, or `context_name` is None and `cls` has no</span>
+<span class=sd>            class-level default.</span>
+<span class=sd>    """</span>
+    <span class=n>context_name</span> <span class=o>=</span> <span class=bp>cls</span><span class=o>.</span><span class=n>_resolve_context_name</span><span class=p>(</span><span class=n>context_name</span><span class=p>)</span>
+
+    <span class=k>if</span> <span class=n>new_storage</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>new_storage</span> <span class=o>=</span> <span class=n>storage</span>
+
+    <span class=n>task_ids_at_storage</span> <span class=o>=</span> <span class=n>storage</span><span class=o>.</span><span class=n>task_ids</span><span class=p>()</span>
+
+    <span class=k>if</span> <span class=ow>not</span> <span class=n>task_ids_at_storage</span><span class=p>:</span>
+        <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span><span class=s2>"Found no task IDs in storage."</span><span class=p>)</span>
+
+    <span class=k>if</span> <span class=n>task_id</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span> <span class=ow>and</span> <span class=n>task_id</span> <span class=ow>not</span> <span class=ow>in</span> <span class=n>task_ids_at_storage</span><span class=p>:</span>
+        <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span><span class=sa>f</span><span class=s2>"Task with ID </span><span class=si>{</span><span class=n>task_id</span><span class=si>}</span><span class=s2> not found at storage </span><span class=si>{</span><span class=n>storage</span><span class=si>}</span><span class=s2>"</span><span class=p>)</span>
+
+    <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=n>task_ids_at_storage</span><span class=p>)</span> <span class=o>&gt;</span> <span class=mi>1</span> <span class=ow>and</span> <span class=n>task_id</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>msg</span> <span class=o>=</span> <span class=s2>"More than one task ID found! Please specify a task_id. Candidates are:</span><span class=se>\n</span><span class=s2>"</span>
+        <span class=k>for</span> <span class=n>candidate_task_id</span> <span class=ow>in</span> <span class=n>task_ids_at_storage</span><span class=p>:</span>
+            <span class=n>creation_time</span> <span class=o>=</span> <span class=n>storage</span><span class=o>.</span><span class=n>get_task_creation_time</span><span class=p>(</span><span class=n>candidate_task_id</span><span class=p>)</span>
+            <span class=n>msg</span> <span class=o>+=</span> <span class=sa>f</span><span class=s2>"  * </span><span class=si>{</span><span class=n>candidate_task_id</span><span class=si>}</span><span class=s2>, created at </span><span class=si>{</span><span class=n>creation_time</span><span class=si>}</span><span class=se>\n</span><span class=s2>"</span>
+        <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span><span class=n>msg</span><span class=p>)</span>
+
+    <span class=k>if</span> <span class=n>task_id</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>task_id</span> <span class=o>=</span> <span class=n>task_ids_at_storage</span><span class=o>.</span><span class=n>pop</span><span class=p>()</span>
+
+    <span class=k>return</span> <span class=bp>cls</span><span class=p>(</span>
+        <span class=n>task_id</span><span class=o>=</span><span class=n>task_id</span><span class=p>,</span>
+        <span class=n>storage</span><span class=o>=</span><span class=n>new_storage</span><span class=p>,</span>
+        <span class=n>fetch_options</span><span class=o>=</span><span class=n>fetch_options</span><span class=p>,</span>
+        <span class=n>result_cls</span><span class=o>=</span><span class=bp>cls</span><span class=o>.</span><span class=n>result_cls</span><span class=p>,</span>
+        <span class=n>context_name</span><span class=o>=</span><span class=n>context_name</span><span class=p>,</span>
+    <span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.from_task_id class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">from_task_id</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small> </span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>from_task_id</span><span class=p>(</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span><span class=p>,</span>
+    <span class=n>context_name</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>Self</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Create a future from a backend task ID.</p> <p>The task record and task definition are fetched from the backend, and the task definition is stored in <code>storage</code> before the future is returned.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_id</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Backend task ID.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>storage</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a> | None</code> </td> <td> <div class=doc-md-description> <p>Storage backend that will receive the task definition and later fetched shots. When None, a fresh <code>DictStorage</code> is used (in-memory; not persisted across processes). Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> <tr class=doc-section-item> <td> <code>fetch_options</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ApiFetchOptions</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a></code> </td> <td> <div class=doc-md-description> <p>Pagination and polling options. Defaults to <code>ApiFetchOptions()</code>.</p> </div> </td> <td> <code><span title=bloqade.core.device.future.DEFAULT_FETCH_OPTIONS>DEFAULT_FETCH_OPTIONS</span></code> </td> </tr> <tr class=doc-section-item> <td> <code>context_name</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Name of the qlam context used to fetch the task and attached to the returned future. When None, the class-level default on <code>cls</code> is used. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>Self</code></td> <td> <code><span title=typing_extensions.Self>Self</span></code> </td> <td> <div class=doc-md-description> <p>A future attached to <code>task_id</code>.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>context_name</code> is None and <code>cls</code> has no class-level default.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>384</span>
+<span class=normal>385</span>
+<span class=normal>386</span>
+<span class=normal>387</span>
+<span class=normal>388</span>
+<span class=normal>389</span>
+<span class=normal>390</span>
+<span class=normal>391</span>
+<span class=normal>392</span>
+<span class=normal>393</span>
+<span class=normal>394</span>
+<span class=normal>395</span>
+<span class=normal>396</span>
+<span class=normal>397</span>
+<span class=normal>398</span>
+<span class=normal>399</span>
+<span class=normal>400</span>
+<span class=normal>401</span>
+<span class=normal>402</span>
+<span class=normal>403</span>
+<span class=normal>404</span>
+<span class=normal>405</span>
+<span class=normal>406</span>
+<span class=normal>407</span>
+<span class=normal>408</span>
+<span class=normal>409</span>
+<span class=normal>410</span>
+<span class=normal>411</span>
+<span class=normal>412</span>
+<span class=normal>413</span>
+<span class=normal>414</span>
+<span class=normal>415</span>
+<span class=normal>416</span>
+<span class=normal>417</span>
+<span class=normal>418</span>
+<span class=normal>419</span>
+<span class=normal>420</span>
+<span class=normal>421</span>
+<span class=normal>422</span>
+<span class=normal>423</span>
+<span class=normal>424</span>
+<span class=normal>425</span>
+<span class=normal>426</span>
+<span class=normal>427</span>
+<span class=normal>428</span>
+<span class=normal>429</span>
+<span class=normal>430</span>
+<span class=normal>431</span>
+<span class=normal>432</span>
+<span class=normal>433</span>
+<span class=normal>434</span>
+<span class=normal>435</span>
+<span class=normal>436</span>
+<span class=normal>437</span>
+<span class=normal>438</span>
+<span class=normal>439</span>
+<span class=normal>440</span>
+<span class=normal>441</span>
+<span class=normal>442</span>
+<span class=normal>443</span>
+<span class=normal>444</span>
+<span class=normal>445</span>
+<span class=normal>446</span>
+<span class=normal>447</span>
+<span class=normal>448</span>
+<span class=normal>449</span>
+<span class=normal>450</span>
+<span class=normal>451</span>
+<span class=normal>452</span></pre></div></td><td class=code><div><pre><span></span><code><span class=nd>@classmethod</span>
+<span class=k>def</span><span class=w> </span><span class=nf>from_task_id</span><span class=p>(</span>
+    <span class=bp>cls</span><span class=p>,</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>task_id</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span><span class=p>,</span>
+    <span class=n>context_name</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>Self</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>"""Create a future from a backend task ID.</span>
+
+<span class=sd>    The task record and task definition are fetched from the backend, and</span>
+<span class=sd>    the task definition is stored in `storage` before the future is</span>
+<span class=sd>    returned.</span>
+
+<span class=sd>    Args:</span>
+<span class=sd>        task_id (str): Backend task ID.</span>
+<span class=sd>        storage (StorageBackend | None): Storage backend that will receive</span>
+<span class=sd>            the task definition and later fetched shots. When None, a fresh</span>
+<span class=sd>            `DictStorage` is used (in-memory; not persisted across</span>
+<span class=sd>            processes). Defaults to None.</span>
+<span class=sd>        fetch_options (ApiFetchOptions): Pagination and polling options.</span>
+<span class=sd>            Defaults to `ApiFetchOptions()`.</span>
+<span class=sd>        context_name (str | None): Name of the qlam context used to fetch</span>
+<span class=sd>            the task and attached to the returned future. When None, the</span>
+<span class=sd>            class-level default on `cls` is used. Defaults to None.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        Self: A future attached to `task_id`.</span>
+
+<span class=sd>    Raises:</span>
+<span class=sd>        ValueError: If `context_name` is None and `cls` has no</span>
+<span class=sd>            class-level default.</span>
+<span class=sd>    """</span>
+    <span class=k>if</span> <span class=n>storage</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>storage</span> <span class=o>=</span> <span class=n>DictStorage</span><span class=p>()</span>
+
+    <span class=n>context_name</span> <span class=o>=</span> <span class=bp>cls</span><span class=o>.</span><span class=n>_resolve_context_name</span><span class=p>(</span><span class=n>context_name</span><span class=p>)</span>
+    <span class=n>auth</span> <span class=o>=</span> <span class=n>AuthMixin</span><span class=p>(</span><span class=n>context_name</span><span class=o>=</span><span class=n>context_name</span><span class=p>)</span>
+    <span class=n>auth</span><span class=o>.</span><span class=n>authenticate</span><span class=p>()</span>
+    <span class=k>with</span> <span class=n>TasksClient</span><span class=p>(</span><span class=n>auth</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>tasks_client</span><span class=p>:</span>
+        <span class=n>task</span> <span class=o>=</span> <span class=n>auth</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span><span class=k>lambda</span><span class=p>:</span> <span class=n>tasks_client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=n>task_id</span><span class=p>))</span>
+
+    <span class=c1># fetch subtasks for metadata</span>
+    <span class=k>with</span> <span class=n>DefinitionsClient</span><span class=p>(</span><span class=n>auth</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>definitions_client</span><span class=p>:</span>
+        <span class=n>task_def</span> <span class=o>=</span> <span class=n>auth</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span>
+            <span class=k>lambda</span><span class=p>:</span> <span class=n>definitions_client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=n>task</span><span class=o>.</span><span class=n>definition_id</span><span class=p>)</span>
+        <span class=p>)</span>
+
+    <span class=n>storage</span><span class=o>.</span><span class=n>add_task_definition</span><span class=p>(</span>
+        <span class=n>task_id</span><span class=p>,</span>
+        <span class=n>task_definition</span><span class=o>=</span><span class=n>TaskDefinition</span><span class=o>.</span><span class=n>model_validate</span><span class=p>(</span>
+            <span class=p>{</span>
+                <span class=o>**</span><span class=n>task_def</span><span class=o>.</span><span class=n>model_dump</span><span class=p>(</span>
+                    <span class=n>include</span><span class=o>=</span><span class=p>{</span><span class=s2>"program_language"</span><span class=p>,</span> <span class=s2>"programs"</span><span class=p>,</span> <span class=s2>"subtasks"</span><span class=p>}</span>
+                <span class=p>),</span>
+                <span class=s2>"group_id"</span><span class=p>:</span> <span class=n>task_def</span><span class=o>.</span><span class=n>group</span><span class=o>.</span><span class=n>id</span><span class=p>,</span>
+            <span class=p>}</span>
+        <span class=p>),</span>
+        <span class=n>creation_time</span><span class=o>=</span><span class=n>task</span><span class=o>.</span><span class=n>created_date</span><span class=p>,</span>
+    <span class=p>)</span>
+
+    <span class=k>return</span> <span class=bp>cls</span><span class=p>(</span>
+        <span class=n>task_id</span><span class=o>=</span><span class=n>task_id</span><span class=p>,</span>
+        <span class=n>storage</span><span class=o>=</span><span class=n>storage</span><span class=p>,</span>
+        <span class=n>fetch_options</span><span class=o>=</span><span class=n>fetch_options</span><span class=p>,</span>
+        <span class=n>result_cls</span><span class=o>=</span><span class=bp>cls</span><span class=o>.</span><span class=n>result_cls</span><span class=p>,</span>
+        <span class=n>context_name</span><span class=o>=</span><span class=n>context_name</span><span class=p>,</span>
+    <span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.get_compilation class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_compilation</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_compilation</span><span class=p>(</span><span class=n>compilation_id</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Fetch the compilation record associated with this task.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>compilation_id</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>ID of the compilation to fetch. When <code>None</code>, the compilation ID is retrieved from the task record. Defaults to <code>None</code>.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> </td> <td> <div class=doc-md-description> <p>The compilation object returned by the backend.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>105</span>
+<span class=normal>106</span>
+<span class=normal>107</span>
+<span class=normal>108</span>
+<span class=normal>109</span>
+<span class=normal>110</span>
+<span class=normal>111</span>
+<span class=normal>112</span>
+<span class=normal>113</span>
+<span class=normal>114</span>
+<span class=normal>115</span>
+<span class=normal>116</span>
+<span class=normal>117</span>
+<span class=normal>118</span>
+<span class=normal>119</span>
+<span class=normal>120</span>
+<span class=normal>121</span>
+<span class=normal>122</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_compilation</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>compilation_id</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>):</span>
+<span class=w>    </span><span class=sd>"""Fetch the compilation record associated with this task.</span>
+
+<span class=sd>    Args:</span>
+<span class=sd>        compilation_id (str | None): ID of the compilation to fetch. When</span>
+<span class=sd>            `None`, the compilation ID is retrieved from the task record.</span>
+<span class=sd>            Defaults to `None`.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        The compilation object returned by the backend.</span>
+<span class=sd>    """</span>
+    <span class=bp>self</span><span class=o>.</span><span class=n>authenticate</span><span class=p>()</span>
+
+    <span class=k>if</span> <span class=n>compilation_id</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>compilation_id</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>get_task</span><span class=p>()</span><span class=o>.</span><span class=n>compilation_id</span>
+
+    <span class=k>with</span> <span class=n>CompilationsClient</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>client</span><span class=p>:</span>
+        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span><span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=n>compilation_id</span><span class=p>))</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.get_task class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">get_task</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>get_task</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=n>Task</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Fetch the current task record from the backend.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>Task</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.Task>Task</span></code> </td> <td> <div class=doc-md-description> <p>The task object returned by the backend.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal> 91</span>
+<span class=normal> 92</span>
+<span class=normal> 93</span>
+<span class=normal> 94</span>
+<span class=normal> 95</span>
+<span class=normal> 96</span>
+<span class=normal> 97</span>
+<span class=normal> 98</span>
+<span class=normal> 99</span>
+<span class=normal>100</span>
+<span class=normal>101</span>
+<span class=normal>102</span>
+<span class=normal>103</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>get_task</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=s2>"Task"</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>"""Fetch the current task record from the backend.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        Task: The task object returned by the backend.</span>
+<span class=sd>    """</span>
+    <span class=bp>self</span><span class=o>.</span><span class=n>authenticate</span><span class=p>()</span>
+    <span class=k>with</span> <span class=n>TasksClient</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>client</span><span class=p>:</span>
+        <span class=n>task</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span><span class=k>lambda</span><span class=p>:</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=nb>id</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>task_id</span><span class=p>))</span>
+        <span class=n>logger</span><span class=o>.</span><span class=n>info</span><span class=p>(</span>
+            <span class=sa>f</span><span class=s2>"Fetched task with id </span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>task_id</span><span class=si>}</span><span class=s2>. Current status: </span><span class=si>{</span><span class=n>task</span><span class=o>.</span><span class=n>task_status</span><span class=si>}</span><span class=s2>"</span>
+        <span class=p>)</span>
+        <span class=k>return</span> <span class=n>task</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.partial_result class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">partial_result</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>partial_result</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=n>ResultType</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Fetch currently available results and return a result view.</p> <p>Unlike <code>result</code>, this method does not wait for the task to finish.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>ResultType</code></td> <td> <code><span title=bloqade.core.device.result.ResultType>ResultType</span></code> </td> <td> <div class=doc-md-description> <p>A result view scoped to this future's task ID and the DETECTED frame type.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>217</span>
+<span class=normal>218</span>
+<span class=normal>219</span>
+<span class=normal>220</span>
+<span class=normal>221</span>
+<span class=normal>222</span>
+<span class=normal>223</span>
+<span class=normal>224</span>
+<span class=normal>225</span>
+<span class=normal>226</span>
+<span class=normal>227</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>partial_result</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ResultType</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>"""Fetch currently available results and return a result view.</span>
+
+<span class=sd>    Unlike `result`, this method does not wait for the task to finish.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        ResultType: A result view scoped to this future's task ID and the</span>
+<span class=sd>            DETECTED frame type.</span>
+<span class=sd>    """</span>
+    <span class=bp>self</span><span class=o>.</span><span class=n>fetch</span><span class=p>()</span>
+    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>results_from_storage</span><span class=p>()</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.result class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">result</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>result</span><span class=p>(</span><span class=o>*</span><span class=p>,</span> <span class=n>timeout</span><span class=p>:</span> <span class=nb>float</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ResultType</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Wait for completion, fetch results, and return a result view.</p> <p><span class=doc-section-title>Other Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>timeout</code></td> <td> <code><span title=float>float</span> | None</code> </td> <td> <div class=doc-md-description> <p>Maximum number of seconds to wait for a terminal task status. If None, wait indefinitely. Defaults to None.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>ResultType</code></td> <td> <code><span title=bloqade.core.device.result.ResultType>ResultType</span></code> </td> <td> <div class=doc-md-description> <p>A result view scoped to this future's task ID and the DETECTED frame type.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=TimeoutError>TimeoutError</span></code> </td> <td> <div class=doc-md-description> <p>If <code>timeout</code> elapses before a terminal status is reached.</p> </div> </td> </tr> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If the task was cancelled or failed.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>191</span>
+<span class=normal>192</span>
+<span class=normal>193</span>
+<span class=normal>194</span>
+<span class=normal>195</span>
+<span class=normal>196</span>
+<span class=normal>197</span>
+<span class=normal>198</span>
+<span class=normal>199</span>
+<span class=normal>200</span>
+<span class=normal>201</span>
+<span class=normal>202</span>
+<span class=normal>203</span>
+<span class=normal>204</span>
+<span class=normal>205</span>
+<span class=normal>206</span>
+<span class=normal>207</span>
+<span class=normal>208</span>
+<span class=normal>209</span>
+<span class=normal>210</span>
+<span class=normal>211</span>
+<span class=normal>212</span>
+<span class=normal>213</span>
+<span class=normal>214</span>
+<span class=normal>215</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>result</span><span class=p>(</span>
+    <span class=bp>self</span><span class=p>,</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>timeout</span><span class=p>:</span> <span class=nb>float</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ResultType</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>"""Wait for completion, fetch results, and return a result view.</span>
+
+<span class=sd>    Keyword Args:</span>
+<span class=sd>        timeout (float | None): Maximum number of seconds to wait for a</span>
+<span class=sd>            terminal task status. If None, wait indefinitely. Defaults to</span>
+<span class=sd>            None.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        ResultType: A result view scoped to this future's task ID and the</span>
+<span class=sd>            DETECTED frame type.</span>
+
+<span class=sd>    Raises:</span>
+<span class=sd>        TimeoutError: If `timeout` elapses before a terminal status is</span>
+<span class=sd>            reached.</span>
+<span class=sd>        ValueError: If the task was cancelled or failed.</span>
+<span class=sd>    """</span>
+    <span class=bp>self</span><span class=o>.</span><span class=n>_wait_for_completion</span><span class=p>(</span><span class=n>timeout</span><span class=o>=</span><span class=n>timeout</span><span class=p>)</span>
+    <span class=bp>self</span><span class=o>.</span><span class=n>fetch</span><span class=p>()</span>
+
+    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>results_from_storage</span><span class=p>()</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.results_from_storage class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">results_from_storage</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>results_from_storage</span><span class=p>(</span>
+    <span class=n>shot_filter</span><span class=p>:</span> <span class=n>ShotFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ResultType</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Build a result view over this future's storage.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>shot_filter</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ShotFilter</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.local_storage.ShotFilter</code>)' href=../local_storage/#bloqade.core.device.local_storage.ShotFilter>ShotFilter</a> | None</code> </td> <td> <div class=doc-md-description> <p>Filter to apply to the result view. When None, the view is scoped to this future's task ID and the DETECTED frame type. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>ResultType</code></td> <td> <code><span title=bloqade.core.device.result.ResultType>ResultType</span></code> </td> <td> <div class=doc-md-description> <p>A result view over the storage backend.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>229</span>
+<span class=normal>230</span>
+<span class=normal>231</span>
+<span class=normal>232</span>
+<span class=normal>233</span>
+<span class=normal>234</span>
+<span class=normal>235</span>
+<span class=normal>236</span>
+<span class=normal>237</span>
+<span class=normal>238</span>
+<span class=normal>239</span>
+<span class=normal>240</span>
+<span class=normal>241</span>
+<span class=normal>242</span>
+<span class=normal>243</span>
+<span class=normal>244</span>
+<span class=normal>245</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>results_from_storage</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>shot_filter</span><span class=p>:</span> <span class=n>ShotFilter</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ResultType</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>"""Build a result view over this future's storage.</span>
+
+<span class=sd>    Args:</span>
+<span class=sd>        shot_filter (ShotFilter | None): Filter to apply to the result view.</span>
+<span class=sd>            When None, the view is scoped to this future's task ID and the</span>
+<span class=sd>            DETECTED frame type. Defaults to None.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        ResultType: A result view over the storage backend.</span>
+<span class=sd>    """</span>
+    <span class=k>if</span> <span class=n>shot_filter</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>shot_filter</span> <span class=o>=</span> <span class=n>ShotFilter</span><span class=p>(</span><span class=n>task_ids</span><span class=o>=</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>task_id</span><span class=p>,),</span> <span class=n>frame_type</span><span class=o>=</span><span class=s2>"DETECTED"</span><span class=p>)</span>
+    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>result_cls</span><span class=p>(</span>
+        <span class=n>storage</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>storage</span><span class=p>,</span>
+        <span class=n>shot_filter</span><span class=o>=</span><span class=n>shot_filter</span><span class=p>,</span>
+    <span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.future.Future.status class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">status</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>status</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=n>TaskStatus</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Return the current status of the task.</p> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>TaskStatus</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskStatus>TaskStatus</span></code> </td> <td> <div class=doc-md-description> <p>The task status as reported by the backend.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/future.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>156</span>
+<span class=normal>157</span>
+<span class=normal>158</span>
+<span class=normal>159</span>
+<span class=normal>160</span>
+<span class=normal>161</span>
+<span class=normal>162</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>status</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>TaskStatus</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>"""Return the current status of the task.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        TaskStatus: The task status as reported by the backend.</span>
+<span class=sd>    """</span>
+    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>get_task</span><span class=p>()</span><span class=o>.</span><span class=n>task_status</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> </div> </div> </div> </div> </div> </div> </article> </div> <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script> </div> <button type=button class="md-top md-icon" data-md-component=top hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg> Back to top </button> </main> <footer class=md-footer> <nav class="md-footer__inner md-grid" aria-label=Footer> <a href=../task/ class="md-footer__link md-footer__link--prev" aria-label="Previous: Task"> <div class="md-footer__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg> </div> <div class=md-footer__title> <span class=md-footer__direction> Previous </span> <div class=md-ellipsis> Task </div> </div> </a> <a href=../result/ class="md-footer__link md-footer__link--next" aria-label="Next: Result"> <div class=md-footer__title> <span class=md-footer__direction> Next </span> <div class=md-ellipsis> Result </div> </div> <div class="md-footer__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg> </div> </a> </nav> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-copyright> <div class=md-copyright__highlight> Copyright &copy; 2024- QuEra Computing, Inc. </div> Made with <a href=https://squidfunk.github.io/mkdocs-material/ target=_blank rel=noopener> Material for MkDocs </a> </div> <div class=md-social> <a href=https://x.com/QueraComputing target=_blank rel=noopener title=x.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg> </a> <a href=https://www.linkedin.com/company/quera-computing-inc/ target=_blank rel=noopener title=www.linkedin.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg> </a> </div> </div> </div> </footer> </div> <div class=md-dialog data-md-component=dialog> <div class="md-dialog__inner md-typeset"></div> </div> <script id=__config type=application/json>{"annotate": null, "base": "../../../../..", "features": ["announce.dismiss", "content.action.view", "content.action.edit", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "navigation.footer", "search.highlight", "search.suggest", "toc.follow"], "search": "../../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script> <script src=../../../../../assets/javascripts/bundle.d7400e89.min.js></script> <script src=../../../../../scripts/katex.js></script> <script src=https://unpkg.com/katex@0/dist/katex.min.js></script> <script src=https://unpkg.com/katex@0/dist/contrib/auto-render.min.js></script> </body> </html>

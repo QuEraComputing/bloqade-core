@@ -1,0 +1,645 @@
+<!doctype html><html lang=en class=no-js> <head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Bloqade-Core: core building blocks for the Bloqade ecosystem"><link href=https://github.com/QuEraComputing/bloqade-core/v0.6.10/reference/bloqade/core/device/device/ rel=canonical><link href=../../../../../contrib/ rel=prev><link href=../task/ rel=next><link rel=icon href=../../../../../assets/images/favicon.png><meta name=generator content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7"><title>Device - bloqade-core</title><link rel=stylesheet href=../../../../../assets/stylesheets/main.ec1eaa64.min.css><link rel=stylesheet href=../../../../../assets/stylesheets/palette.ab4e12ef.min.css><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback"><style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style><link rel=stylesheet href=../../../../../assets/_mkdocstrings.css><link rel=stylesheet href=../../../../../stylesheets/extra.css><link rel=stylesheet href=https://unpkg.com/katex@0/dist/katex.min.css><script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script></head> <body dir=ltr data-md-color-scheme=default data-md-color-primary=custom data-md-color-accent=custom> <input class=md-toggle data-md-toggle=drawer type=checkbox id=__drawer autocomplete=off> <input class=md-toggle data-md-toggle=search type=checkbox id=__search autocomplete=off> <label class=md-overlay for=__drawer></label> <div data-md-component=skip> <a href=#bloqade.core.device.device class=md-skip> Skip to content </a> </div> <div data-md-component=announce> </div> <div data-md-color-scheme=default data-md-component=outdated hidden> </div> <header class=md-header data-md-component=header> <nav class="md-header__inner md-grid" aria-label=Header> <a href=../../../../.. title=bloqade-core class="md-header__button md-logo" aria-label=bloqade-core data-md-component=logo> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg> </a> <label class="md-header__button md-icon" for=__drawer> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg> </label> <div class=md-header__title data-md-component=header-title> <div class=md-header__ellipsis> <div class=md-header__topic> <span class=md-ellipsis> bloqade-core </span> </div> <div class=md-header__topic data-md-component=header-topic> <span class=md-ellipsis> Device </span> </div> </div> </div> <form class=md-header__option data-md-component=palette> <input class=md-option data-md-color-media data-md-color-scheme=default data-md-color-primary=custom data-md-color-accent=custom aria-label="Switch to dark mode" type=radio name=__palette id=__palette_0> <label class="md-header__button md-icon" title="Switch to dark mode" for=__palette_1 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg> </label> <input class=md-option data-md-color-media data-md-color-scheme=slate data-md-color-primary=custom data-md-color-accent=custom aria-label="Switch to light mode" type=radio name=__palette id=__palette_1> <label class="md-header__button md-icon" title="Switch to light mode" for=__palette_0 hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg> </label> </form> <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script> <label class="md-header__button md-icon" for=__search> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg> </label> <div class=md-search data-md-component=search role=dialog> <label class=md-search__overlay for=__search></label> <div class=md-search__inner role=search> <form class=md-search__form name=search> <input type=text class=md-search__input name=query aria-label=Search placeholder=Search autocapitalize=off autocorrect=off autocomplete=off spellcheck=false data-md-component=search-query required> <label class="md-search__icon md-icon" for=__search> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg> </label> <nav class=md-search__options aria-label=Search> <button type=reset class="md-search__icon md-icon" title=Clear aria-label=Clear tabindex=-1> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg> </button> </nav> <div class=md-search__suggest data-md-component=search-suggest></div> </form> <div class=md-search__output> <div class=md-search__scrollwrap tabindex=0 data-md-scrollfix> <div class=md-search-result data-md-component=search-result> <div class=md-search-result__meta> Initializing search </div> <ol class=md-search-result__list role=presentation></ol> </div> </div> </div> </div> </div> <div class=md-header__source> <a href=https://github.com/QuEraComputing/bloqade-core title="Go to repository" class=md-source data-md-component=source> <div class="md-source__icon md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg> </div> <div class=md-source__repository> bloqade-core </div> </a> </div> </nav> </header> <div class=md-container data-md-component=container> <nav class=md-tabs aria-label=Tabs data-md-component=tabs> <div class=md-grid> <ul class=md-tabs__list> <li class=md-tabs__item> <a href=../../../../.. class=md-tabs__link> Home </a> </li> <li class="md-tabs__item md-tabs__item--active"> <a href=./ class=md-tabs__link> API Reference </a> </li> </ul> </div> </nav> <main class=md-main data-md-component=main> <div class="md-main__inner md-grid"> <div class="md-sidebar md-sidebar--primary" data-md-component=sidebar data-md-type=navigation> <div class=md-sidebar__scrollwrap> <div class=md-sidebar__inner> <nav class="md-nav md-nav--primary md-nav--lifted" aria-label=Navigation data-md-level=0> <label class=md-nav__title for=__drawer> <a href=../../../../.. title=bloqade-core class="md-nav__button md-logo" aria-label=bloqade-core data-md-component=logo> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg> </a> bloqade-core </label> <div class=md-nav__source> <a href=https://github.com/QuEraComputing/bloqade-core title="Go to repository" class=md-source data-md-component=source> <div class="md-source__icon md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg> </div> <div class=md-source__repository> bloqade-core </div> </a> </div> <ul class=md-nav__list data-md-scrollfix> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_1> <div class="md-nav__link md-nav__container"> <a href=../../../../.. class="md-nav__link "> <span class=md-ellipsis> Home </span> </a> <label class="md-nav__link " for=__nav_1 id=__nav_1_label tabindex=0> <span class="md-nav__icon md-icon"></span> </label> </div> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_1_label aria-expanded=false> <label class=md-nav__title for=__nav_1> <span class="md-nav__icon md-icon"></span> Home </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../../../../install/ class=md-nav__link> <span class=md-ellipsis> Installation </span> </a> </li> <li class=md-nav__item> <a href=../../../../../device_workflow/ class=md-nav__link> <span class=md-ellipsis> Running kernels on a device </span> </a> </li> <li class=md-nav__item> <a href=../../../../../contrib/ class=md-nav__link> <span class=md-ellipsis> Contributing </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2 checked> <label class=md-nav__link for=__nav_2 id=__nav_2_label tabindex> <span class=md-ellipsis> API Reference </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=1 aria-labelledby=__nav_2_label aria-expanded=true> <label class=md-nav__title for=__nav_2> <span class="md-nav__icon md-icon"></span> API Reference </label> <ul class=md-nav__list data-md-scrollfix> <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2_1 checked> <label class=md-nav__link for=__nav_2_1 id=__nav_2_1_label tabindex> <span class=md-ellipsis> Device </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=2 aria-labelledby=__nav_2_1_label aria-expanded=true> <label class=md-nav__title for=__nav_2_1> <span class="md-nav__icon md-icon"></span> Device </label> <ul class=md-nav__list data-md-scrollfix> <li class="md-nav__item md-nav__item--active"> <input class="md-nav__toggle md-toggle" type=checkbox id=__toc> <label class="md-nav__link md-nav__link--active" for=__toc> <span class=md-ellipsis> Device </span> <span class="md-nav__icon md-icon"></span> </label> <a href=./ class="md-nav__link md-nav__link--active"> <span class=md-ellipsis> Device </span> </a> <nav class="md-nav md-nav--secondary" aria-label="Table of contents"> <label class=md-nav__title for=__toc> <span class="md-nav__icon md-icon"></span> Table of contents </label> <ul class=md-nav__list data-md-component=toc data-md-scrollfix> <li class=md-nav__item> <a href=#bloqade.core.device.device class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;device </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.device.Device class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Device </span> </a> <nav class=md-nav aria-label= Device> <ul class=md-nav__list> <li class=md-nav__item> <a href=#bloqade.core.device.device.Device.batch_task class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;batch_task </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.device.Device.parameter_scan class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;parameter_scan </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.device.Device.run_async class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;run_async </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.device.Device.submit_task_definition class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;submit_task_definition </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.device.Device.task class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;task </span> </a> </li> </ul> </nav> </li> </ul> </nav> </li> <li class=md-nav__item> <a href=../task/ class=md-nav__link> <span class=md-ellipsis> Task </span> </a> </li> <li class=md-nav__item> <a href=../future/ class=md-nav__link> <span class=md-ellipsis> Future </span> </a> </li> <li class=md-nav__item> <a href=../result/ class=md-nav__link> <span class=md-ellipsis> Result </span> </a> </li> <li class=md-nav__item> <a href=../local_storage/ class=md-nav__link> <span class=md-ellipsis> Local storage </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--section md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2_2> <label class=md-nav__link for=__nav_2_2 id=__nav_2_2_label tabindex> <span class=md-ellipsis> Geometry dialect groups </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=2 aria-labelledby=__nav_2_2_label aria-expanded=false> <label class=md-nav__title for=__nav_2_2> <span class="md-nav__icon md-icon"></span> Geometry dialect groups </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../../geometry/prelude/ class=md-nav__link> <span class=md-ellipsis> Kernel decorator </span> </a> </li> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2_2_2> <label class=md-nav__link for=__nav_2_2_2 id=__nav_2_2_2_label tabindex=0> <span class=md-ellipsis> Dialects </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=3 aria-labelledby=__nav_2_2_2_label aria-expanded=false> <label class=md-nav__title for=__nav_2_2_2> <span class="md-nav__icon md-icon"></span> Dialects </label> <ul class=md-nav__list data-md-scrollfix> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2_2_2_1> <label class=md-nav__link for=__nav_2_2_2_1 id=__nav_2_2_2_1_label tabindex=0> <span class=md-ellipsis> grid </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=4 aria-labelledby=__nav_2_2_2_1_label aria-expanded=false> <label class=md-nav__title for=__nav_2_2_2_1> <span class="md-nav__icon md-icon"></span> grid </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../../geometry/dialects/grid/_interface/ class=md-nav__link> <span class=md-ellipsis> statements </span> </a> </li> <li class=md-nav__item> <a href=../../../geometry/dialects/grid/types/ class=md-nav__link> <span class=md-ellipsis> types </span> </a> </li> </ul> </nav> </li> <li class="md-nav__item md-nav__item--nested"> <input class="md-nav__toggle md-toggle " type=checkbox id=__nav_2_2_2_2> <label class=md-nav__link for=__nav_2_2_2_2 id=__nav_2_2_2_2_label tabindex=0> <span class=md-ellipsis> filled </span> <span class="md-nav__icon md-icon"></span> </label> <nav class=md-nav data-md-level=4 aria-labelledby=__nav_2_2_2_2_label aria-expanded=false> <label class=md-nav__title for=__nav_2_2_2_2> <span class="md-nav__icon md-icon"></span> filled </label> <ul class=md-nav__list data-md-scrollfix> <li class=md-nav__item> <a href=../../../geometry/dialects/filled/_interface/ class=md-nav__link> <span class=md-ellipsis> statements </span> </a> </li> <li class=md-nav__item> <a href=../../../geometry/dialects/filled/types/ class=md-nav__link> <span class=md-ellipsis> types </span> </a> </li> </ul> </nav> </li> </ul> </nav> </li> </ul> </nav> </li> </ul> </nav> </li> </ul> </nav> </div> </div> </div> <div class="md-sidebar md-sidebar--secondary" data-md-component=sidebar data-md-type=toc> <div class=md-sidebar__scrollwrap> <div class=md-sidebar__inner> <nav class="md-nav md-nav--secondary" aria-label="Table of contents"> <label class=md-nav__title for=__toc> <span class="md-nav__icon md-icon"></span> Table of contents </label> <ul class=md-nav__list data-md-component=toc data-md-scrollfix> <li class=md-nav__item> <a href=#bloqade.core.device.device class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;device </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.device.Device class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Device </span> </a> <nav class=md-nav aria-label= Device> <ul class=md-nav__list> <li class=md-nav__item> <a href=#bloqade.core.device.device.Device.batch_task class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;batch_task </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.device.Device.parameter_scan class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;parameter_scan </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.device.Device.run_async class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;run_async </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.device.Device.submit_task_definition class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;submit_task_definition </span> </a> </li> <li class=md-nav__item> <a href=#bloqade.core.device.device.Device.task class=md-nav__link> <span class=md-ellipsis> <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;task </span> </a> </li> </ul> </nav> </li> </ul> </nav> </div> </div> </div> <div class=md-content data-md-component=content> <article class="md-content__inner md-typeset"> <a href=https://github.com/QuEraComputing/bloqade-core/edit/main/src/bloqade/core/device/device.py title="Edit this page" class="md-content__button md-icon" rel=edit> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg> </a> <a href=https://github.com/QuEraComputing/bloqade-core/raw/main/src/bloqade/core/device/device.py title="View source of this page" class="md-content__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg> </a> <h1>Device</h1> <div class="doc doc-object doc-module"> <a id=bloqade.core.device.device></a> <div class="doc doc-contents first"> <div class="doc doc-children"> <div class="doc doc-object doc-class"> <h2 id=bloqade.core.device.device.Device class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code> <span class="doc doc-object-name doc-class-name">Device</span> <span class="doc doc-labels"> <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small> </span> </h2> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>Device</span><span class=p>(</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>context_name</span><span class=p>:</span> <span class=nb>str</span><span class=p>,</span>
+    <span class=n>program_language</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"squin"</span><span class=p>,</span>
+    <span class=n>language_version</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"0.1.0"</span><span class=p>,</span>
+    <span class=n>future_cls</span><span class=p>:</span> <span class=nb>type</span><span class=p>[</span><span class=n>FutureType</span><span class=p>]</span> <span class=o>=</span> <span class=n>Future</span><span class=p>,</span>
+    <span class=n>kernel_serializer</span><span class=p>:</span> <span class=n>KernelSerializer</span> <span class=o>=</span> <span class=n>JSONSerializer</span><span class=p>(),</span>
+    <span class=n>validation_suite</span><span class=p>:</span> <span class=n>ValidationSuite</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>dialect_group</span><span class=p>:</span> <span class=n>DialectGroup</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span>
+<span class=p>)</span>
+</code></pre></div> <div class="doc doc-contents "> <p class="doc doc-class-bases"> Bases: <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">AuthMixin</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.mixins.AuthMixin</code>)' href=../mixins/#bloqade.core.device.mixins.AuthMixin>AuthMixin</a></code>, <code><span title=typing.Generic>Generic</span>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code></p> <div style="display: none"> <a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Device</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.device.Device</code>)' href=#bloqade.core.device.device.Device id=mermaid-link-bloqade.core.device.device.Device></a> <a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">AuthMixin</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.mixins.AuthMixin</code>)' href=../mixins/#bloqade.core.device.mixins.AuthMixin id=mermaid-link-bloqade.core.device.mixins.AuthMixin></a> </div> <pre class=mermaid><code id=mermaid-diagram-bloqade.core.device.device.Device>
+              flowchart TD
+              bloqade.core.device.device.Device[Device]
+              bloqade.core.device.mixins.AuthMixin[AuthMixin]
+
+                              bloqade.core.device.mixins.AuthMixin --> bloqade.core.device.device.Device
+                
+
+
+              click bloqade.core.device.device.Device href "" "bloqade.core.device.device.Device"
+              click bloqade.core.device.mixins.AuthMixin href "" "bloqade.core.device.mixins.AuthMixin"
+            </code></pre> <script>
+              var diagram = document.getElementById('mermaid-diagram-bloqade.core.device.device.Device');
+              diagram.innerHTML = diagram.innerHTML.replace(/click ([\w.]+) href "" "\1"/g, function(match, nodeID, offset) {
+                try {
+                  const link = document.getElementById("mermaid-link-" + nodeID).href;
+                  return `click ${nodeID} href "${link}" "${nodeID}"`
+                } catch (e) {
+                  return '';
+                }
+              });
+            </script> <p>Create legacy tasks and finalize or submit task builders.</p> <p>Legacy factory methods return task objects that submit themselves. For the builder API, the device supplies serialization and validation context and owns dry-run and submission through :meth:<code>run_async</code>.</p> <p><span class=doc-section-title>Attributes:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.device.Device.program_language>program_language</span></code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Language name placed on builder-generated task definitions. Defaults to <code>"squin"</code>.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.device.Device.language_version>language_version</span></code></td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Language version used when serializing builder kernels. Defaults to <code>"0.1.0"</code>.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.device.Device.future_cls>future_cls</span></code></td> <td> <code><span title=type>type</span>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code> </td> <td> <div class=doc-md-description> <p>Future class used by tasks created from this device. Defaults to <code>Future</code>.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code><span title=bloqade.core.device.device.Device.kernel_serializer>kernel_serializer</span></code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">KernelSerializer</span> (<code>bloqade.core.device.task.KernelSerializer</code>)' href=../task/#bloqade.core.device.task.KernelSerializer>KernelSerializer</a></code> </td> <td> <div class=doc-md-description> <p>Default serializer passed to created tasks. The serializer is used by <code>TaskABC.serialize_kernel</code>; it should provide an <code>encode</code> method for Kirin serialization modules. Defaults to <code>kirin.serialization.JSONSerializer</code>.</p> </div> </td> </tr> </tbody> </table> <div class="doc doc-children"> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.device.Device.batch_task class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">batch_task</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>batch_task</span><span class=p>(</span>
+    <span class=n>kernels</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=n>Method</span><span class=p>],</span>
+    <span class=n>arguments</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>metadata</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=n>Any</span><span class=p>]]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>num_shots</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]</span> <span class=o>|</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span>
+    <span class=n>program_language</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"squin"</span><span class=p>,</span>
+    <span class=n>language_version</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"0.1.0"</span><span class=p>,</span>
+    <span class=n>kernel_serializer</span><span class=p>:</span> <span class=n>KernelSerializer</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>KernelBatchTask</span><span class=p>[</span><span class=n>FutureType</span><span class=p>]</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Create a task containing one subtask per kernel.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>kernels</code> </td> <td> <code><span title=list>list</span>[<span title=kirin.ir.Method>Method</span>]</code> </td> <td> <div class=doc-md-description> <p>Kernels to execute.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>arguments</code> </td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>Per-kernel argument dictionaries. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> <tr class=doc-section-item> <td> <code>metadata</code> </td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>[<span title=str>str</span>, <span title=typing.Any>Any</span>]] | None</code> </td> <td> <div class=doc-md-description> <p>Per-kernel metadata dictionaries. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> <tr class=doc-section-item> <td> <code>num_shots</code> </td> <td> <code><span title=list>list</span>[<span title=int>int</span>] | <span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Shot count for each kernel, or one value to broadcast to every kernel. Defaults to 1.</p> </div> </td> <td> <code>1</code> </td> </tr> <tr class=doc-section-item> <td> <code>program_language</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Program language to store in the task definition. Defaults to "squin".</p> </div> </td> <td> <code>&#39;squin&#39;</code> </td> </tr> <tr class=doc-section-item> <td> <code>language_version</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Semantic version of the program language to store in the task definition. Defaults to "0.1.0".</p> </div> </td> <td> <code>&#39;0.1.0&#39;</code> </td> </tr> <tr class=doc-section-item> <td> <code>kernel_serializer</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">KernelSerializer</span> (<code>bloqade.core.device.task.KernelSerializer</code>)' href=../task/#bloqade.core.device.task.KernelSerializer>KernelSerializer</a> | None</code> </td> <td> <div class=doc-md-description> <p>Serializer for this task's kernels. When None, the device's <code>kernel_serializer</code> is used. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> <tr class=doc-section-item> <td> <code>group</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Name of the QLAM group for this task definition. When None, the configured group is used at submission time.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">KernelBatchTask</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.task.KernelBatchTask</code>)' href=../task/#bloqade.core.device.task.KernelBatchTask>KernelBatchTask</a>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code> </td> <td> <div class=doc-md-description> <p>KernelBatchTask[FutureType]: A batch task object ready for dry-run or submission.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>306</span>
+<span class=normal>307</span>
+<span class=normal>308</span>
+<span class=normal>309</span>
+<span class=normal>310</span>
+<span class=normal>311</span>
+<span class=normal>312</span>
+<span class=normal>313</span>
+<span class=normal>314</span>
+<span class=normal>315</span>
+<span class=normal>316</span>
+<span class=normal>317</span>
+<span class=normal>318</span>
+<span class=normal>319</span>
+<span class=normal>320</span>
+<span class=normal>321</span>
+<span class=normal>322</span>
+<span class=normal>323</span>
+<span class=normal>324</span>
+<span class=normal>325</span>
+<span class=normal>326</span>
+<span class=normal>327</span>
+<span class=normal>328</span>
+<span class=normal>329</span>
+<span class=normal>330</span>
+<span class=normal>331</span>
+<span class=normal>332</span>
+<span class=normal>333</span>
+<span class=normal>334</span>
+<span class=normal>335</span>
+<span class=normal>336</span>
+<span class=normal>337</span>
+<span class=normal>338</span>
+<span class=normal>339</span>
+<span class=normal>340</span>
+<span class=normal>341</span>
+<span class=normal>342</span>
+<span class=normal>343</span>
+<span class=normal>344</span>
+<span class=normal>345</span>
+<span class=normal>346</span>
+<span class=normal>347</span>
+<span class=normal>348</span>
+<span class=normal>349</span>
+<span class=normal>350</span>
+<span class=normal>351</span>
+<span class=normal>352</span>
+<span class=normal>353</span>
+<span class=normal>354</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>batch_task</span><span class=p>(</span>
+    <span class=bp>self</span><span class=p>,</span>
+    <span class=n>kernels</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>],</span>
+    <span class=n>arguments</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>metadata</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>[</span><span class=nb>str</span><span class=p>,</span> <span class=n>Any</span><span class=p>]]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>num_shots</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]</span> <span class=o>|</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span>
+    <span class=n>program_language</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"squin"</span><span class=p>,</span>
+    <span class=n>language_version</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"0.1.0"</span><span class=p>,</span>
+    <span class=n>kernel_serializer</span><span class=p>:</span> <span class=n>KernelSerializer</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>KernelBatchTask</span><span class=p>[</span><span class=n>FutureType</span><span class=p>]:</span>
+<span class=w>    </span><span class=sd>"""Create a task containing one subtask per kernel.</span>
+
+<span class=sd>    Args:</span>
+<span class=sd>        kernels (list[ir.Method]): Kernels to execute.</span>
+<span class=sd>        arguments (list[dict] | None): Per-kernel argument dictionaries.</span>
+<span class=sd>            Defaults to None.</span>
+<span class=sd>        metadata (list[dict[str, Any]] | None): Per-kernel metadata</span>
+<span class=sd>            dictionaries. Defaults to None.</span>
+<span class=sd>        num_shots (list[int] | int): Shot count for each kernel, or one</span>
+<span class=sd>            value to broadcast to every kernel. Defaults to 1.</span>
+<span class=sd>        program_language (str): Program language to store in the task</span>
+<span class=sd>            definition. Defaults to "squin".</span>
+<span class=sd>        language_version (str): Semantic version of the program language to</span>
+<span class=sd>            store in the task definition. Defaults to "0.1.0".</span>
+<span class=sd>        kernel_serializer (KernelSerializer | None): Serializer for this</span>
+<span class=sd>            task's kernels. When None, the device's `kernel_serializer` is</span>
+<span class=sd>            used. Defaults to None.</span>
+<span class=sd>        group (str | None): Name of the QLAM group for this task</span>
+<span class=sd>            definition. When None, the configured group is used at</span>
+<span class=sd>            submission time.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        KernelBatchTask[FutureType]: A batch task object ready for dry-run or</span>
+<span class=sd>            submission.</span>
+<span class=sd>    """</span>
+
+    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>kernel_batch_task_cls</span><span class=p>(</span>
+        <span class=n>context_name</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>context_name</span><span class=p>,</span>
+        <span class=n>kernels</span><span class=o>=</span><span class=n>kernels</span><span class=p>,</span>
+        <span class=n>arguments</span><span class=o>=</span><span class=n>arguments</span><span class=p>,</span>
+        <span class=n>num_shots</span><span class=o>=</span><span class=n>num_shots</span><span class=p>,</span>
+        <span class=n>metadata</span><span class=o>=</span><span class=n>metadata</span><span class=p>,</span>
+        <span class=n>program_language</span><span class=o>=</span><span class=n>program_language</span><span class=p>,</span>
+        <span class=n>language_version</span><span class=o>=</span><span class=n>language_version</span><span class=p>,</span>
+        <span class=n>future_cls</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>future_cls</span><span class=p>,</span>
+        <span class=n>kernel_serializer</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>_resolve_kernel_serializer</span><span class=p>(</span><span class=n>kernel_serializer</span><span class=p>),</span>
+        <span class=n>group</span><span class=o>=</span><span class=n>group</span><span class=p>,</span>
+    <span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.device.Device.parameter_scan class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">parameter_scan</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>parameter_scan</span><span class=p>(</span>
+    <span class=n>kernel</span><span class=p>:</span> <span class=n>Method</span><span class=p>,</span>
+    <span class=n>arguments</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>],</span>
+    <span class=n>metadata</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>num_shots</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]</span> <span class=o>|</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span>
+    <span class=n>program_language</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"squin"</span><span class=p>,</span>
+    <span class=n>language_version</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"0.1.0"</span><span class=p>,</span>
+    <span class=n>kernel_serializer</span><span class=p>:</span> <span class=n>KernelSerializer</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ParameterScanTask</span><span class=p>[</span><span class=n>FutureType</span><span class=p>]</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Create a parameter-scan task for one kernel.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>kernel</code> </td> <td> <code><span title=kirin.ir.Method>Method</span></code> </td> <td> <div class=doc-md-description> <p>Kernel to execute for each parameter set.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>arguments</code> </td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>]</code> </td> <td> <div class=doc-md-description> <p>Argument dictionaries, one per subtask.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>metadata</code> </td> <td> <code><span title=list>list</span>[<span title=dict>dict</span>] | None</code> </td> <td> <div class=doc-md-description> <p>Metadata dictionaries, one per subtask. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> <tr class=doc-section-item> <td> <code>num_shots</code> </td> <td> <code><span title=list>list</span>[<span title=int>int</span>] | <span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Shot count for each parameter set, or one value to broadcast to every subtask. Defaults to 1.</p> </div> </td> <td> <code>1</code> </td> </tr> <tr class=doc-section-item> <td> <code>program_language</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Program language to store in the task definition. Defaults to "squin".</p> </div> </td> <td> <code>&#39;squin&#39;</code> </td> </tr> <tr class=doc-section-item> <td> <code>language_version</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Semantic version of the program language to store in the task definition. Defaults to "0.1.0".</p> </div> </td> <td> <code>&#39;0.1.0&#39;</code> </td> </tr> <tr class=doc-section-item> <td> <code>kernel_serializer</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">KernelSerializer</span> (<code>bloqade.core.device.task.KernelSerializer</code>)' href=../task/#bloqade.core.device.task.KernelSerializer>KernelSerializer</a> | None</code> </td> <td> <div class=doc-md-description> <p>Serializer for the scanned kernel. When None, the device's <code>kernel_serializer</code> is used. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> <tr class=doc-section-item> <td> <code>group</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Name of the QLAM group for this task definition. When None, the configured group is used at submission time.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ParameterScanTask</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.task.ParameterScanTask</code>)' href=../task/#bloqade.core.device.task.ParameterScanTask>ParameterScanTask</a>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code> </td> <td> <div class=doc-md-description> <p>ParameterScanTask[FutureType]: A parameter-scan task object ready for dry-run or submission.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>356</span>
+<span class=normal>357</span>
+<span class=normal>358</span>
+<span class=normal>359</span>
+<span class=normal>360</span>
+<span class=normal>361</span>
+<span class=normal>362</span>
+<span class=normal>363</span>
+<span class=normal>364</span>
+<span class=normal>365</span>
+<span class=normal>366</span>
+<span class=normal>367</span>
+<span class=normal>368</span>
+<span class=normal>369</span>
+<span class=normal>370</span>
+<span class=normal>371</span>
+<span class=normal>372</span>
+<span class=normal>373</span>
+<span class=normal>374</span>
+<span class=normal>375</span>
+<span class=normal>376</span>
+<span class=normal>377</span>
+<span class=normal>378</span>
+<span class=normal>379</span>
+<span class=normal>380</span>
+<span class=normal>381</span>
+<span class=normal>382</span>
+<span class=normal>383</span>
+<span class=normal>384</span>
+<span class=normal>385</span>
+<span class=normal>386</span>
+<span class=normal>387</span>
+<span class=normal>388</span>
+<span class=normal>389</span>
+<span class=normal>390</span>
+<span class=normal>391</span>
+<span class=normal>392</span>
+<span class=normal>393</span>
+<span class=normal>394</span>
+<span class=normal>395</span>
+<span class=normal>396</span>
+<span class=normal>397</span>
+<span class=normal>398</span>
+<span class=normal>399</span>
+<span class=normal>400</span>
+<span class=normal>401</span>
+<span class=normal>402</span>
+<span class=normal>403</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>parameter_scan</span><span class=p>(</span>
+    <span class=bp>self</span><span class=p>,</span>
+    <span class=n>kernel</span><span class=p>:</span> <span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>,</span>
+    <span class=n>arguments</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>],</span>
+    <span class=n>metadata</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>num_shots</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>int</span><span class=p>]</span> <span class=o>|</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span>
+    <span class=n>program_language</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"squin"</span><span class=p>,</span>
+    <span class=n>language_version</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"0.1.0"</span><span class=p>,</span>
+    <span class=n>kernel_serializer</span><span class=p>:</span> <span class=n>KernelSerializer</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>ParameterScanTask</span><span class=p>[</span><span class=n>FutureType</span><span class=p>]:</span>
+<span class=w>    </span><span class=sd>"""Create a parameter-scan task for one kernel.</span>
+
+<span class=sd>    Args:</span>
+<span class=sd>        kernel (ir.Method): Kernel to execute for each parameter set.</span>
+<span class=sd>        arguments (list[dict]): Argument dictionaries, one per subtask.</span>
+<span class=sd>        metadata (list[dict] | None): Metadata dictionaries, one per</span>
+<span class=sd>            subtask. Defaults to None.</span>
+<span class=sd>        num_shots (list[int] | int): Shot count for each parameter set, or</span>
+<span class=sd>            one value to broadcast to every subtask. Defaults to 1.</span>
+<span class=sd>        program_language (str): Program language to store in the task</span>
+<span class=sd>            definition. Defaults to "squin".</span>
+<span class=sd>        language_version (str): Semantic version of the program language to</span>
+<span class=sd>            store in the task definition. Defaults to "0.1.0".</span>
+<span class=sd>        kernel_serializer (KernelSerializer | None): Serializer for the</span>
+<span class=sd>            scanned kernel. When None, the device's `kernel_serializer` is</span>
+<span class=sd>            used. Defaults to None.</span>
+<span class=sd>        group (str | None): Name of the QLAM group for this task</span>
+<span class=sd>            definition. When None, the configured group is used at</span>
+<span class=sd>            submission time.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        ParameterScanTask[FutureType]: A parameter-scan task object ready for</span>
+<span class=sd>            dry-run or submission.</span>
+<span class=sd>    """</span>
+
+    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>parameter_scan_task_cls</span><span class=p>(</span>
+        <span class=n>context_name</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>context_name</span><span class=p>,</span>
+        <span class=n>kernel</span><span class=o>=</span><span class=n>kernel</span><span class=p>,</span>
+        <span class=n>num_shots</span><span class=o>=</span><span class=n>num_shots</span><span class=p>,</span>
+        <span class=n>arguments</span><span class=o>=</span><span class=n>arguments</span><span class=p>,</span>
+        <span class=n>metadata</span><span class=o>=</span><span class=n>metadata</span><span class=p>,</span>
+        <span class=n>program_language</span><span class=o>=</span><span class=n>program_language</span><span class=p>,</span>
+        <span class=n>language_version</span><span class=o>=</span><span class=n>language_version</span><span class=p>,</span>
+        <span class=n>future_cls</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>future_cls</span><span class=p>,</span>
+        <span class=n>kernel_serializer</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>_resolve_kernel_serializer</span><span class=p>(</span><span class=n>kernel_serializer</span><span class=p>),</span>
+        <span class=n>group</span><span class=o>=</span><span class=n>group</span><span class=p>,</span>
+    <span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.device.Device.run_async class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">run_async</span> </h3> <div class=doc-overloads> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>run_async</span><span class=p>(</span>
+    <span class=n>task_builder</span><span class=p>:</span> <span class=n>TaskBuilder</span><span class=p>,</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>dry_run</span><span class=p>:</span> <span class=n>Literal</span><span class=p>[</span><span class=kc>True</span><span class=p>],</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=kc>None</span>
+</code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class=nf>run_async</span><span class=p>(</span>
+    <span class=n>task_builder</span><span class=p>:</span> <span class=n>TaskBuilder</span><span class=p>,</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>dry_run</span><span class=p>:</span> <span class=n>Literal</span><span class=p>[</span><span class=kc>False</span><span class=p>],</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span>
+</code></pre></div> </div> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>run_async</span><span class=p>(</span>
+    <span class=n>task_builder</span><span class=p>:</span> <span class=n>TaskBuilder</span><span class=p>,</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>dry_run</span><span class=p>:</span> <span class=nb>bool</span><span class=p>,</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span> <span class=o>|</span> <span class=kc>None</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Validate and finalize a builder, optionally submitting it.</p> <p>A dry run performs the same kernel validation and serialization as a submission, prints the builder summary, and returns <code>None</code> without authenticating, writing storage, or calling QLAM. Finalization does not mutate the builder, so it remains editable after a dry run.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_builder</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TaskBuilder</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.task_builder.TaskBuilder</code>)' href=../task_builder/#bloqade.core.device.task_builder.TaskBuilder>TaskBuilder</a></code> </td> <td> <div class=doc-md-description> <p>Incrementally assembled task to finalize.</p> </div> </td> <td> <em>required</em> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Other Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>dry_run</code></td> <td> <code><span title=bool>bool</span></code> </td> <td> <div class=doc-md-description> <p>When true, print a preview without submitting. When false, submit and return a future.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>group</code></td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Optional QLAM group name or UUID string for this submission. Defaults to configured group precedence.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>storage</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a> | None</code> </td> <td> <div class=doc-md-description> <p>Storage for the submitted task definition. Ignored during a dry run.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>fetch_options</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ApiFetchOptions</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=../future/#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a></code> </td> <td> <div class=doc-md-description> <p>Fetch configuration attached to the returned future. Ignored during a dry run.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=bloqade.core.device.future.FutureType>FutureType</span> | None</code> </td> <td> <div class=doc-md-description> <p>FutureType | None: <code>None</code> for a dry run; otherwise the future associated with the submitted QLAM task.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>110</span>
+<span class=normal>111</span>
+<span class=normal>112</span>
+<span class=normal>113</span>
+<span class=normal>114</span>
+<span class=normal>115</span>
+<span class=normal>116</span>
+<span class=normal>117</span>
+<span class=normal>118</span>
+<span class=normal>119</span>
+<span class=normal>120</span>
+<span class=normal>121</span>
+<span class=normal>122</span>
+<span class=normal>123</span>
+<span class=normal>124</span>
+<span class=normal>125</span>
+<span class=normal>126</span>
+<span class=normal>127</span>
+<span class=normal>128</span>
+<span class=normal>129</span>
+<span class=normal>130</span>
+<span class=normal>131</span>
+<span class=normal>132</span>
+<span class=normal>133</span>
+<span class=normal>134</span>
+<span class=normal>135</span>
+<span class=normal>136</span>
+<span class=normal>137</span>
+<span class=normal>138</span>
+<span class=normal>139</span>
+<span class=normal>140</span>
+<span class=normal>141</span>
+<span class=normal>142</span>
+<span class=normal>143</span>
+<span class=normal>144</span>
+<span class=normal>145</span>
+<span class=normal>146</span>
+<span class=normal>147</span>
+<span class=normal>148</span>
+<span class=normal>149</span>
+<span class=normal>150</span>
+<span class=normal>151</span>
+<span class=normal>152</span>
+<span class=normal>153</span>
+<span class=normal>154</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>run_async</span><span class=p>(</span>
+    <span class=bp>self</span><span class=p>,</span>
+    <span class=n>task_builder</span><span class=p>:</span> <span class=n>TaskBuilder</span><span class=p>,</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>dry_run</span><span class=p>:</span> <span class=nb>bool</span><span class=p>,</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span> <span class=o>|</span> <span class=kc>None</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>"""Validate and finalize a builder, optionally submitting it.</span>
+
+<span class=sd>    A dry run performs the same kernel validation and serialization as a</span>
+<span class=sd>    submission, prints the builder summary, and returns ``None`` without</span>
+<span class=sd>    authenticating, writing storage, or calling QLAM. Finalization does not</span>
+<span class=sd>    mutate the builder, so it remains editable after a dry run.</span>
+
+<span class=sd>    Args:</span>
+<span class=sd>        task_builder (TaskBuilder): Incrementally assembled task to</span>
+<span class=sd>            finalize.</span>
+
+<span class=sd>    Keyword Args:</span>
+<span class=sd>        dry_run (bool): When true, print a preview without submitting.</span>
+<span class=sd>            When false, submit and return a future.</span>
+<span class=sd>        group (str | None): Optional QLAM group name or UUID string for</span>
+<span class=sd>            this submission. Defaults to configured group precedence.</span>
+<span class=sd>        storage (StorageBackend | None): Storage for the submitted task</span>
+<span class=sd>            definition. Ignored during a dry run.</span>
+<span class=sd>        fetch_options (ApiFetchOptions): Fetch configuration attached to</span>
+<span class=sd>            the returned future. Ignored during a dry run.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        FutureType | None: ``None`` for a dry run; otherwise the future</span>
+<span class=sd>            associated with the submitted QLAM task.</span>
+<span class=sd>    """</span>
+    <span class=n>finalize_ctx</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_finalize_context</span><span class=p>()</span>
+    <span class=n>task_definition</span> <span class=o>=</span> <span class=n>task_builder</span><span class=o>.</span><span class=n>_finalize</span><span class=p>(</span><span class=n>finalize_ctx</span><span class=p>)</span>
+    <span class=k>if</span> <span class=n>dry_run</span><span class=p>:</span>
+        <span class=nb>print</span><span class=p>(</span><span class=n>task_builder</span><span class=o>.</span><span class=n>summary</span><span class=p>())</span>
+        <span class=k>return</span>
+    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>submit_task_definition</span><span class=p>(</span>
+        <span class=n>task_definition</span><span class=o>=</span><span class=n>task_definition</span><span class=p>,</span>
+        <span class=n>storage</span><span class=o>=</span><span class=n>storage</span><span class=p>,</span>
+        <span class=n>fetch_options</span><span class=o>=</span><span class=n>fetch_options</span><span class=p>,</span>
+        <span class=n>group</span><span class=o>=</span><span class=n>group</span><span class=p>,</span>
+    <span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.device.Device.submit_task_definition class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">submit_task_definition</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>submit_task_definition</span><span class=p>(</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>task_definition</span><span class=p>:</span> <span class=n>TaskDefinition</span><span class=p>,</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span><span class=p>,</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Submit a prepared task definition and return a future.</p> <p>When the definition does not set a group ID, a task-level group name takes precedence over the <code>~/.qsh</code> config group (<code>plugins.tasks.group</code>, then <code>defaults.group</code>). The selected name is resolved before submission. When neither is set, the group is omitted and QLAM selects the backend default group.</p> <p><span class=doc-section-title>Other Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>task_definition</code></td> <td> <code><span title=qlam_core.plugins.tasks.api.tasks_models.TaskDefinition>TaskDefinition</span></code> </td> <td> <div class=doc-md-description> <p>Task definition to submit.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>storage</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StorageBackend</span> (<code>bloqade.core.device.local_storage.StorageBackend</code>)' href=../local_storage/#bloqade.core.device.local_storage.StorageBackend>StorageBackend</a> | None</code> </td> <td> <div class=doc-md-description> <p>Storage backend that will receive the task definition. When None, a fresh <code>DictStorage</code> is used (in-memory; not persisted across processes). Defaults to None.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>fetch_options</code></td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ApiFetchOptions</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=../future/#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a></code> </td> <td> <div class=doc-md-description> <p>Pagination and polling options attached to the returned future. Defaults to <code>ApiFetchOptions()</code>.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>FutureType</code></td> <td> <code><span title=bloqade.core.device.future.FutureType>FutureType</span></code> </td> <td> <div class=doc-md-description> <p>Future attached to the created task ID.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If the backend response is missing a task ID.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>181</span>
+<span class=normal>182</span>
+<span class=normal>183</span>
+<span class=normal>184</span>
+<span class=normal>185</span>
+<span class=normal>186</span>
+<span class=normal>187</span>
+<span class=normal>188</span>
+<span class=normal>189</span>
+<span class=normal>190</span>
+<span class=normal>191</span>
+<span class=normal>192</span>
+<span class=normal>193</span>
+<span class=normal>194</span>
+<span class=normal>195</span>
+<span class=normal>196</span>
+<span class=normal>197</span>
+<span class=normal>198</span>
+<span class=normal>199</span>
+<span class=normal>200</span>
+<span class=normal>201</span>
+<span class=normal>202</span>
+<span class=normal>203</span>
+<span class=normal>204</span>
+<span class=normal>205</span>
+<span class=normal>206</span>
+<span class=normal>207</span>
+<span class=normal>208</span>
+<span class=normal>209</span>
+<span class=normal>210</span>
+<span class=normal>211</span>
+<span class=normal>212</span>
+<span class=normal>213</span>
+<span class=normal>214</span>
+<span class=normal>215</span>
+<span class=normal>216</span>
+<span class=normal>217</span>
+<span class=normal>218</span>
+<span class=normal>219</span>
+<span class=normal>220</span>
+<span class=normal>221</span>
+<span class=normal>222</span>
+<span class=normal>223</span>
+<span class=normal>224</span>
+<span class=normal>225</span>
+<span class=normal>226</span>
+<span class=normal>227</span>
+<span class=normal>228</span>
+<span class=normal>229</span>
+<span class=normal>230</span>
+<span class=normal>231</span>
+<span class=normal>232</span>
+<span class=normal>233</span>
+<span class=normal>234</span>
+<span class=normal>235</span>
+<span class=normal>236</span>
+<span class=normal>237</span>
+<span class=normal>238</span>
+<span class=normal>239</span>
+<span class=normal>240</span>
+<span class=normal>241</span>
+<span class=normal>242</span>
+<span class=normal>243</span>
+<span class=normal>244</span>
+<span class=normal>245</span>
+<span class=normal>246</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>submit_task_definition</span><span class=p>(</span>
+    <span class=bp>self</span><span class=p>,</span>
+    <span class=o>*</span><span class=p>,</span>
+    <span class=n>task_definition</span><span class=p>:</span> <span class=n>TaskDefinition</span><span class=p>,</span>
+    <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span><span class=p>,</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span><span class=p>:</span>
+<span class=w>    </span><span class=sd>"""Submit a prepared task definition and return a future.</span>
+
+<span class=sd>    When the definition does not set a group ID, a task-level group name</span>
+<span class=sd>    takes precedence over the `~/.qsh` config group (`plugins.tasks.group`,</span>
+<span class=sd>    then `defaults.group`). The selected name is resolved before</span>
+<span class=sd>    submission. When neither is set, the group is omitted and QLAM selects</span>
+<span class=sd>    the backend default group.</span>
+
+<span class=sd>    Keyword Args:</span>
+<span class=sd>        task_definition (TaskDefinition): Task definition to submit.</span>
+<span class=sd>        storage (StorageBackend | None): Storage backend that will receive</span>
+<span class=sd>            the task definition. When None, a fresh `DictStorage` is used</span>
+<span class=sd>            (in-memory; not persisted across processes). Defaults to None.</span>
+<span class=sd>        fetch_options (ApiFetchOptions): Pagination and polling options</span>
+<span class=sd>            attached to the returned future. Defaults to</span>
+<span class=sd>            `ApiFetchOptions()`.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        FutureType: Future attached to the created task ID.</span>
+
+<span class=sd>    Raises:</span>
+<span class=sd>        ValueError: If the backend response is missing a task ID.</span>
+<span class=sd>    """</span>
+    <span class=k>if</span> <span class=n>storage</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>storage</span> <span class=o>=</span> <span class=n>DictStorage</span><span class=p>()</span>
+
+    <span class=bp>self</span><span class=o>.</span><span class=n>authenticate</span><span class=p>()</span>
+
+    <span class=k>if</span> <span class=n>task_definition</span><span class=o>.</span><span class=n>group_id</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>group</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_configured_group</span><span class=p>(</span><span class=n>group</span><span class=p>)</span>
+        <span class=k>if</span> <span class=n>group</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=n>task_definition</span> <span class=o>=</span> <span class=n>task_definition</span><span class=o>.</span><span class=n>model_copy</span><span class=p>(</span>
+                <span class=n>update</span><span class=o>=</span><span class=p>{</span><span class=s2>"group_id"</span><span class=p>:</span> <span class=bp>self</span><span class=o>.</span><span class=n>_resolve_group_id</span><span class=p>(</span><span class=n>group</span><span class=p>)}</span>
+            <span class=p>)</span>
+
+    <span class=n>task_request</span> <span class=o>=</span> <span class=n>TaskCreationRequest</span><span class=p>(</span><span class=n>root</span><span class=o>=</span><span class=n>task_definition</span><span class=p>)</span>
+    <span class=k>with</span> <span class=n>TasksClient</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>app_context</span><span class=p>)</span> <span class=k>as</span> <span class=n>tasks_client</span><span class=p>:</span>
+        <span class=n>created_task</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>call_with_auth_refresh</span><span class=p>(</span>
+            <span class=k>lambda</span><span class=p>:</span> <span class=n>tasks_client</span><span class=o>.</span><span class=n>create</span><span class=p>(</span><span class=n>body</span><span class=o>=</span><span class=n>task_request</span><span class=p>)</span>
+        <span class=p>)</span>
+
+    <span class=n>task_id</span> <span class=o>=</span> <span class=n>created_task</span><span class=o>.</span><span class=n>id</span>
+
+    <span class=k>if</span> <span class=ow>not</span> <span class=n>task_id</span><span class=p>:</span>
+        <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span>
+            <span class=sa>f</span><span class=s2>"Couldn't get id of created task </span><span class=si>{</span><span class=n>created_task</span><span class=si>}</span><span class=s2>. Please report this issue!"</span>
+        <span class=p>)</span>
+
+    <span class=n>logger</span><span class=o>.</span><span class=n>info</span><span class=p>(</span><span class=sa>f</span><span class=s2>"Submitted task with ID: </span><span class=si>{</span><span class=n>task_id</span><span class=si>}</span><span class=s2>"</span><span class=p>)</span>
+
+    <span class=n>storage</span><span class=o>.</span><span class=n>add_task_definition</span><span class=p>(</span><span class=n>task_id</span><span class=p>,</span> <span class=n>task_definition</span><span class=p>,</span> <span class=n>created_task</span><span class=o>.</span><span class=n>created_date</span><span class=p>)</span>
+
+    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>future_cls</span><span class=p>(</span>
+        <span class=n>task_id</span><span class=o>=</span><span class=n>task_id</span><span class=p>,</span>
+        <span class=n>fetch_options</span><span class=o>=</span><span class=n>fetch_options</span><span class=p>,</span>
+        <span class=n>storage</span><span class=o>=</span><span class=n>storage</span><span class=p>,</span>
+        <span class=n>context_name</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>context_name</span><span class=p>,</span>
+    <span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> <div class="doc doc-object doc-function"> <h3 id=bloqade.core.device.device.Device.task class="doc doc-heading"> <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code> <span class="doc doc-object-name doc-function-name">task</span> </h3> <div class="doc-signature highlight"><pre><span></span><code><span class=nf>task</span><span class=p>(</span>
+    <span class=n>kernel</span><span class=p>:</span> <span class=n>Method</span><span class=p>,</span>
+    <span class=n>num_shots</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span>
+    <span class=n>arguments</span><span class=p>:</span> <span class=nb>dict</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>metadata</span><span class=p>:</span> <span class=nb>dict</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>program_language</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"squin"</span><span class=p>,</span>
+    <span class=n>language_version</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"0.1.0"</span><span class=p>,</span>
+    <span class=n>kernel_serializer</span><span class=p>:</span> <span class=n>KernelSerializer</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>SingleKernelTask</span><span class=p>[</span><span class=n>FutureType</span><span class=p>]</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Create a task for one kernel.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>kernel</code> </td> <td> <code><span title=kirin.ir.Method>Method</span></code> </td> <td> <div class=doc-md-description> <p>The kernel to execute.</p> </div> </td> <td> <em>required</em> </td> </tr> <tr class=doc-section-item> <td> <code>num_shots</code> </td> <td> <code><span title=int>int</span></code> </td> <td> <div class=doc-md-description> <p>Number of shots to run for the kernel. Defaults to 1.</p> </div> </td> <td> <code>1</code> </td> </tr> <tr class=doc-section-item> <td> <code>arguments</code> </td> <td> <code><span title=dict>dict</span> | None</code> </td> <td> <div class=doc-md-description> <p>Argument dictionary for the kernel. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> <tr class=doc-section-item> <td> <code>metadata</code> </td> <td> <code><span title=dict>dict</span> | None</code> </td> <td> <div class=doc-md-description> <p>Metadata for the single subtask. When provided, it is wrapped in a one-element list to match the task API. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> <tr class=doc-section-item> <td> <code>program_language</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Program language to store in the task definition. Defaults to "squin".</p> </div> </td> <td> <code>&#39;squin&#39;</code> </td> </tr> <tr class=doc-section-item> <td> <code>language_version</code> </td> <td> <code><span title=str>str</span></code> </td> <td> <div class=doc-md-description> <p>Semantic version of the program language to store in the task definition. Defaults to "0.1.0".</p> </div> </td> <td> <code>&#39;0.1.0&#39;</code> </td> </tr> <tr class=doc-section-item> <td> <code>kernel_serializer</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">KernelSerializer</span> (<code>bloqade.core.device.task.KernelSerializer</code>)' href=../task/#bloqade.core.device.task.KernelSerializer>KernelSerializer</a> | None</code> </td> <td> <div class=doc-md-description> <p>Serializer for this task's kernel. When None, the device's <code>kernel_serializer</code> is used. Defaults to None.</p> </div> </td> <td> <code>None</code> </td> </tr> <tr class=doc-section-item> <td> <code>group</code> </td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Name of the QLAM group for this task definition. When None, the configured group is used at submission time.</p> </div> </td> <td> <code>None</code> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">SingleKernelTask</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span> (<code>bloqade.core.device.task.SingleKernelTask</code>)' href=../task/#bloqade.core.device.task.SingleKernelTask>SingleKernelTask</a>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code> </td> <td> <div class=doc-md-description> <p>SingleKernelTask[FutureType]: A task object ready for dry-run or submission.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>257</span>
+<span class=normal>258</span>
+<span class=normal>259</span>
+<span class=normal>260</span>
+<span class=normal>261</span>
+<span class=normal>262</span>
+<span class=normal>263</span>
+<span class=normal>264</span>
+<span class=normal>265</span>
+<span class=normal>266</span>
+<span class=normal>267</span>
+<span class=normal>268</span>
+<span class=normal>269</span>
+<span class=normal>270</span>
+<span class=normal>271</span>
+<span class=normal>272</span>
+<span class=normal>273</span>
+<span class=normal>274</span>
+<span class=normal>275</span>
+<span class=normal>276</span>
+<span class=normal>277</span>
+<span class=normal>278</span>
+<span class=normal>279</span>
+<span class=normal>280</span>
+<span class=normal>281</span>
+<span class=normal>282</span>
+<span class=normal>283</span>
+<span class=normal>284</span>
+<span class=normal>285</span>
+<span class=normal>286</span>
+<span class=normal>287</span>
+<span class=normal>288</span>
+<span class=normal>289</span>
+<span class=normal>290</span>
+<span class=normal>291</span>
+<span class=normal>292</span>
+<span class=normal>293</span>
+<span class=normal>294</span>
+<span class=normal>295</span>
+<span class=normal>296</span>
+<span class=normal>297</span>
+<span class=normal>298</span>
+<span class=normal>299</span>
+<span class=normal>300</span>
+<span class=normal>301</span>
+<span class=normal>302</span>
+<span class=normal>303</span>
+<span class=normal>304</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>task</span><span class=p>(</span>
+    <span class=bp>self</span><span class=p>,</span>
+    <span class=n>kernel</span><span class=p>:</span> <span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>,</span>
+    <span class=n>num_shots</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span>
+    <span class=n>arguments</span><span class=p>:</span> <span class=nb>dict</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>metadata</span><span class=p>:</span> <span class=nb>dict</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>program_language</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"squin"</span><span class=p>,</span>
+    <span class=n>language_version</span><span class=p>:</span> <span class=nb>str</span> <span class=o>=</span> <span class=s2>"0.1.0"</span><span class=p>,</span>
+    <span class=n>kernel_serializer</span><span class=p>:</span> <span class=n>KernelSerializer</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+    <span class=n>group</span><span class=p>:</span> <span class=nb>str</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
+<span class=p>)</span> <span class=o>-&gt;</span> <span class=n>SingleKernelTask</span><span class=p>[</span><span class=n>FutureType</span><span class=p>]:</span>
+<span class=w>    </span><span class=sd>"""Create a task for one kernel.</span>
+
+<span class=sd>    Args:</span>
+<span class=sd>        kernel (ir.Method): The kernel to execute.</span>
+<span class=sd>        num_shots (int): Number of shots to run for the kernel. Defaults to 1.</span>
+<span class=sd>        arguments (dict | None): Argument dictionary for the kernel.</span>
+<span class=sd>            Defaults to None.</span>
+<span class=sd>        metadata (dict | None): Metadata for the single subtask. When</span>
+<span class=sd>            provided, it is wrapped in a one-element list to match the</span>
+<span class=sd>            task API. Defaults to None.</span>
+<span class=sd>        program_language (str): Program language to store in the task</span>
+<span class=sd>            definition. Defaults to "squin".</span>
+<span class=sd>        language_version (str): Semantic version of the program language to</span>
+<span class=sd>            store in the task definition. Defaults to "0.1.0".</span>
+<span class=sd>        kernel_serializer (KernelSerializer | None): Serializer for this</span>
+<span class=sd>            task's kernel. When None, the device's `kernel_serializer` is</span>
+<span class=sd>            used. Defaults to None.</span>
+<span class=sd>        group (str | None): Name of the QLAM group for this task</span>
+<span class=sd>            definition. When None, the configured group is used at</span>
+<span class=sd>            submission time.</span>
+
+<span class=sd>    Returns:</span>
+<span class=sd>        SingleKernelTask[FutureType]: A task object ready for dry-run or submission.</span>
+<span class=sd>    """</span>
+
+    <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>single_kernel_task_cls</span><span class=p>(</span>
+        <span class=n>context_name</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>context_name</span><span class=p>,</span>
+        <span class=n>kernel</span><span class=o>=</span><span class=n>kernel</span><span class=p>,</span>
+        <span class=n>num_shots</span><span class=o>=</span><span class=n>num_shots</span><span class=p>,</span>
+        <span class=n>arguments</span><span class=o>=</span><span class=n>arguments</span><span class=p>,</span>
+        <span class=n>metadata</span><span class=o>=</span><span class=n>metadata</span><span class=p>,</span>
+        <span class=n>program_language</span><span class=o>=</span><span class=n>program_language</span><span class=p>,</span>
+        <span class=n>language_version</span><span class=o>=</span><span class=n>language_version</span><span class=p>,</span>
+        <span class=n>future_cls</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>future_cls</span><span class=p>,</span>
+        <span class=n>kernel_serializer</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>_resolve_kernel_serializer</span><span class=p>(</span><span class=n>kernel_serializer</span><span class=p>),</span>
+        <span class=n>group</span><span class=o>=</span><span class=n>group</span><span class=p>,</span>
+    <span class=p>)</span>
+</code></pre></div></td></tr></table></div> </details> </div> </div> </div> </div> </div> </div> </div> </div> </article> </div> <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script> </div> <button type=button class="md-top md-icon" data-md-component=top hidden> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg> Back to top </button> </main> <footer class=md-footer> <nav class="md-footer__inner md-grid" aria-label=Footer> <a href=../../../../../contrib/ class="md-footer__link md-footer__link--prev" aria-label="Previous: Contributing"> <div class="md-footer__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg> </div> <div class=md-footer__title> <span class=md-footer__direction> Previous </span> <div class=md-ellipsis> Contributing </div> </div> </a> <a href=../task/ class="md-footer__link md-footer__link--next" aria-label="Next: Task"> <div class=md-footer__title> <span class=md-footer__direction> Next </span> <div class=md-ellipsis> Task </div> </div> <div class="md-footer__button md-icon"> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg> </div> </a> </nav> <div class="md-footer-meta md-typeset"> <div class="md-footer-meta__inner md-grid"> <div class=md-copyright> <div class=md-copyright__highlight> Copyright &copy; 2024- QuEra Computing, Inc. </div> Made with <a href=https://squidfunk.github.io/mkdocs-material/ target=_blank rel=noopener> Material for MkDocs </a> </div> <div class=md-social> <a href=https://x.com/QueraComputing target=_blank rel=noopener title=x.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 24 24"><path d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg> </a> <a href=https://www.linkedin.com/company/quera-computing-inc/ target=_blank rel=noopener title=www.linkedin.com class=md-social__link> <svg xmlns=http://www.w3.org/2000/svg viewbox="0 0 448 512"><!-- Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg> </a> </div> </div> </div> </footer> </div> <div class=md-dialog data-md-component=dialog> <div class="md-dialog__inner md-typeset"></div> </div> <script id=__config type=application/json>{"annotate": null, "base": "../../../../..", "features": ["announce.dismiss", "content.action.view", "content.action.edit", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "navigation.footer", "search.highlight", "search.suggest", "toc.follow"], "search": "../../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script> <script src=../../../../../assets/javascripts/bundle.d7400e89.min.js></script> <script src=../../../../../scripts/katex.js></script> <script src=https://unpkg.com/katex@0/dist/katex.min.js></script> <script src=https://unpkg.com/katex@0/dist/contrib/auto-render.min.js></script> </body> </html>
