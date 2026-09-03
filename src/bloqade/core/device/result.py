@@ -16,13 +16,12 @@ def _default_shot_filter() -> ShotFilter:
     return ShotFilter(frame_type="DETECTED")
 
 
-def _shot_identity(shot: ShotResult) -> tuple[str, int, int, int]:
-    """Return the storage identity shared by a shot's frame records."""
+def _shot_sorting_key(shot: ShotResult) -> tuple[str, int, str]:
+    """Return the key by which shots should be sorted when returned from a Result."""
     return (
         shot.task_id,
-        shot.subtask_index,
-        shot.subtask_shot_index,
         shot.shot_index,
+        shot.frame_type,
     )
 
 
@@ -135,7 +134,7 @@ class Result:
         """Return raw storage rows grouped by an already-selected subtask list.
 
         Each group uses the corresponding merged ``subtask_index``. Rows are
-        sorted by ``(task_id, subtask_index, subtask_shot_index, shot_index)``.
+        sorted by ``(task_id, shot_index, frame_type)``.
         """
         shot_results: list[list[ShotResult]] = []
         for subtask in subtasks:
@@ -143,7 +142,7 @@ class Result:
                 self.shot_filter, subtask_indices=(subtask["subtask_index"],)
             )
             storage_shots = self.storage.get_shots(shot_filter=shot_filter)
-            shot_results.append(sorted(storage_shots, key=_shot_identity))
+            shot_results.append(sorted(storage_shots, key=_shot_sorting_key))
 
         return shot_results
 
@@ -171,8 +170,7 @@ class Result:
         Unlike :meth:`shot_results`, this preserves each row's task ID, shot
         indexes, frame type, and bitstring. A group contains all selected task
         IDs that contribute to its merged ``subtask_index``. Rows within each
-        group are sorted by ``(task_id, subtask_index, subtask_shot_index,
-        shot_index)``.
+        group are sorted by ``(task_id, shot_index, frame_type)``.
 
         Args:
             verify: Whether to validate that selected task IDs can be merged
@@ -180,8 +178,8 @@ class Result:
 
         Returns:
             One list of raw shot rows per merged subtask, ordered by subtask
-            index. Rows within each list are ordered by their storage identity:
-            ``(task_id, subtask_index, subtask_shot_index, shot_index)``.
+            index. Rows within each list are ordered by
+            ``(task_id, shot_index, frame_type)``.
 
         Raises:
             ValueError: If ``verify`` is True and selected task IDs cannot be
