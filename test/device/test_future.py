@@ -93,6 +93,19 @@ def test_from_storage_uses_single_stored_task_id_and_optional_new_storage():
     assert future.context_name == "ctx"
 
 
+def test_from_storage_preserves_explicit_qpu_mode():
+    storage = DictStorage()
+    storage.add_task_definition("task-1", make_task_definition(), CREATION_TIME)
+
+    future = Future.from_storage(
+        storage=storage,
+        context_name="ctx",
+        qpu_mode="squin-256q",
+    )
+
+    assert future.qpu_mode == "squin-256q"
+
+
 def test_from_storage_rejects_empty_storage():
     with pytest.raises(ValueError, match="Found no task IDs"):
         Future.from_storage(storage=DictStorage(), context_name="ctx")
@@ -159,6 +172,44 @@ def test_from_task_id_fetches_definition_and_stores_it(monkeypatch):
     ]
     assert stored_def.group_id == task_definition_response.group.id
     assert storage.get_task_creation_time("task-1") == CREATION_TIME
+
+
+def test_from_task_id_passes_explicit_qpu_mode_to_backend_fetches(monkeypatch):
+    task_definition_response = remote.make_task_definition_response(
+        id="11111111-1111-1111-1111-111111111111",
+    )
+    task = remote.make_task(
+        id="task-1",
+        definition_id="11111111-1111-1111-1111-111111111111",
+        task_status=TaskStatus.CREATED,
+        created_date=CREATION_TIME,
+    )
+    tasks_client = remote.FakeTasksClient(get_return=task)
+    defs_client = remote.FakeDefinitionsClient(get_return=task_definition_response)
+
+    monkeypatch.setattr(future_mod.AuthMixin, "authenticate", lambda auth: None)
+    monkeypatch.setattr(future_mod, "TasksClient", lambda app_context: tasks_client)
+    monkeypatch.setattr(
+        future_mod, "DefinitionsClient", lambda app_context: defs_client
+    )
+
+    future = Future.from_task_id(
+        task_id="task-1",
+        context_name="ctx",
+        qpu_mode="squin-256q",
+    )
+
+    assert future.qpu_mode == "squin-256q"
+    assert tasks_client.calls == [("get", {"id": "task-1", "qpu_mode": "squin-256q"})]
+    assert defs_client.calls == [
+        (
+            "get",
+            {
+                "id": "11111111-1111-1111-1111-111111111111",
+                "qpu_mode": "squin-256q",
+            },
+        )
+    ]
 
 
 def test_future_defaults_to_fresh_dict_storage_per_instance():
@@ -395,6 +446,60 @@ def test_fetch_subtask_page_parses_results_and_tracks_first_incomplete_page():
     assert [shot.frame_type for shot in shots] == ["DETECTED", "RAW"]
     np.testing.assert_array_equal(shots[0].bitstring, np.array([True, False, True]))
     np.testing.assert_array_equal(shots[1].bitstring, np.array([False, True, False]))
+
+
+def test_future_passes_explicit_qpu_mode_to_backend_clients(monkeypatch):
+    returned_task = remote.make_task(task_status=TaskStatus.CREATED)
+    returned_compilation = remote.make_public_compilation()
+    future = Future(
+        task_id="task-1",
+        storage=DictStorage(),
+        context_name="ctx",
+        qpu_mode="squin-256q",
+        fetch_options=ApiFetchOptions(subtasks_per_fetch=10, shots_per_fetch=100),
+    )
+
+    tasks_client = remote.FakeTasksClient(get_return=returned_task)
+    compilations_client = remote.FakeCompilationsClient(get_return=returned_compilation)
+    results_client = remote.FakeResultsClient(
+        envelope_return=remote.make_result_envelope(elements=[], total=0)
+    )
+
+    monkeypatch.setattr(future, "authenticate", lambda: None)
+    monkeypatch.setattr(future_mod, "TasksClient", lambda app_context: tasks_client)
+    monkeypatch.setattr(
+        future_mod, "CompilationsClient", lambda app_context: compilations_client
+    )
+    monkeypatch.setattr(future_mod, "ResultsClient", lambda app_context: results_client)
+
+    assert future.get_task() is returned_task
+    assert future.cancel() is None
+    assert (
+        future.get_compilation(compilation_id="compilation-1") is returned_compilation
+    )
+    future.fetch()
+
+    assert tasks_client.calls == [
+        ("get", {"id": "task-1", "qpu_mode": "squin-256q"}),
+        ("cancel", {"id": "task-1", "qpu_mode": "squin-256q"}),
+    ]
+    assert compilations_client.calls == [
+        ("get", {"id": "compilation-1", "qpu_mode": "squin-256q"})
+    ]
+    assert results_client.calls == [
+        (
+            "get",
+            {
+                "id": "task-1",
+                "qpu_mode": "squin-256q",
+                "page": 0,
+                "size": 10,
+                "sort": "completed_date,asc",
+                "shots_page": 0,
+                "shots_size": 100,
+            },
+        )
+    ]
 
 
 def test_fetch_subtask_page_persists_completed_dates_from_api_schema(storage):

@@ -61,6 +61,8 @@ class Future(AuthMixin, Generic[ResultType]):
     and construct result views over that storage using ``result_cls``.
 
     Attributes:
+        qpu_mode (str | None): Explicit qlam QPU mode used for backend API
+            calls. When None, qlam-core resolves it from configuration.
         task_id (str): Backend task ID.
         storage (StorageBackend): Storage backend used for fetched shots and
             task metadata. Defaults to a fresh `DictStorage` (in-memory; not
@@ -96,7 +98,14 @@ class Future(AuthMixin, Generic[ResultType]):
         """
         self.authenticate()
         with TasksClient(self.app_context) as client:
-            task = self.call_with_auth_refresh(lambda: client.get(id=self.task_id))
+            # NOTE: typing issue in qlam-core
+            # every client is BaseRestApi, which doesn't have get, but it actually does
+            task = self.call_with_auth_refresh(
+                lambda: client.get(  # type: ignore
+                    qpu_mode=self.qpu_mode,
+                    id=self.task_id,
+                )
+            )
             logger.info(
                 f"Fetched task with id {self.task_id}. Current status: {task.task_status}"
             )
@@ -119,7 +128,12 @@ class Future(AuthMixin, Generic[ResultType]):
             compilation_id = self.get_task().compilation_id
 
         with CompilationsClient(self.app_context) as client:
-            return self.call_with_auth_refresh(lambda: client.get(id=compilation_id))
+            return self.call_with_auth_refresh(
+                lambda: client.get(  # type: ignore
+                    qpu_mode=self.qpu_mode,
+                    id=compilation_id,
+                )
+            )
 
     def fetch(self) -> None:
         """Fetch currently available shot results into this future's storage.
@@ -173,7 +187,10 @@ class Future(AuthMixin, Generic[ResultType]):
         with TasksClient(self.app_context) as client:
             try:
                 return self.call_with_auth_refresh(
-                    lambda: client.cancel(id=self.task_id)
+                    lambda: client.cancel(  # type: ignore
+                        qpu_mode=self.qpu_mode,
+                        id=self.task_id,
+                    )
                 )
             except Exception as e:  # noqa: BLE001
                 warn(
@@ -324,6 +341,7 @@ class Future(AuthMixin, Generic[ResultType]):
         task_id: str | None = None,
         fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
         context_name: str | None = None,
+        qpu_mode: str | None = None,
     ) -> Self:
         """Create a future from task metadata already present in storage.
 
@@ -340,6 +358,9 @@ class Future(AuthMixin, Generic[ResultType]):
             context_name (str | None): Name of the qlam context to attach to
                 the returned future. When None, the class-level default on
                 `cls` is used. Defaults to None.
+            qpu_mode (str | None): Explicit qlam QPU mode to attach to the
+                returned future. When None, qlam-core resolves it from
+                configuration. Defaults to None.
 
         Returns:
             Self: A future attached to the selected task ID.
@@ -379,6 +400,7 @@ class Future(AuthMixin, Generic[ResultType]):
             fetch_options=fetch_options,
             result_cls=cls.result_cls,
             context_name=context_name,
+            qpu_mode=qpu_mode,
         )
 
     @classmethod
@@ -389,6 +411,7 @@ class Future(AuthMixin, Generic[ResultType]):
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
         context_name: str | None = None,
+        qpu_mode: str | None = None,
     ) -> Self:
         """Create a future from a backend task ID.
 
@@ -407,6 +430,9 @@ class Future(AuthMixin, Generic[ResultType]):
             context_name (str | None): Name of the qlam context used to fetch
                 the task and attached to the returned future. When None, the
                 class-level default on `cls` is used. Defaults to None.
+            qpu_mode (str | None): Explicit qlam QPU mode used to fetch the
+                task and attached to the returned future. When None, qlam-core
+                resolves it from configuration. Defaults to None.
 
         Returns:
             Self: A future attached to `task_id`.
@@ -419,15 +445,23 @@ class Future(AuthMixin, Generic[ResultType]):
             storage = DictStorage()
 
         context_name = cls._resolve_context_name(context_name)
-        auth = AuthMixin(context_name=context_name)
+        auth = AuthMixin(context_name=context_name, qpu_mode=qpu_mode)
         auth.authenticate()
-        with TasksClient(auth.app_context) as tasks_client:
-            task = auth.call_with_auth_refresh(lambda: tasks_client.get(id=task_id))
+        with TasksClient(auth.app_context) as client:
+            task = auth.call_with_auth_refresh(
+                lambda: client.get(  # type: ignore
+                    qpu_mode=qpu_mode,
+                    id=task_id,
+                )
+            )
 
         # fetch subtasks for metadata
         with DefinitionsClient(auth.app_context) as definitions_client:
             task_def = auth.call_with_auth_refresh(
-                lambda: definitions_client.get(id=task.definition_id)
+                lambda: definitions_client.get(  # type: ignore
+                    qpu_mode=qpu_mode,
+                    id=task.definition_id,
+                )
             )
 
         storage.add_task_definition(
@@ -449,6 +483,7 @@ class Future(AuthMixin, Generic[ResultType]):
             fetch_options=fetch_options,
             result_cls=cls.result_cls,
             context_name=context_name,
+            qpu_mode=qpu_mode,
         )
 
     def _wait_for_completion(self, timeout: float | None = None) -> TaskStatus:
@@ -517,6 +552,7 @@ class Future(AuthMixin, Generic[ResultType]):
 
         while full_shots_page:
             response = client.get(
+                qpu_mode=self.qpu_mode,
                 id=self.task_id,
                 page=subtask_page,
                 size=self.fetch_options.subtasks_per_fetch,

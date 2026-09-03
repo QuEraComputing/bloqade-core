@@ -33,6 +33,9 @@ class Device(AuthMixin, Generic[FutureType]):
     owns dry-run and submission through :meth:`run_async`.
 
     Attributes:
+        qpu_mode (str | None): Explicit qlam QPU mode used by tasks created
+            from this device. When None, qlam-core resolves it from
+            configuration.
         program_language (str): Language name placed on builder-generated task
             definitions. Defaults to ``"squin"``.
         language_version (str): Language version used when serializing builder
@@ -224,7 +227,7 @@ class Device(AuthMixin, Generic[FutureType]):
         task_request = TaskCreationRequest(root=task_definition)
         with TasksClient(self.app_context) as tasks_client:
             created_task = self.call_with_auth_refresh(
-                lambda: tasks_client.create(body=task_request)
+                lambda: tasks_client.create(body=task_request, qpu_mode=self.qpu_mode)
             )
 
         task_id = created_task.id
@@ -243,6 +246,7 @@ class Device(AuthMixin, Generic[FutureType]):
             fetch_options=fetch_options,
             storage=storage,
             context_name=self.context_name,
+            qpu_mode=self.qpu_mode,
         )
 
     def _resolve_kernel_serializer(
@@ -292,6 +296,7 @@ class Device(AuthMixin, Generic[FutureType]):
 
         return self.single_kernel_task_cls(
             context_name=self.context_name,
+            qpu_mode=self.qpu_mode,
             kernel=kernel,
             num_shots=num_shots,
             arguments=arguments,
@@ -342,6 +347,7 @@ class Device(AuthMixin, Generic[FutureType]):
 
         return self.kernel_batch_task_cls(
             context_name=self.context_name,
+            qpu_mode=self.qpu_mode,
             kernels=kernels,
             arguments=arguments,
             num_shots=num_shots,
@@ -391,6 +397,7 @@ class Device(AuthMixin, Generic[FutureType]):
 
         return self.parameter_scan_task_cls(
             context_name=self.context_name,
+            qpu_mode=self.qpu_mode,
             kernel=kernel,
             num_shots=num_shots,
             arguments=arguments,
