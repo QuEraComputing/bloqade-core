@@ -1,19 +1,25 @@
 import json
 from collections.abc import Callable, Hashable, Sequence
 from dataclasses import dataclass, field, replace
-from typing import TypeVar
+from typing import Literal, TypeVar
 
 import numpy as np
 from typing_extensions import Self
 
-from .local_storage import ShotFilter, ShotResult, StorageBackend, StorageFilter
+from .local_storage import (
+    ShotFilter,
+    ShotResult,
+    StorageBackend,
+    StorageFilter,
+)
 
 ResultType = TypeVar("ResultType", bound="Result")
 ShotValue = TypeVar("ShotValue")
 
 
-def _default_shot_filter() -> ShotFilter:
-    return ShotFilter(frame_type="DETECTED")
+@dataclass(frozen=True)
+class ResultScope(StorageFilter):
+    task_shot_pairs: tuple[tuple[str, int], ...] | None = None
 
 
 @dataclass(kw_only=True)
@@ -26,27 +32,39 @@ class Result:
     Attributes:
         storage (StorageBackend): Storage backend that holds shots and task
             metadata.
-        shot_filter (ShotFilter): Filter used when reading shots and deriving
-            subtask scope. Defaults to the DETECTED frame type.
+        scope (ResultScope): Filter used when reading shots and deriving
+            subtask scope.
     """
 
     storage: StorageBackend
-    shot_filter: ShotFilter = field(default_factory=_default_shot_filter)
+    scope: ResultScope = field(default_factory=ResultScope)
 
     _is_valid: bool = field(init=False, default=False)
 
     @property
     def storage_filter(self) -> StorageFilter:
-        """Return the subtask-level portion of `shot_filter`.
+        """Return the subtask-level portion of `scope`.
 
         Returns:
             StorageFilter: Filter containing task IDs, subtask indices, and
-                task-subtask pairs from `shot_filter`.
+                task-subtask pairs from `scope`.
         """
         return StorageFilter(
-            task_ids=self.shot_filter.task_ids,
-            subtask_indices=self.shot_filter.subtask_indices,
-            task_subtask_pairs=self.shot_filter.task_subtask_pairs,
+            task_ids=self.scope.task_ids,
+            subtask_indices=self.scope.subtask_indices,
+            task_subtask_pairs=self.scope.task_subtask_pairs,
+        )
+
+    @staticmethod
+    def _shot_filter(
+        scope: ResultScope, *, frame_type: Literal["SORTED", "DETECTED"]
+    ) -> ShotFilter:
+        return ShotFilter(
+            task_ids=scope.task_ids,
+            subtask_indices=scope.subtask_indices,
+            task_subtask_pairs=scope.task_subtask_pairs,
+            task_shot_pairs=scope.task_shot_pairs,
+            frame_type=frame_type,
         )
 
     def validate(self) -> None:
@@ -64,10 +82,10 @@ class Result:
         if self._is_valid:
             return
 
-        if self.shot_filter.task_ids is None:
+        if self.scope.task_ids is None:
             task_ids = self.storage.task_ids()
         else:
-            task_ids = self.shot_filter.task_ids
+            task_ids = self.scope.task_ids
 
         if len(task_ids) == 1:
             # Just a single task, we're safe
@@ -111,11 +129,17 @@ class Result:
 
         self._is_valid = True
 
-    def _shot_results_for_subtasks(self, subtasks: list[dict]) -> list[np.ndarray]:
+    def _detected_shot_results_for_subtasks(
+        self, subtasks: list[dict]
+    ) -> list[np.ndarray]:
         shot_results = []
         for subtask in subtasks:
-            shot_filter = replace(
-                self.shot_filter, subtask_indices=(subtask["subtask_index"],)
+            shot_filter = Result._shot_filter(
+                replace(
+                    self.scope,
+                    subtask_indices=(subtask["subtask_index"],),
+                ),
+                frame_type="DETECTED",
             )
             shot_results.append(self.storage.get_shots(shot_filter=shot_filter))
 
@@ -142,7 +166,7 @@ class Result:
                 merged.
         """
         subtasks = self.subtasks(verify=verify)
-        return self._shot_results_for_subtasks(subtasks)
+        return self._detected_shot_results_for_subtasks(subtasks)
 
     def arguments(self, verify: bool = True) -> list[dict | None]:
         """Return subtask arguments after merging selected task IDs.
@@ -306,11 +330,11 @@ class Result:
         """Return task IDs selected by this result view.
 
         Returns:
-            set[str]: Task IDs from `shot_filter.task_ids` when set; otherwise
+            set[str]: Task IDs from `scope.task_ids` when set; otherwise
                 all task IDs known to storage.
         """
-        if self.shot_filter.task_ids is not None:
-            return set(self.shot_filter.task_ids)
+        if self.scope.task_ids is not None:
+            return set(self.scope.task_ids)
 
         return self.storage.task_ids()
 
@@ -319,15 +343,15 @@ class Result:
         where_filter: StorageFilter,
     ) -> Self:
         """Build a narrowed result by overlaying `where_filter`'s `task_subtask_pairs`
-        onto `self.shot_filter`. All other scoping on `self` is preserved.
+        onto `self.scope`. All other scoping on `self` is preserved.
         """
-        shot_filter = replace(
-            self.shot_filter,
+        scope = replace(
+            self.scope,
             task_subtask_pairs=where_filter.task_subtask_pairs,
         )
         return type(self)(
             storage=self.storage,
-            shot_filter=shot_filter,
+            scope=scope,
         )
 
     def where_subtasks(
@@ -359,7 +383,7 @@ class Result:
     ) -> Self:
         """Return a result narrowed by subtask arguments.
 
-        The predicate sees only subtasks in the scope of `self.shot_filter`; the
+        The predicate sees only subtasks in the scope of `self.scope`; the
         returned result inherits that scope intersected with the matches.
 
         NOTE: the Subtask model coerces bool values in `arguments` to float
@@ -390,7 +414,7 @@ class Result:
 
         Expects user_metadata to be a JSON-serialized dict; non-JSON values raise. To
         filter on raw strings instead, use `where_subtasks` and parse manually. The
-        predicate sees only subtasks in the scope of `self.shot_filter`; the returned
+        predicate sees only subtasks in the scope of `self.scope`; the returned
         result inherits that scope intersected with the matches.
 
         Args:
@@ -410,14 +434,13 @@ class Result:
     def where_shots(
         self,
         predicate: Callable[[ShotResult], bool],
-        predicate_filter: ShotFilter | None = None,
     ) -> Self:
         """Return a result narrowed by shot-level predicate.
 
         `predicate_filter` selects the shots the predicate evaluates against;
-        defaults to `self.shot_filter` (predicate sees the same shots the
+        defaults to `self.scope` (predicate sees the same shots the
         current result fetches). The returned result inherits
-        `self.shot_filter`'s scope (notably `frame_type`) intersected with the
+        `self.scope`'s scope (notably `frame_type`) intersected with the
         matching shot pairs.
 
         To precondition on one frame and return another, such as
@@ -428,23 +451,41 @@ class Result:
             predicate (Callable[[ShotResult], bool]): Predicate applied to each
                 shot selected by `predicate_filter`.
             predicate_filter (ShotFilter | None): Filter used only for predicate
-                evaluation. When None, `self.shot_filter` is used. Defaults to
+                evaluation. When None, `self.scope` is used. Defaults to
                 None.
 
         Returns:
             Self: A narrowed result view.
         """
-        if predicate_filter is None:
-            predicate_filter = self.shot_filter
+        return self._where_frame_shots(predicate, "DETECTED")
 
-        where_filter = self.storage.filter_by_shots(
-            predicate, shot_filter=predicate_filter
+    def where_sorted_shots(
+        self,
+        predicate: Callable[[ShotResult], bool],
+    ) -> Self:
+        """
+        return DETECTED shots, filtered based on SORTED shots
+        """
+        return self._where_frame_shots(predicate, "SORTED")
+
+    def _where_frame_shots(
+        self,
+        predicate: Callable[[ShotResult], bool],
+        frame_type: Literal["DETECTED", "SORTED"],
+    ) -> Self:
+        shot_filter = self._shot_filter(
+            self.scope,
+            frame_type=frame_type,
         )
-        shot_filter = replace(
-            self.shot_filter,
+        where_filter = self.storage.filter_by_shots(
+            predicate,
+            shot_filter=shot_filter,
+        )
+        scope = replace(
+            self.scope,
             task_shot_pairs=where_filter.task_shot_pairs,
         )
         return type(self)(
             storage=self.storage,
-            shot_filter=shot_filter,
+            scope=scope,
         )

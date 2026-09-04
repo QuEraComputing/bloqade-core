@@ -7,6 +7,6 @@ from .local_storage import (
     SQLiteStorage as SQLiteStorage,
 )
 from .log_info import set_logging as set_logging
-from .result import Result as Result
+from .result import Result as Result, ResultScope as ResultScope
 from .task import KernelSerializer as KernelSerializer
 from .task_builder import TaskBuilder as TaskBuilder

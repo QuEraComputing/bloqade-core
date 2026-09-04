@@ -23,7 +23,7 @@ from .local_storage import (
 )
 from .log_info import logger
 from .mixins import AuthMixin
-from .result import Result, ResultType
+from .result import Result, ResultScope, ResultType
 
 
 @dataclass(frozen=True)
@@ -226,22 +226,23 @@ class Future(AuthMixin, Generic[ResultType]):
         self.fetch()
         return self.results_from_storage()
 
-    def results_from_storage(self, shot_filter: ShotFilter | None = None) -> ResultType:
+    def results_from_storage(self, scope: ResultScope | None = None) -> ResultType:
         """Build a result view over this future's storage.
 
         Args:
-            shot_filter (ShotFilter | None): Filter to apply to the result view.
+            scope (ResultScope | None): Filter to apply to the result view.
                 When None, the view is scoped to this future's task ID and the
                 DETECTED frame type. Defaults to None.
 
         Returns:
             ResultType: A result view over the storage backend.
         """
-        if shot_filter is None:
-            shot_filter = ShotFilter(task_ids=(self.task_id,), frame_type="DETECTED")
+        if scope is None:
+            scope = ResultScope(task_ids=(self.task_id,))
+
         return self.result_cls(
             storage=self.storage,
-            shot_filter=shot_filter,
+            scope=scope,
         )
 
     def export_to(
