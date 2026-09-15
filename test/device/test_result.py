@@ -32,7 +32,7 @@ def make_shot(*, frame_type: str = "DETECTED", **kwargs):
     return local.make_shot(frame_type=frame_type, **kwargs)
 
 
-def add_compatible_tasks(storage: DictStorage):
+def add_compatible_task_definitions(storage: DictStorage):
     add_task(
         storage,
         "task-1",
@@ -57,8 +57,20 @@ def add_compatible_tasks(storage: DictStorage):
             remote.make_subtask(num_shots=4),
         ],
     )
+
+
+def add_compatible_tasks(storage: DictStorage):
+    add_compatible_task_definitions(storage)
     storage.add_shots(
         [
+            # Intentionally add this before task-1's equivalent local shot;
+            # raw results must still use the total storage-identity order.
+            make_shot(
+                task_id="task-2",
+                shot_index=0,
+                subtask_index=0,
+                bitstring=(True, True),
+            ),
             make_shot(task_id="task-1", shot_index=0, subtask_index=0),
             make_shot(
                 task_id="task-1",
@@ -70,12 +82,6 @@ def add_compatible_tasks(storage: DictStorage):
                 task_id="task-1",
                 shot_index=2,
                 subtask_index=1,
-                bitstring=(True, True),
-            ),
-            make_shot(
-                task_id="task-2",
-                shot_index=0,
-                subtask_index=0,
                 bitstring=(True, True),
             ),
             make_shot(
@@ -173,6 +179,143 @@ def test_result_shot_results_returns_bitstrings_grouped_by_subtask():
     )
 
 
+def test_result_raw_shot_results_returns_rows_grouped_by_merged_subtask(storage):
+    # Indices match the live results envelope (qlam-core v0.6.x): shot_index is
+    # task-global, subtask_shot_index restarts per subtask. See
+    # fixtures/examples/results_envelope_completed.json. local.make_shot is the
+    # storage row; remote.make_shot_result_dict is the HTTP envelope.
+    add_compatible_task_definitions(storage)
+    storage.add_shots(
+        [
+            make_shot(
+                task_id="task-2",
+                shot_index=0,
+                subtask_index=0,
+                subtask_shot_index=0,
+                bitstring=(True, True),
+            ),
+            make_shot(
+                task_id="task-1",
+                shot_index=0,
+                subtask_index=0,
+                subtask_shot_index=0,
+            ),
+            make_shot(
+                task_id="task-1",
+                shot_index=1,
+                subtask_index=0,
+                subtask_shot_index=1,
+                bitstring=(False, True),
+            ),
+            make_shot(
+                task_id="task-1",
+                shot_index=2,
+                subtask_index=1,
+                subtask_shot_index=0,
+                bitstring=(True, True),
+            ),
+            make_shot(
+                task_id="task-2",
+                shot_index=1,
+                subtask_index=1,
+                subtask_shot_index=0,
+                bitstring=(False, False),
+            ),
+        ]
+    )
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1", "task-2"), frame_type="DETECTED"),
+    )
+
+    raw_shots = result.raw_shot_results()
+
+    assert len(raw_shots) == 2
+    assert all(
+        isinstance(shot, local.ShotResult)
+        for subtask_shots in raw_shots
+        for shot in subtask_shots
+    )
+    assert [
+        (shot.task_id, shot.subtask_index, shot.subtask_shot_index, shot.shot_index)
+        for shot in raw_shots[0]
+    ] == [
+        ("task-1", 0, 0, 0),
+        ("task-1", 0, 1, 1),
+        ("task-2", 0, 0, 0),
+    ]
+    assert [
+        (shot.task_id, shot.subtask_index, shot.subtask_shot_index, shot.shot_index)
+        for shot in raw_shots[1]
+    ] == [
+        ("task-1", 1, 0, 2),
+        ("task-2", 1, 0, 1),
+    ]
+
+
+def test_result_raw_shot_results_orders_paired_frames_by_frame_type(storage):
+    # Live envelope emits Sorted then Detected for the same
+    # (shot_index, subtask_shot_index). UNIQUE(task_id, shot_index, frame_type)
+    # requires frame_type in the sort key; otherwise the pair is unstable.
+    add_task(storage, "task-1", [remote.make_subtask(num_shots=2)])
+    storage.add_shots(
+        [
+            make_shot(
+                task_id="task-1",
+                shot_index=1,
+                subtask_index=0,
+                subtask_shot_index=1,
+                frame_type="SORTED",
+                bitstring=(True, True),
+            ),
+            make_shot(
+                task_id="task-1",
+                shot_index=1,
+                subtask_index=0,
+                subtask_shot_index=1,
+                frame_type="DETECTED",
+                bitstring=(False, False),
+            ),
+            make_shot(
+                task_id="task-1",
+                shot_index=0,
+                subtask_index=0,
+                subtask_shot_index=0,
+                frame_type="SORTED",
+            ),
+            make_shot(
+                task_id="task-1",
+                shot_index=0,
+                subtask_index=0,
+                subtask_shot_index=0,
+                frame_type="DETECTED",
+            ),
+        ]
+    )
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1",), frame_type=None),
+    )
+
+    raw_shots = result.raw_shot_results()
+
+    assert [
+        (
+            shot.task_id,
+            shot.subtask_index,
+            shot.subtask_shot_index,
+            shot.shot_index,
+            shot.frame_type,
+        )
+        for shot in raw_shots[0]
+    ] == [
+        ("task-1", 0, 0, 0, "DETECTED"),
+        ("task-1", 0, 0, 0, "SORTED"),
+        ("task-1", 0, 1, 1, "DETECTED"),
+        ("task-1", 0, 1, 1, "SORTED"),
+    ]
+
+
 @pytest.mark.parametrize(
     ("second_subtask", "message"),
     [
@@ -232,6 +375,117 @@ def test_result_full_views_and_task_ids_respect_filter_scope():
         "task-1",
         "task-1",
     ]
+
+
+def test_result_group_shots_by_metadata_aggregates_full_subtask_shots():
+    storage = DictStorage()
+    add_task(
+        storage,
+        "task-1",
+        [
+            remote.make_subtask(
+                subtask_metadata=make_metadata({"basis": "X", "cycle": 0})
+            ),
+            remote.make_subtask(
+                subtask_metadata=make_metadata({"basis": "X", "cycle": 1})
+            ),
+            remote.make_subtask(
+                subtask_metadata=make_metadata({"basis": "Y", "cycle": 0})
+            ),
+        ],
+    )
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1",)),
+    )
+
+    grouped = result.group_shots_by_metadata(
+        shots=[["x0"], ["x1a", "x1b"], ["y0"]],
+        metadata_keys=("basis",),
+    )
+
+    assert grouped == {
+        ("X",): ["x0", "x1a", "x1b"],
+        ("Y",): ["y0"],
+    }
+
+
+def test_result_group_shots_by_metadata_requires_merged_subtask_alignment():
+    storage = DictStorage()
+    add_task(
+        storage,
+        "task-1",
+        [remote.make_subtask(subtask_metadata=make_metadata({"basis": "X"}))],
+    )
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1",)),
+    )
+
+    with pytest.raises(ValueError, match="one sequence per selected merged subtask"):
+        result.group_shots_by_metadata(shots=[], metadata_keys=("basis",))
+
+
+def test_result_group_shots_by_metadata_requires_metadata_to_match_merged_tasks():
+    storage = DictStorage()
+    for task_id, basis in (("task-1", "X"), ("task-2", "Y")):
+        add_task(
+            storage,
+            task_id,
+            [remote.make_subtask(subtask_metadata=make_metadata({"basis": basis}))],
+        )
+
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1", "task-2")),
+    )
+
+    with pytest.raises(ValueError, match="disagree on metadata values"):
+        result.group_shots_by_metadata(
+            shots=[["merged-shot"]],
+            metadata_keys=("basis",),
+        )
+
+
+@pytest.mark.parametrize(
+    ("subtask_metadata", "error_type", "match"),
+    [
+        (None, ValueError, "has no user metadata"),
+        (
+            remote.make_task_metadata(user_metadata="not JSON"),
+            ValueError,
+            "has invalid JSON user metadata",
+        ),
+        (
+            remote.make_task_metadata(user_metadata=json.dumps(["X"])),
+            TypeError,
+            "user metadata must be a JSON object",
+        ),
+        (make_metadata({"other": "X"}), ValueError, "is missing metadata keys"),
+        (make_metadata({"basis": ["X"]}), ValueError, "must be hashable"),
+    ],
+)
+def test_result_group_shots_by_metadata_rejects_invalid_metadata(
+    subtask_metadata,
+    error_type,
+    match,
+):
+    storage = DictStorage()
+    add_task(
+        storage,
+        "task-1",
+        [remote.make_subtask(subtask_metadata=subtask_metadata)],
+    )
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1",)),
+    )
+
+    with pytest.raises(error_type, match=match):
+        result.group_shots_by_metadata(
+            shots=[["shot"]],
+            metadata_keys=("basis",),
+        )
 
 
 def test_result_where_methods_return_narrowed_results():

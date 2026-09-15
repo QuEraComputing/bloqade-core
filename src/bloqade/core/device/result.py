@@ -1,4 +1,5 @@
-from collections.abc import Callable
+import json
+from collections.abc import Callable, Hashable, Sequence
 from dataclasses import dataclass, field, replace
 from typing import TypeVar
 
@@ -8,10 +9,20 @@ from typing_extensions import Self
 from .local_storage import ShotFilter, ShotResult, StorageBackend, StorageFilter
 
 ResultType = TypeVar("ResultType", bound="Result")
+ShotValue = TypeVar("ShotValue")
 
 
 def _default_shot_filter() -> ShotFilter:
     return ShotFilter(frame_type="DETECTED")
+
+
+def _shot_sorting_key(shot: ShotResult) -> tuple[str, int, str]:
+    """Return the key by which shots should be sorted when returned from a Result."""
+    return (
+        shot.task_id,
+        shot.shot_index,
+        shot.frame_type,
+    )
 
 
 @dataclass(kw_only=True)
@@ -110,19 +121,30 @@ class Result:
         self._is_valid = True
 
     def _shot_results_for_subtasks(self, subtasks: list[dict]) -> list[np.ndarray]:
-        shot_results = []
+        shot_results = self._raw_shot_results_for_subtasks(subtasks)
+
+        return [
+            np.array([shot_result.bitstring for shot_result in subtask_shots])
+            for subtask_shots in shot_results
+        ]
+
+    def _raw_shot_results_for_subtasks(
+        self, subtasks: list[dict]
+    ) -> list[list[ShotResult]]:
+        """Return raw storage rows grouped by an already-selected subtask list.
+
+        Each group uses the corresponding merged ``subtask_index``. Rows are
+        sorted by ``(task_id, shot_index, frame_type)``.
+        """
+        shot_results: list[list[ShotResult]] = []
         for subtask in subtasks:
             shot_filter = replace(
                 self.shot_filter, subtask_indices=(subtask["subtask_index"],)
             )
-            shot_results.append(self.storage.get_shots(shot_filter=shot_filter))
+            storage_shots = self.storage.get_shots(shot_filter=shot_filter)
+            shot_results.append(sorted(storage_shots, key=_shot_sorting_key))
 
-        shots_per_subtask = [
-            np.array([shot_result.bitstring for shot_result in shot_results[i]])
-            for i in range(len(shot_results))
-        ]
-
-        return shots_per_subtask
+        return shot_results
 
     def shot_results(self, verify: bool = True) -> list[np.ndarray]:
         """Return physical shot bitstrings grouped by merged subtask.
@@ -141,6 +163,30 @@ class Result:
         """
         subtasks = self.subtasks(verify=verify)
         return self._shot_results_for_subtasks(subtasks)
+
+    def raw_shot_results(self, verify: bool = True) -> list[list[ShotResult]]:
+        """Return raw :class:`ShotResult` objects grouped by merged subtask.
+
+        Unlike :meth:`shot_results`, this preserves each row's task ID, shot
+        indexes, frame type, and bitstring. A group contains all selected task
+        IDs that contribute to its merged ``subtask_index``. Rows within each
+        group are sorted by ``(task_id, shot_index, frame_type)``.
+
+        Args:
+            verify: Whether to validate that selected task IDs can be merged
+                before reading shots. Defaults to True.
+
+        Returns:
+            One list of raw shot rows per merged subtask, ordered by subtask
+            index. Rows within each list are ordered by
+            ``(task_id, shot_index, frame_type)``.
+
+        Raises:
+            ValueError: If ``verify`` is True and selected task IDs cannot be
+                merged.
+        """
+        subtasks = self.subtasks(verify=verify)
+        return self._raw_shot_results_for_subtasks(subtasks)
 
     def arguments(self, verify: bool = True) -> list[dict | None]:
         """Return subtask arguments after merging selected task IDs.
@@ -213,6 +259,92 @@ class Result:
             list[dict]: Full subtask dictionaries selected by `storage_filter`.
         """
         return self.storage.get_subtasks(storage_filter=self.storage_filter)
+
+    def group_shots_by_metadata(
+        self,
+        shots: Sequence[Sequence[ShotValue]],
+        metadata_keys: Sequence[str],
+    ) -> dict[tuple[Hashable, ...], list[ShotValue]]:
+        """Aggregate per-subtask shots by selected user-metadata values.
+
+        ``shots`` must contain one sequence per entry of :meth:`subtasks`, in
+        that same order. For a result merged from multiple task IDs, every full
+        subtask contributing to one merged subtask must agree on the requested
+        metadata values.
+
+        Args:
+            shots: Per-subtask shot sequences to aggregate.
+            metadata_keys: User-metadata keys whose values form each group key.
+
+        Returns:
+            A dictionary mapping metadata-value tuples to flattened shot lists.
+            The order within each list follows ``subtasks()`` order, then the
+            order supplied within each corresponding shot sequence.
+
+        Raises:
+            ValueError: If ``shots`` does not align with the selected merged
+                subtasks, a full subtask has invalid/missing user metadata, a
+                requested key is missing, metadata disagrees across merged
+                task IDs, or a key value is unhashable.
+        """
+        subtasks = self.subtasks()
+        if len(shots) != len(subtasks):
+            raise ValueError(
+                "shots must contain one sequence per selected merged subtask: "
+                f"got {len(shots)} sequences for {len(subtasks)} subtasks."
+            )
+
+        metadata_keys_by_subtask_index: dict[int, tuple[Hashable, ...]] = {}
+        for subtask in self.full_subtasks():
+            subtask_ref = f"{subtask['task_id']!r}/{subtask['subtask_index']}"
+            metadata = subtask["metadata"]
+            user_metadata_text = (
+                None if metadata is None else metadata.get("user_metadata")
+            )
+            if user_metadata_text is None:
+                raise ValueError(f"Subtask {subtask_ref} has no user metadata.")
+
+            try:
+                user_metadata = json.loads(user_metadata_text)
+            except (TypeError, json.JSONDecodeError) as exc:
+                raise ValueError(
+                    f"Subtask {subtask_ref} has invalid JSON user metadata."
+                ) from exc
+
+            if not isinstance(user_metadata, dict):
+                raise TypeError(
+                    f"Subtask {subtask_ref} user metadata must be a JSON object."
+                )
+
+            missing_keys = [key for key in metadata_keys if key not in user_metadata]
+            if missing_keys:
+                raise ValueError(
+                    f"Subtask {subtask_ref} is missing metadata keys: {missing_keys!r}."
+                )
+
+            key = tuple(user_metadata[name] for name in metadata_keys)
+            try:
+                hash(key)
+            except TypeError as exc:
+                raise ValueError(
+                    f"Subtask {subtask_ref} metadata values for {metadata_keys!r} "
+                    "must be hashable."
+                ) from exc
+
+            subtask_index = subtask["subtask_index"]
+            existing_key = metadata_keys_by_subtask_index.setdefault(subtask_index, key)
+            if existing_key != key:
+                raise ValueError(
+                    "Selected task IDs disagree on metadata values for "
+                    f"subtask_index={subtask_index}: {existing_key!r} != {key!r}."
+                )
+
+        grouped: dict[tuple[Hashable, ...], list[ShotValue]] = {}
+        for subtask, subtask_shots in zip(subtasks, shots, strict=True):
+            key = metadata_keys_by_subtask_index[subtask["subtask_index"]]
+            grouped.setdefault(key, []).extend(subtask_shots)
+
+        return grouped
 
     def task_ids(self) -> set[str]:
         """Return task IDs selected by this result view.
