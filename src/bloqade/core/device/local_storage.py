@@ -85,7 +85,7 @@ class ShotFilter(StorageFilter):
 
 
 class _BloqadeSchemaVersion:
-    version: str = "0.2.0"
+    version: str = "0.2.1"
 
     @property
     def semantic_version(self) -> semver.Version:
@@ -794,27 +794,25 @@ class SQLiteStorage(StorageBackend):
                 task_id TEXT PRIMARY KEY,
                 program_language TEXT NOT NULL,
                 creation_time TEXT NOT NULL,
-                group_id TEXT
+                group_id TEXT,
+                profile_id TEXT
             )
             """)
 
-        if stored_version == "0.1.0":
-            # One-way, additive upgrade: adds a nullable column and restamps
-            # the version. Older bloqade versions refuse the upgraded file.
-            logger.info(
-                f"Migrating bloqade storage schema in {db_file!r} from 0.1.0 "
-                f"to {_BloqadeSchemaVersion.version} (adds nullable "
-                "task_definitions.group_id; older bloqade versions will no "
-                "longer open this file)"
-            )
+        if stored_version in ("0.1.0", "0.2.0"):
             columns = {
                 row["name"]
                 for row in self.conn.execute("PRAGMA table_info(task_definitions)")
             }
-            if "group_id" not in columns:
-                self.conn.execute(
-                    "ALTER TABLE task_definitions ADD COLUMN group_id TEXT"
-                )
+            for name in ("group_id", "profile_id"):
+                if name not in columns:
+                    self.conn.execute(
+                        f"ALTER TABLE task_definitions ADD COLUMN {name} TEXT"
+                    )
+            logger.info(
+                f"Migrating bloqade storage schema in {db_file!r} from "
+                f"{stored_version} to {_BloqadeSchemaVersion.version}"
+            )
             self.conn.execute(
                 "UPDATE bloqade_schema SET version_number = ?",
                 (_BloqadeSchemaVersion.version,),
