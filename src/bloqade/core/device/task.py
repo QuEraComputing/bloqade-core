@@ -399,6 +399,16 @@ class TaskABC(AuthMixin, ABC, Generic[FutureType]):
                     update={"group_id": self._resolve_group_id(group)}
                 )
 
+        if task_definition.profile_id is None and self.profile_id is not None:
+            profile_id = (
+                UUID(self.profile_id)
+                if isinstance(self.profile_id, str)
+                else self.profile_id
+            )
+            task_definition = task_definition.model_copy(
+                update={"profile_id": profile_id}
+            )
+
         task_request = TaskCreationRequest(root=task_definition)
         with TasksClient(self.app_context) as tasks_client:
             created_task = self.call_with_auth_refresh(

@@ -226,9 +226,11 @@ class Device(AuthMixin, Generic[FutureType]):
                     update={"group_id": self._resolve_group_id(group)}
                 )
 
-        if profile_id is not None:
+        if task_definition.profile_id is None and profile_id is not None:
             profile_id = UUID(profile_id) if isinstance(profile_id, str) else profile_id
-            task_definition.profile_id = profile_id
+            task_definition = task_definition.model_copy(
+                update={"profile_id": profile_id}
+            )
 
         task_request = TaskCreationRequest(root=task_definition)
         with TasksClient(self.app_context) as tasks_client:
