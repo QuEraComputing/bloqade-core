@@ -27,6 +27,7 @@ from typing import Any
 from uuid import UUID
 
 from qlam_core.plugins.compilations.api.compilations_models import (
+    GroupSummary as CompilationGroupSummary,
     ProgramFailure,
     PublicCompilation,
     PublicCompilationStatus,
@@ -226,11 +227,14 @@ def make_public_compilation(
     created_by: UUID = DEFAULT_USER_ID,
     modified_date: datetime | None = None,
     modified_by: UUID | None = None,
+    group: CompilationGroupSummary | None = None,
 ) -> PublicCompilation:
     if modified_date is None:
         modified_date = created_date
     if modified_by is None:
         modified_by = created_by
+    if group is None:
+        group = CompilationGroupSummary(id=UUID(id) if isinstance(id, str) else id)
     return PublicCompilation(
         id=UUID(id) if isinstance(id, str) else id,
         input_definition_id=(
@@ -245,6 +249,7 @@ def make_public_compilation(
         created_by=created_by,
         modified_date=modified_date,
         modified_by=modified_by,
+        group=group,
     )
 
 
