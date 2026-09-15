@@ -33,9 +33,9 @@ class Device(AuthMixin, Generic[FutureType]):
     owns dry-run and submission through :meth:`run_async`.
 
     Attributes:
-        program_language (str): Language name placed on builder-generated task
+        program_language (str): Default language name placed on generated task
             definitions. Defaults to ``"squin"``.
-        language_version (str): Language version used when serializing builder
+        language_version (str): Default language version used when serializing
             kernels. Defaults to ``"0.1.0"``.
         future_cls (type[FutureType]): Future class used by tasks created from
             this device. Defaults to `Future`.
@@ -260,8 +260,8 @@ class Device(AuthMixin, Generic[FutureType]):
         num_shots: int = 1,
         arguments: dict | None = None,
         metadata: dict | None = None,
-        program_language: str = "squin",
-        language_version: str = "0.1.0",
+        program_language: str | None = None,
+        language_version: str | None = None,
         kernel_serializer: KernelSerializer | None = None,
         group: str | None = None,
     ) -> SingleKernelTask[FutureType]:
@@ -275,10 +275,10 @@ class Device(AuthMixin, Generic[FutureType]):
             metadata (dict | None): Metadata for the single subtask. When
                 provided, it is wrapped in a one-element list to match the
                 task API. Defaults to None.
-            program_language (str): Program language to store in the task
-                definition. Defaults to "squin".
-            language_version (str): Semantic version of the program language to
-                store in the task definition. Defaults to "0.1.0".
+            program_language (str | None): Program language to store in the task
+                definition. When None, uses the device's `program_language`.
+            language_version (str | None): Semantic version of the program
+                language. When None, uses the device's `language_version`.
             kernel_serializer (KernelSerializer | None): Serializer for this
                 task's kernel. When None, the device's `kernel_serializer` is
                 used. Defaults to None.
@@ -296,8 +296,16 @@ class Device(AuthMixin, Generic[FutureType]):
             num_shots=num_shots,
             arguments=arguments,
             metadata=metadata,
-            program_language=program_language,
-            language_version=language_version,
+            program_language=(
+                program_language
+                if program_language is not None
+                else self.program_language
+            ),
+            language_version=(
+                language_version
+                if language_version is not None
+                else self.language_version
+            ),
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
             group=group,
@@ -309,8 +317,8 @@ class Device(AuthMixin, Generic[FutureType]):
         arguments: list[dict] | None = None,
         metadata: list[dict[str, Any]] | None = None,
         num_shots: list[int] | int = 1,
-        program_language: str = "squin",
-        language_version: str = "0.1.0",
+        program_language: str | None = None,
+        language_version: str | None = None,
         kernel_serializer: KernelSerializer | None = None,
         group: str | None = None,
     ) -> KernelBatchTask[FutureType]:
@@ -324,10 +332,10 @@ class Device(AuthMixin, Generic[FutureType]):
                 dictionaries. Defaults to None.
             num_shots (list[int] | int): Shot count for each kernel, or one
                 value to broadcast to every kernel. Defaults to 1.
-            program_language (str): Program language to store in the task
-                definition. Defaults to "squin".
-            language_version (str): Semantic version of the program language to
-                store in the task definition. Defaults to "0.1.0".
+            program_language (str | None): Program language to store in the task
+                definition. When None, uses the device's `program_language`.
+            language_version (str | None): Semantic version of the program
+                language. When None, uses the device's `language_version`.
             kernel_serializer (KernelSerializer | None): Serializer for this
                 task's kernels. When None, the device's `kernel_serializer` is
                 used. Defaults to None.
@@ -346,8 +354,16 @@ class Device(AuthMixin, Generic[FutureType]):
             arguments=arguments,
             num_shots=num_shots,
             metadata=metadata,
-            program_language=program_language,
-            language_version=language_version,
+            program_language=(
+                program_language
+                if program_language is not None
+                else self.program_language
+            ),
+            language_version=(
+                language_version
+                if language_version is not None
+                else self.language_version
+            ),
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
             group=group,
@@ -359,8 +375,8 @@ class Device(AuthMixin, Generic[FutureType]):
         arguments: list[dict],
         metadata: list[dict] | None = None,
         num_shots: list[int] | int = 1,
-        program_language: str = "squin",
-        language_version: str = "0.1.0",
+        program_language: str | None = None,
+        language_version: str | None = None,
         kernel_serializer: KernelSerializer | None = None,
         group: str | None = None,
     ) -> ParameterScanTask[FutureType]:
@@ -373,10 +389,10 @@ class Device(AuthMixin, Generic[FutureType]):
                 subtask. Defaults to None.
             num_shots (list[int] | int): Shot count for each parameter set, or
                 one value to broadcast to every subtask. Defaults to 1.
-            program_language (str): Program language to store in the task
-                definition. Defaults to "squin".
-            language_version (str): Semantic version of the program language to
-                store in the task definition. Defaults to "0.1.0".
+            program_language (str | None): Program language to store in the task
+                definition. When None, uses the device's `program_language`.
+            language_version (str | None): Semantic version of the program
+                language. When None, uses the device's `language_version`.
             kernel_serializer (KernelSerializer | None): Serializer for the
                 scanned kernel. When None, the device's `kernel_serializer` is
                 used. Defaults to None.
@@ -395,8 +411,16 @@ class Device(AuthMixin, Generic[FutureType]):
             num_shots=num_shots,
             arguments=arguments,
             metadata=metadata,
-            program_language=program_language,
-            language_version=language_version,
+            program_language=(
+                program_language
+                if program_language is not None
+                else self.program_language
+            ),
+            language_version=(
+                language_version
+                if language_version is not None
+                else self.language_version
+            ),
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
             group=group,
