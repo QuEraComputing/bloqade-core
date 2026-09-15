@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from uuid import UUID
 
 import numpy as np
+import semver
 from qlam_core.plugins.tasks.api.tasks_models import (
     Program,
     Subtask,
@@ -85,6 +86,10 @@ class ShotFilter(StorageFilter):
 
 class _BloqadeSchemaVersion:
     version: str = "0.2.0"
+
+    @property
+    def semantic_version(self) -> semver.Version:
+        return semver.Version.parse(self.version)
 
 
 class StorageBackend(ABC):
@@ -816,9 +821,16 @@ class SQLiteStorage(StorageBackend):
             )
             stored_version = _BloqadeSchemaVersion.version
 
-        if stored_version != _BloqadeSchemaVersion.version:
+        stored_semver = semver.Version.parse(stored_version)
+        bloqade_semver = _BloqadeSchemaVersion().semantic_version
+        if stored_semver.major == 0 and bloqade_semver.major == 0:
+            version_mismatch = stored_semver.minor > bloqade_semver.minor
+        else:
+            version_mismatch = stored_semver.major > bloqade_semver.major
+
+        if version_mismatch:
             raise ValueError(
-                f"Schema version mismatch: expected {_BloqadeSchemaVersion.version}, found {stored_version}"
+                f"Schema version mismatch: stored version is at {stored_semver}, but your bloqade-core installation expects {bloqade_semver}. Update bloqade-core."
             )
 
         self.conn.commit()

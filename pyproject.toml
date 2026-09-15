@@ -11,6 +11,7 @@ dependencies = [
     "kirin-toolchain~=0.22.11",
     "loguru>=0.7.3",
     "qlam-core~=0.7.0",
+    "semver>=3.1.0",
 ]
 requires-python = ">= 3.10"
 
