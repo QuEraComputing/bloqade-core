@@ -10,17 +10,27 @@ T = TypeVar("T")
 
 
 @dataclass(kw_only=True)
-class AuthMixin:
-    """Mixin that provides authentication helpers for qlam API clients.
-
-    Manages an `AppContext` scoped to a qlam context name and ensures the
-    client is authenticated before making API calls.
+class ConfigMixin:
+    """Mixin that provides qlam connection and API configuration.
 
     Attributes:
         context_name (str): Name of the qlam context to use.
+        qpu_mode (str | None): Explicit qlam QPU mode to use for API calls.
+            When None, qlam-core resolves it from configuration.
     """
 
     context_name: str
+    qpu_mode: str | None = None
+
+
+@dataclass(kw_only=True)
+class AuthMixin(ConfigMixin):
+    """Mixin that provides authentication helpers for qlam API clients.
+
+    Inherits qlam configuration from `ConfigMixin` and manages an
+    `AppContext` scoped to `context_name`. Ensures the client is
+    authenticated before making API calls.
+    """
 
     @property
     def app_context(self) -> AppContext:
