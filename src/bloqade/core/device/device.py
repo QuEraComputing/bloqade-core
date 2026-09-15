@@ -92,6 +92,7 @@ class Device(AuthMixin, Generic[FutureType]):
         *,
         dry_run: Literal[True],
         group: str | None = None,
+        profile_id: str | UUID | None = None,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
     ) -> None: ...
@@ -103,6 +104,7 @@ class Device(AuthMixin, Generic[FutureType]):
         *,
         dry_run: Literal[False],
         group: str | None = None,
+        profile_id: str | UUID | None = None,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
     ) -> FutureType: ...
@@ -113,6 +115,7 @@ class Device(AuthMixin, Generic[FutureType]):
         *,
         dry_run: bool,
         group: str | None = None,
+        profile_id: str | UUID | None = None,
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
     ) -> FutureType | None:
@@ -151,6 +154,7 @@ class Device(AuthMixin, Generic[FutureType]):
             storage=storage,
             fetch_options=fetch_options,
             group=group,
+            profile_id=profile_id,
         )
 
     def _configured_group(self, group: str | None = None) -> str | None:
@@ -185,6 +189,7 @@ class Device(AuthMixin, Generic[FutureType]):
         storage: StorageBackend | None = None,
         fetch_options: ApiFetchOptions = DEFAULT_FETCH_OPTIONS,
         group: str | None = None,
+        profile_id: str | UUID | None = None,
     ) -> FutureType:
         """Submit a prepared task definition and return a future.
 
@@ -220,6 +225,10 @@ class Device(AuthMixin, Generic[FutureType]):
                 task_definition = task_definition.model_copy(
                     update={"group_id": self._resolve_group_id(group)}
                 )
+
+        if profile_id is not None:
+            profile_id = UUID(profile_id) if isinstance(profile_id, str) else profile_id
+            task_definition.profile_id = profile_id
 
         task_request = TaskCreationRequest(root=task_definition)
         with TasksClient(self.app_context) as tasks_client:
@@ -264,6 +273,7 @@ class Device(AuthMixin, Generic[FutureType]):
         language_version: str = "0.1.0",
         kernel_serializer: KernelSerializer | None = None,
         group: str | None = None,
+        profile_id: str | UUID | None = None,
     ) -> SingleKernelTask[FutureType]:
         """Create a task for one kernel.
 
@@ -301,6 +311,7 @@ class Device(AuthMixin, Generic[FutureType]):
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
             group=group,
+            profile_id=profile_id,
         )
 
     def batch_task(
@@ -313,6 +324,7 @@ class Device(AuthMixin, Generic[FutureType]):
         language_version: str = "0.1.0",
         kernel_serializer: KernelSerializer | None = None,
         group: str | None = None,
+        profile_id: str | UUID | None = None,
     ) -> KernelBatchTask[FutureType]:
         """Create a task containing one subtask per kernel.
 
@@ -351,6 +363,7 @@ class Device(AuthMixin, Generic[FutureType]):
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
             group=group,
+            profile_id=profile_id,
         )
 
     def parameter_scan(
@@ -363,6 +376,7 @@ class Device(AuthMixin, Generic[FutureType]):
         language_version: str = "0.1.0",
         kernel_serializer: KernelSerializer | None = None,
         group: str | None = None,
+        profile_id: str | UUID | None = None,
     ) -> ParameterScanTask[FutureType]:
         """Create a parameter-scan task for one kernel.
 
@@ -400,4 +414,5 @@ class Device(AuthMixin, Generic[FutureType]):
             future_cls=self.future_cls,
             kernel_serializer=self._resolve_kernel_serializer(kernel_serializer),
             group=group,
+            profile_id=profile_id,
         )

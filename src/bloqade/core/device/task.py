@@ -66,6 +66,7 @@ class TaskABC(AuthMixin, ABC, Generic[FutureType]):
     language_version: str = "0.1.0"
     kernel_serializer: KernelSerializer = field(default_factory=JSONSerializer)
     group: str | None = None
+    profile_id: str | UUID | None = None
 
     # NOTE: bound to subclasses of future, so need to ignore the typing issue here
     future_cls: type[FutureType] = Future  # type: ignore
@@ -257,11 +258,18 @@ class TaskABC(AuthMixin, ABC, Generic[FutureType]):
             )
 
         program_language_with_version = f"{self.program_language}.v{self.program_language_version.removeprefix('v')}"
+
+        if isinstance(self.profile_id, str):
+            profile_id = UUID(self.profile_id)
+        else:
+            profile_id = self.profile_id
+
         return TaskDefinition(
             program_language=program_language_with_version,
             programs=programs,
             subtasks=subtasks,
             group_id=None,
+            profile_id=profile_id,
         )
 
     def _configured_group(self) -> str | None:
