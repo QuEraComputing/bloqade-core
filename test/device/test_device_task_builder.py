@@ -232,3 +232,99 @@ def test_device_submit_rejects_missing_task_id(monkeypatch):
                 group_id=UUID("33333333-3333-3333-3333-333333333333")
             )
         )
+
+
+def _submitting_device(monkeypatch, create_return):
+    tasks_client = remote.FakeTasksClient(create_return=create_return)
+    device = Device(
+        context_name="ctx",
+        program_language="squin",
+        kernel_serializer=RecordingSerializer(),
+        future_cls=RecordingFuture,  # type: ignore[arg-type]
+    )
+    monkeypatch.setattr(device, "authenticate", lambda: None)
+    monkeypatch.setattr(device_mod, "TasksClient", lambda app_context: tasks_client)
+    return device, tasks_client
+
+
+def _task_with_profile(profile_id):
+    def create_return(body):
+        return remote.make_task(
+            id="builder-task",
+            task_status=TaskStatus.CREATED,
+            created_date=local.CREATION_TIME,
+            profile_id=profile_id,
+        )
+
+    return create_return
+
+
+def test_device_run_async_forwards_profile_id_to_submit(monkeypatch):
+    submitted = {}
+    device = Device(context_name="ctx", program_language="squin")
+
+    def submit_task_definition(**kwargs):
+        submitted.update(kwargs)
+        return "future"
+
+    monkeypatch.setattr(device, "submit_task_definition", submit_task_definition)
+
+    device.run_async(make_builder(), dry_run=False, profile_id="profile-x")
+
+    assert submitted["profile_id"] == "profile-x"
+
+
+def test_device_submit_fills_profile_id_kwarg_when_definition_has_none(monkeypatch):
+    profile_id = UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+    device, tasks_client = _submitting_device(
+        monkeypatch, _task_with_profile(profile_id)
+    )
+
+    device.submit_task_definition(
+        task_definition=remote.make_task_definition(
+            group_id=UUID("99999999-9999-9999-9999-999999999999")
+        ),
+        profile_id=str(profile_id),  # string form is accepted and converted
+    )
+
+    sent = tasks_client.calls[0][1]["body"].root
+    assert sent.profile_id == profile_id
+    assert isinstance(sent.profile_id, UUID)
+
+
+def test_device_submit_keeps_definition_profile_over_kwarg(monkeypatch):
+    definition_profile = UUID("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
+    device, tasks_client = _submitting_device(
+        monkeypatch, _task_with_profile(definition_profile)
+    )
+
+    device.submit_task_definition(
+        task_definition=remote.make_task_definition(
+            group_id=UUID("99999999-9999-9999-9999-999999999999"),
+            profile_id=definition_profile,
+        ),
+        profile_id=UUID("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+    )
+
+    assert tasks_client.calls[0][1]["body"].root.profile_id == definition_profile
+
+
+def test_device_submit_stores_backend_profile(monkeypatch):
+    """Storage reflects the profile the backend reported, not the one requested."""
+    requested = UUID("11111111-1111-1111-1111-111111111111")
+    backend_profile = UUID("22222222-2222-2222-2222-222222222222")
+    device, tasks_client = _submitting_device(
+        monkeypatch, _task_with_profile(backend_profile)
+    )
+    storage = DictStorage()
+
+    device.submit_task_definition(
+        task_definition=remote.make_task_definition(
+            group_id=UUID("99999999-9999-9999-9999-999999999999")
+        ),
+        profile_id=requested,
+        storage=storage,
+    )
+
+    assert tasks_client.calls[0][1]["body"].root.profile_id == requested
+    assert storage.get_task_definition("builder-task").profile_id == backend_profile

@@ -106,6 +106,7 @@ def make_task_definition(
     programs: list[Program] | None = None,
     subtasks: list[Subtask] | None = None,
     group_id: UUID | None = None,
+    profile_id: UUID | None = None,
 ) -> TaskDefinition:
     if programs is None:
         programs = [make_program()]
@@ -116,6 +117,7 @@ def make_task_definition(
         programs=programs,
         subtasks=subtasks,
         group_id=group_id,
+        profile_id=profile_id,
     )
 
 
