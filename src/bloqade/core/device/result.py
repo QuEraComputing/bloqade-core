@@ -61,13 +61,15 @@ class Result:
     def validate(self) -> None:
         """Validate that selected task IDs can be merged by subtask index.
 
-        Compatible task IDs have the same `program_index` and equal arguments
-        for each shared `subtask_index`. Different shot counts are allowed, and
-        None and empty dictionaries are treated as equivalent arguments.
+        Compatible task IDs have the same `program_index`, identical program
+        `content`, and equal arguments for each shared `subtask_index`.
+        Content is compared as an exact string. Different shot counts are
+        allowed, and None and empty dictionaries are treated as equivalent
+        arguments.
 
         Raises:
-            ValueError: If selected task IDs disagree on `program_index` or
-                arguments for the same `subtask_index`.
+            ValueError: If selected task IDs disagree on `program_index`,
+                program `content`, or arguments for the same `subtask_index`.
         """
 
         if self._is_valid:
@@ -84,6 +86,10 @@ class Result:
             return
 
         full_subtasks = self.full_subtasks()
+        program_contents = {
+            (program["task_id"], program["program_index"]): program["content"]
+            for program in self.storage.get_programs(task_ids=tuple(task_ids))
+        }
 
         subtask_index_groups: dict[int, list[dict]] = {}
         for subtask in full_subtasks:
@@ -104,6 +110,21 @@ class Result:
                         f"{ref_subtask['task_id']!r} -> {ref_subtask['program_index']}, "
                         f"{other_subtask['task_id']!r} -> {other_subtask['program_index']}. "
                         + _VERIFY_HINT
+                    )
+                ref_program = (
+                    ref_subtask["task_id"],
+                    ref_subtask["program_index"],
+                )
+                other_program = (
+                    other_subtask["task_id"],
+                    other_subtask["program_index"],
+                )
+                if program_contents[other_program] != program_contents[ref_program]:
+                    raise ValueError(
+                        f"task_ids disagree on program content for subtask_index={idx}: "
+                        f"{ref_subtask['task_id']!r} and {other_subtask['task_id']!r} "
+                        f"reference different content at "
+                        f"program_index={ref_subtask['program_index']}. " + _VERIFY_HINT
                     )
                 ref_arguments = ref_subtask["arguments"]
                 other_arguments = other_subtask["arguments"]
