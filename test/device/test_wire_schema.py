@@ -356,7 +356,9 @@ def test_strict_check_rejects_malformed_definition(mutate, expected_fragment):
 def test_task_profile_content_stays_free_form():
     """Server stores profile content verbatim; do not check for undeclared fields."""
     payload = wire_payload(
-        TaskProfileRequest(name="afm-sweep", layers=3, annotation=None)
+        TaskProfileRequest.model_validate(
+            {"name": "afm-sweep", "layers": 3, "annotation": None}
+        )
     )
 
     assert payload == {"name": "afm-sweep", "layers": 3}  # exclude_none drops the null
