@@ -300,7 +300,13 @@ def test_submit_task_definition_stores_definition_and_returns_future(monkeypatch
     name, kwargs = client.calls[0]
     assert name == "create"
     assert kwargs["body"].root == task_definition
-    assert storage.get_task_definition("task-created") == task_definition
+    # The stored definition records the group the backend reported, not the
+    # (unset) group that was sent.
+    stored = storage.get_task_definition("task-created")
+    assert stored == task_definition.model_copy(
+        update={"group_id": created_task.group.id}
+    )
+    assert stored.group_id == remote.DEFAULT_GROUP_ID
     assert storage.get_task_creation_time("task-created") == CREATION_TIME
     assert future.task_id == "task-created"
     assert future.storage is storage
@@ -384,7 +390,9 @@ def test_submit_task_definition_defaults_to_fresh_dict_storage(monkeypatch):
     future = task.submit_task_definition(task_definition=task_definition)
 
     assert isinstance(future.storage, DictStorage)
-    assert future.storage.get_task_definition("task-created") == task_definition
+    assert future.storage.get_task_definition(
+        "task-created"
+    ) == task_definition.model_copy(update={"group_id": created_task.group.id})
     assert future.storage.get_task_creation_time("task-created") == CREATION_TIME
 
 
@@ -462,6 +470,15 @@ def _submit_and_get_created_definition(
         id="task-created",
         task_status=TaskStatus.CREATED,
         created_date=CREATION_TIME,
+        # A real backend reports the group the task landed in; echo the one
+        # that was resolved so the stored definition matches it.
+        group=(
+            None
+            if resolved_group_id is None
+            else remote.TaskGroupSummary(
+                id=resolved_group_id, name="resolved-group", deactivated=False
+            )
+        ),
     )
     client = remote.FakeTasksClient(create_return=created_task)
     groups_client = remote.FakeGroupsClient(resolve_id_return=resolved_group_id)
@@ -587,3 +604,40 @@ def test_submit_task_definition_omits_group_without_config(monkeypatch):
 
     assert sent.group_id is None
     assert groups_client.calls == []
+
+
+def test_submit_task_definition_stores_backend_group_over_sent_group(monkeypatch):
+    """The stored definition records the group the backend reported."""
+    sent_group = UUID("11111111-1111-1111-1111-111111111111")
+    backend_group = UUID("22222222-2222-2222-2222-222222222222")
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        future_cls=RecordingFuture,  # type: ignore
+    )
+    storage = DictStorage()
+
+    def create_return(body):
+        return remote.make_task(
+            id="task-created",
+            task_status=TaskStatus.CREATED,
+            created_date=CREATION_TIME,
+            group=remote.TaskGroupSummary(
+                id=backend_group, name="backend-group", deactivated=False
+            ),
+        )
+
+    client = remote.FakeTasksClient(create_return=create_return)
+    monkeypatch.setattr(task, "authenticate", lambda: None)
+    monkeypatch.setattr(task_mod, "TasksClient", lambda app_context: client)
+
+    task.submit_task_definition(
+        task_definition=remote.make_task_definition(group_id=sent_group),
+        storage=storage,
+    )
+
+    assert client.calls[0][1]["body"].root.group_id == sent_group
+    assert storage.get_task_definition("task-created").group_id == backend_group
+    assert storage.get_task_group_id("task-created") == backend_group

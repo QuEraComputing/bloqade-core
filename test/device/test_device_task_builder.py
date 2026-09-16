@@ -105,6 +105,7 @@ def test_device_submit_resolves_group_stores_definition_and_returns_future(
         id="builder-task",
         task_status=TaskStatus.CREATED,
         created_date=local.CREATION_TIME,
+        group=remote.TaskGroupSummary(id=group_id, name="research", deactivated=False),
     )
     tasks_client = remote.FakeTasksClient(create_return=created_task)
     groups_client = remote.FakeGroupsClient(resolve_id_return=group_id)
@@ -192,7 +193,10 @@ def test_device_configured_group_falls_back_to_context_default(write_qsh_config)
 
 def test_device_submit_preserves_definition_group_id(monkeypatch):
     group_id = UUID("22222222-2222-2222-2222-222222222222")
-    created_task = remote.make_task(id="existing-group-task")
+    created_task = remote.make_task(
+        id="existing-group-task",
+        group=remote.TaskGroupSummary(id=group_id, name="existing", deactivated=False),
+    )
     tasks_client = remote.FakeTasksClient(create_return=created_task)
     device = Device(
         context_name="ctx",
@@ -232,3 +236,60 @@ def test_device_submit_rejects_missing_task_id(monkeypatch):
                 group_id=UUID("33333333-3333-3333-3333-333333333333")
             )
         )
+
+
+def _submitting_device(monkeypatch, create_return):
+    tasks_client = remote.FakeTasksClient(create_return=create_return)
+    device = Device(
+        context_name="ctx",
+        program_language="squin",
+        kernel_serializer=RecordingSerializer(),
+        future_cls=RecordingFuture,  # type: ignore[arg-type]
+    )
+    monkeypatch.setattr(device, "authenticate", lambda: None)
+    monkeypatch.setattr(device_mod, "TasksClient", lambda app_context: tasks_client)
+    return device, tasks_client
+
+
+def test_device_submit_stores_backend_group_over_sent_group(monkeypatch):
+    """Storage reflects the group the backend reported, not the one requested."""
+    sent_group = UUID("11111111-1111-1111-1111-111111111111")
+    backend_group = UUID("22222222-2222-2222-2222-222222222222")
+
+    def create_return(body):
+        return remote.make_task(
+            id="builder-task",
+            task_status=TaskStatus.CREATED,
+            created_date=local.CREATION_TIME,
+            group=remote.TaskGroupSummary(
+                id=backend_group, name="backend-group", deactivated=False
+            ),
+        )
+
+    device, tasks_client = _submitting_device(monkeypatch, create_return)
+    storage = DictStorage()
+
+    device.submit_task_definition(
+        task_definition=remote.make_task_definition(group_id=sent_group),
+        storage=storage,
+    )
+
+    assert tasks_client.calls[0][1]["body"].root.group_id == sent_group
+    assert storage.get_task_definition("builder-task").group_id == backend_group
+
+
+def test_device_submit_stores_backend_default_group_when_none_sent(monkeypatch):
+    """With no group sent, storage records the backend-applied default group."""
+    created_task = remote.make_task(id="builder-task", task_status=TaskStatus.CREATED)
+    device, tasks_client = _submitting_device(monkeypatch, created_task)
+    monkeypatch.setattr(device, "_configured_group", lambda group=None: None)
+    storage = DictStorage()
+
+    device.submit_task_definition(
+        task_definition=remote.make_task_definition(), storage=storage
+    )
+
+    assert tasks_client.calls[0][1]["body"].root.group_id is None
+    assert storage.get_task_definition("builder-task").group_id == (
+        remote.DEFAULT_GROUP_ID
+    )
