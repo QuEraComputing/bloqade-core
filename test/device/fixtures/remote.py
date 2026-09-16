@@ -407,8 +407,11 @@ class FakeTasksClient(_RecordingContextManager):
         self.create_return = create_return
         self.cancel_raises = cancel_raises
 
-    def get(self, id):
-        self._record("get", id=id)
+    def get(self, id, qpu_mode=None):
+        kwargs = {"id": id}
+        if qpu_mode is not None:
+            kwargs["qpu_mode"] = qpu_mode
+        self._record("get", **kwargs)
         ret = self.get_return
         if ret is None:
             raise AssertionError("FakeTasksClient.get called but no get_return set")
@@ -416,8 +419,11 @@ class FakeTasksClient(_RecordingContextManager):
             return ret(id)
         return ret
 
-    def create(self, body):
-        self._record("create", body=body)
+    def create(self, body, qpu_mode=None):
+        kwargs = {"body": body}
+        if qpu_mode is not None:
+            kwargs["qpu_mode"] = qpu_mode
+        self._record("create", **kwargs)
         ret = self.create_return
         if ret is None:
             raise AssertionError(
@@ -427,8 +433,11 @@ class FakeTasksClient(_RecordingContextManager):
             return ret(body)
         return ret
 
-    def cancel(self, id):
-        self._record("cancel", id=id)
+    def cancel(self, id, qpu_mode=None):
+        kwargs = {"id": id}
+        if qpu_mode is not None:
+            kwargs["qpu_mode"] = qpu_mode
+        self._record("cancel", **kwargs)
         if self.cancel_raises is not None:
             raise self.cancel_raises
 
@@ -478,8 +487,11 @@ class FakeDefinitionsClient(_RecordingContextManager):
         self.app_context = app_context
         self.get_return = get_return
 
-    def get(self, id):
-        self._record("get", id=id)
+    def get(self, id, qpu_mode=None):
+        kwargs = {"id": id}
+        if qpu_mode is not None:
+            kwargs["qpu_mode"] = qpu_mode
+        self._record("get", **kwargs)
         if self.get_return is None:
             raise AssertionError(
                 "FakeDefinitionsClient.get called but no get_return set"
@@ -498,8 +510,11 @@ class FakeCompilationsClient(_RecordingContextManager):
         self.app_context = app_context
         self.get_return = get_return
 
-    def get(self, id):
-        self._record("get", id=id)
+    def get(self, id, qpu_mode=None):
+        kwargs = {"id": id}
+        if qpu_mode is not None:
+            kwargs["qpu_mode"] = qpu_mode
+        self._record("get", **kwargs)
         if self.get_return is None:
             raise AssertionError(
                 "FakeCompilationsClient.get called but no get_return set"
@@ -555,6 +570,8 @@ class FakeResultsClient(_RecordingContextManager):
         self.envelope_fn = envelope_fn
 
     def get(self, **kwargs):
+        if kwargs.get("qpu_mode") is None:
+            kwargs.pop("qpu_mode", None)
         self._record("get", **kwargs)
         if self.envelope_fn is not None:
             return self.envelope_fn(**kwargs)

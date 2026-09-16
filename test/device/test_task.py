@@ -308,6 +308,39 @@ def test_submit_task_definition_stores_definition_and_returns_future(monkeypatch
     assert future.context_name == "ctx"
 
 
+def test_submit_task_definition_passes_explicit_qpu_mode(monkeypatch):
+    task = SingleKernelTask(
+        context_name="ctx",
+        qpu_mode="squin-256q",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        future_cls=RecordingFuture,  # type: ignore
+    )
+    task_definition = task.create_task_definition()
+    created_task = remote.make_task(
+        id="task-created",
+        task_status=TaskStatus.CREATED,
+        created_date=CREATION_TIME,
+    )
+    client = remote.FakeTasksClient(create_return=created_task)
+
+    monkeypatch.setattr(task, "authenticate", lambda: None)
+    monkeypatch.setattr(task_mod, "TasksClient", lambda app_context: client)
+
+    future = task.submit_task_definition(
+        task_definition=task_definition,
+        storage=DictStorage(),
+    )
+
+    assert len(client.calls) == 1
+    name, kwargs = client.calls[0]
+    assert name == "create"
+    assert kwargs["qpu_mode"] == "squin-256q"
+    assert kwargs["body"].root == task_definition
+    assert future.qpu_mode == "squin-256q"
+
+
 def test_run_async_defaults_storage_to_fresh_dict_storage(monkeypatch):
     task = SingleKernelTask(
         context_name="ctx",

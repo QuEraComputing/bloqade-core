@@ -32,7 +32,7 @@ def make_shot(*, frame_type: str = "DETECTED", **kwargs):
     return local.make_shot(frame_type=frame_type, **kwargs)
 
 
-def add_compatible_tasks(storage: DictStorage):
+def add_compatible_task_definitions(storage: DictStorage):
     add_task(
         storage,
         "task-1",
@@ -57,8 +57,20 @@ def add_compatible_tasks(storage: DictStorage):
             remote.make_subtask(num_shots=4),
         ],
     )
+
+
+def add_compatible_tasks(storage: DictStorage):
+    add_compatible_task_definitions(storage)
     storage.add_shots(
         [
+            # Intentionally add this before task-1's equivalent local shot;
+            # raw results must still use the total storage-identity order.
+            make_shot(
+                task_id="task-2",
+                shot_index=0,
+                subtask_index=0,
+                bitstring=(True, True),
+            ),
             make_shot(task_id="task-1", shot_index=0, subtask_index=0),
             make_shot(
                 task_id="task-1",
@@ -70,12 +82,6 @@ def add_compatible_tasks(storage: DictStorage):
                 task_id="task-1",
                 shot_index=2,
                 subtask_index=1,
-                bitstring=(True, True),
-            ),
-            make_shot(
-                task_id="task-2",
-                shot_index=0,
-                subtask_index=0,
                 bitstring=(True, True),
             ),
             make_shot(
@@ -171,6 +177,143 @@ def test_result_shot_results_returns_bitstrings_grouped_by_subtask():
             ]
         ),
     )
+
+
+def test_result_raw_shot_results_returns_rows_grouped_by_merged_subtask(storage):
+    # Indices match the live results envelope (qlam-core v0.6.x): shot_index is
+    # task-global, subtask_shot_index restarts per subtask. See
+    # fixtures/examples/results_envelope_completed.json. local.make_shot is the
+    # storage row; remote.make_shot_result_dict is the HTTP envelope.
+    add_compatible_task_definitions(storage)
+    storage.add_shots(
+        [
+            make_shot(
+                task_id="task-2",
+                shot_index=0,
+                subtask_index=0,
+                subtask_shot_index=0,
+                bitstring=(True, True),
+            ),
+            make_shot(
+                task_id="task-1",
+                shot_index=0,
+                subtask_index=0,
+                subtask_shot_index=0,
+            ),
+            make_shot(
+                task_id="task-1",
+                shot_index=1,
+                subtask_index=0,
+                subtask_shot_index=1,
+                bitstring=(False, True),
+            ),
+            make_shot(
+                task_id="task-1",
+                shot_index=2,
+                subtask_index=1,
+                subtask_shot_index=0,
+                bitstring=(True, True),
+            ),
+            make_shot(
+                task_id="task-2",
+                shot_index=1,
+                subtask_index=1,
+                subtask_shot_index=0,
+                bitstring=(False, False),
+            ),
+        ]
+    )
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1", "task-2"), frame_type="DETECTED"),
+    )
+
+    raw_shots = result.raw_shot_results()
+
+    assert len(raw_shots) == 2
+    assert all(
+        isinstance(shot, local.ShotResult)
+        for subtask_shots in raw_shots
+        for shot in subtask_shots
+    )
+    assert [
+        (shot.task_id, shot.subtask_index, shot.subtask_shot_index, shot.shot_index)
+        for shot in raw_shots[0]
+    ] == [
+        ("task-1", 0, 0, 0),
+        ("task-1", 0, 1, 1),
+        ("task-2", 0, 0, 0),
+    ]
+    assert [
+        (shot.task_id, shot.subtask_index, shot.subtask_shot_index, shot.shot_index)
+        for shot in raw_shots[1]
+    ] == [
+        ("task-1", 1, 0, 2),
+        ("task-2", 1, 0, 1),
+    ]
+
+
+def test_result_raw_shot_results_orders_paired_frames_by_frame_type(storage):
+    # Live envelope emits Sorted then Detected for the same
+    # (shot_index, subtask_shot_index). UNIQUE(task_id, shot_index, frame_type)
+    # requires frame_type in the sort key; otherwise the pair is unstable.
+    add_task(storage, "task-1", [remote.make_subtask(num_shots=2)])
+    storage.add_shots(
+        [
+            make_shot(
+                task_id="task-1",
+                shot_index=1,
+                subtask_index=0,
+                subtask_shot_index=1,
+                frame_type="SORTED",
+                bitstring=(True, True),
+            ),
+            make_shot(
+                task_id="task-1",
+                shot_index=1,
+                subtask_index=0,
+                subtask_shot_index=1,
+                frame_type="DETECTED",
+                bitstring=(False, False),
+            ),
+            make_shot(
+                task_id="task-1",
+                shot_index=0,
+                subtask_index=0,
+                subtask_shot_index=0,
+                frame_type="SORTED",
+            ),
+            make_shot(
+                task_id="task-1",
+                shot_index=0,
+                subtask_index=0,
+                subtask_shot_index=0,
+                frame_type="DETECTED",
+            ),
+        ]
+    )
+    result = Result(
+        storage=storage,
+        shot_filter=ShotFilter(task_ids=("task-1",), frame_type=None),
+    )
+
+    raw_shots = result.raw_shot_results()
+
+    assert [
+        (
+            shot.task_id,
+            shot.subtask_index,
+            shot.subtask_shot_index,
+            shot.shot_index,
+            shot.frame_type,
+        )
+        for shot in raw_shots[0]
+    ] == [
+        ("task-1", 0, 0, 0, "DETECTED"),
+        ("task-1", 0, 0, 0, "SORTED"),
+        ("task-1", 0, 1, 1, "DETECTED"),
+        ("task-1", 0, 1, 1, "SORTED"),
+    ]
 
 
 @pytest.mark.parametrize(
