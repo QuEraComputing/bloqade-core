@@ -411,6 +411,11 @@ class TaskABC(AuthMixin, ABC, Generic[FutureType]):
 
         logger.info(f"Submitted task with ID: {task_id}")
 
+        # copy the group_id set on the backend into task_definition
+        task_definition = task_definition.model_copy(
+            update={"group_id": created_task.group.id}
+        )
+
         storage.add_task_definition(task_id, task_definition, created_task.created_date)
 
         return self.future_cls(
