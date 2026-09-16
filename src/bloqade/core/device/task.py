@@ -60,6 +60,9 @@ class TaskABC(AuthMixin, ABC, Generic[FutureType]):
             the `~/.qsh` config group (`plugins.tasks.group`, then
             `defaults.group`) is applied at submission time; when that is also
             unset, QLAM selects the backend default group. Defaults to None.
+        profile_id (str | UUID | None): Task profile UUID for the task
+            definition. String values are converted to `UUID`. Defaults to
+            None, allowing QLAM to select the effective profile.
     """
 
     program_language: str
@@ -371,6 +374,12 @@ class TaskABC(AuthMixin, ABC, Generic[FutureType]):
         then `defaults.group`). The selected name is resolved before
         submission. When neither is set, the group is omitted and QLAM selects
         the backend default group.
+
+        An existing `task_definition.profile_id` takes precedence over the
+        task object's `profile_id`. The task-level value fills the profile only
+        when the prepared definition does not already specify one. After
+        submission, the profile returned by QLAM is stored as the effective
+        profile for the task.
 
         Keyword Args:
             task_definition (TaskDefinition): Task definition to submit.

@@ -135,6 +135,9 @@ class Device(AuthMixin, Generic[FutureType]):
                 When false, submit and return a future.
             group (str | None): Optional QLAM group name or UUID string for
                 this submission. Defaults to configured group precedence.
+            profile_id (str | UUID | None): Optional task profile UUID. Used
+                when the finalized task definition does not already specify a
+                profile. Defaults to None.
             storage (StorageBackend | None): Storage for the submitted task
                 definition. Ignored during a dry run.
             fetch_options (ApiFetchOptions): Fetch configuration attached to
@@ -199,6 +202,12 @@ class Device(AuthMixin, Generic[FutureType]):
         submission. When neither is set, the group is omitted and QLAM selects
         the backend default group.
 
+        An existing `task_definition.profile_id` takes precedence over the
+        `profile_id` keyword argument. The keyword argument fills the profile
+        only when the definition does not already specify one. After
+        submission, the profile returned by QLAM is stored as the effective
+        profile for the task.
+
         Keyword Args:
             task_definition (TaskDefinition): Task definition to submit.
             storage (StorageBackend | None): Storage backend that will receive
@@ -207,6 +216,12 @@ class Device(AuthMixin, Generic[FutureType]):
             fetch_options (ApiFetchOptions): Pagination and polling options
                 attached to the returned future. Defaults to
                 `ApiFetchOptions()`.
+            group (str | None): Optional QLAM group name or UUID string. Used
+                when `task_definition.group_id` is None. Defaults to configured
+                group precedence.
+            profile_id (str | UUID | None): Optional task profile UUID. Used
+                only when `task_definition.profile_id` is None. Defaults to
+                None.
 
         Returns:
             FutureType: Future attached to the created task ID.
@@ -301,6 +316,9 @@ class Device(AuthMixin, Generic[FutureType]):
             group (str | None): Name of the QLAM group for this task
                 definition. When None, the configured group is used at
                 submission time.
+            profile_id (str | UUID | None): Task profile UUID for this task
+                definition. String values are converted to `UUID`. Defaults to
+                None, allowing QLAM to select the effective profile.
 
         Returns:
             SingleKernelTask[FutureType]: A task object ready for dry-run or submission.
@@ -352,6 +370,9 @@ class Device(AuthMixin, Generic[FutureType]):
             group (str | None): Name of the QLAM group for this task
                 definition. When None, the configured group is used at
                 submission time.
+            profile_id (str | UUID | None): Task profile UUID for this task
+                definition. String values are converted to `UUID`. Defaults to
+                None, allowing QLAM to select the effective profile.
 
         Returns:
             KernelBatchTask[FutureType]: A batch task object ready for dry-run or
@@ -403,6 +424,9 @@ class Device(AuthMixin, Generic[FutureType]):
             group (str | None): Name of the QLAM group for this task
                 definition. When None, the configured group is used at
                 submission time.
+            profile_id (str | UUID | None): Task profile UUID for this task
+                definition. String values are converted to `UUID`. Defaults to
+                None, allowing QLAM to select the effective profile.
 
         Returns:
             ParameterScanTask[FutureType]: A parameter-scan task object ready for
