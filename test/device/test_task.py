@@ -613,3 +613,173 @@ def test_submit_task_definition_omits_group_without_config(monkeypatch):
 
     assert sent.group_id is None
     assert groups_client.calls == []
+
+
+def test_create_task_definition_converts_profile_id_string_to_uuid():
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        profile_id="12345678-1234-5678-1234-567812345678",
+    )
+
+    definition = task.create_task_definition()
+
+    assert definition.profile_id == UUID("12345678-1234-5678-1234-567812345678")
+    assert isinstance(definition.profile_id, UUID)
+
+
+def test_create_task_definition_leaves_profile_id_unset_by_default():
+    task = SingleKernelTask(
+        context_name="ctx", program_language="squin", kernel=main, num_shots=1
+    )
+
+    assert task.create_task_definition().profile_id is None
+
+
+def _submit_with_backend_profile(monkeypatch, task, definition, backend_profile):
+    """Submit ``definition`` through a fake backend that reports ``backend_profile``.
+
+    Returns ``(sent_definition, storage)``.
+    """
+    storage = DictStorage()
+
+    def create_return(body):
+        return remote.make_task(
+            id="task-created",
+            task_status=TaskStatus.CREATED,
+            created_date=CREATION_TIME,
+            profile_id=backend_profile,
+        )
+
+    client = remote.FakeTasksClient(create_return=create_return)
+    monkeypatch.setattr(task, "authenticate", lambda: None)
+    monkeypatch.setattr(task_mod, "TasksClient", lambda app_context: client)
+
+    task.submit_task_definition(task_definition=definition, storage=storage)
+
+    return client.calls[0][1]["body"].root, storage
+
+
+def test_submit_task_definition_fills_task_profile_when_definition_has_none(
+    monkeypatch,
+):
+    profile_id = UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        profile_id=str(profile_id),
+        future_cls=RecordingFuture,  # type: ignore
+    )
+
+    # A hand-built definition with no profile: the task-level value fills it,
+    # converted from str to UUID on the way out.
+    sent, _ = _submit_with_backend_profile(
+        monkeypatch, task, remote.make_task_definition(), backend_profile=profile_id
+    )
+
+    assert sent.profile_id == profile_id
+    assert isinstance(sent.profile_id, UUID)
+
+
+def test_submit_task_definition_keeps_definition_profile_over_task_profile(
+    monkeypatch,
+):
+    definition_profile = UUID("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        profile_id=UUID("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+        future_cls=RecordingFuture,  # type: ignore
+    )
+
+    sent, _ = _submit_with_backend_profile(
+        monkeypatch,
+        task,
+        remote.make_task_definition(profile_id=definition_profile),
+        backend_profile=definition_profile,
+    )
+
+    assert sent.profile_id == definition_profile
+
+
+def test_submit_task_definition_stores_backend_profile(monkeypatch):
+    """Storage records the profile the backend reported as effective."""
+    requested = UUID("11111111-1111-1111-1111-111111111111")
+    backend_profile = UUID("22222222-2222-2222-2222-222222222222")
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        profile_id=requested,
+        future_cls=RecordingFuture,  # type: ignore
+    )
+
+    sent, storage = _submit_with_backend_profile(
+        monkeypatch,
+        task,
+        task.create_task_definition(),
+        backend_profile=backend_profile,
+    )
+
+    assert sent.profile_id == requested
+    assert storage.get_task_definition("task-created").profile_id == backend_profile
+    assert storage.get_profile_id("task-created") == backend_profile
+
+
+def test_submit_task_definition_stores_backend_default_profile_when_none_sent(
+    monkeypatch,
+):
+    """With no profile sent, storage records the backend-applied default."""
+    backend_profile = UUID("33333333-3333-3333-3333-333333333333")
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        future_cls=RecordingFuture,  # type: ignore
+    )
+
+    sent, storage = _submit_with_backend_profile(
+        monkeypatch,
+        task,
+        task.create_task_definition(),
+        backend_profile=backend_profile,
+    )
+
+    assert sent.profile_id is None
+    assert storage.get_profile_id("task-created") == backend_profile
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason=(
+        "Known defect: the post-submit copy-back overwrites a requested profile "
+        "with None when the backend response omits profile_id. Remove this marker "
+        "once the copy-back only applies a non-None backend value."
+    ),
+)
+def test_submit_task_definition_keeps_requested_profile_when_backend_omits_it(
+    monkeypatch,
+):
+    requested = UUID("44444444-4444-4444-4444-444444444444")
+    task = SingleKernelTask(
+        context_name="ctx",
+        program_language="squin",
+        kernel=main,
+        num_shots=1,
+        profile_id=requested,
+        future_cls=RecordingFuture,  # type: ignore
+    )
+
+    _, storage = _submit_with_backend_profile(
+        monkeypatch, task, task.create_task_definition(), backend_profile=None
+    )
+
+    assert storage.get_profile_id("task-created") == requested

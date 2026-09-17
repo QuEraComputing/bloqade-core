@@ -16,7 +16,7 @@ testing the production normalization paths (`.upper()` in future.py) exercises
 realistic input. The bloqade local dict schema lives in `local.py`.
 
 These builders and the `examples/` dumps they mirror were verified against
-qlam-core v0.6.x (the `~=0.6.0` pin in pyproject.toml).
+qlam-core v0.7.0 (the `~=0.7.0` pin in pyproject.toml).
 """
 
 from __future__ import annotations
@@ -106,6 +106,7 @@ def make_task_definition(
     programs: list[Program] | None = None,
     subtasks: list[Subtask] | None = None,
     group_id: UUID | None = None,
+    profile_id: UUID | None = None,
 ) -> TaskDefinition:
     if programs is None:
         programs = [make_program()]
@@ -116,6 +117,7 @@ def make_task_definition(
         programs=programs,
         subtasks=subtasks,
         group_id=group_id,
+        profile_id=profile_id,
     )
 
 
@@ -139,6 +141,7 @@ def make_task(
     modified_by: UUID | None = None,
     scheduled_date: datetime | None = None,
     group: TaskGroupSummary | None = None,
+    profile_id: UUID | None = None,
     error_reasons: list[str] | None = None,
     **extras: Any,
 ) -> Task:
@@ -166,6 +169,7 @@ def make_task(
             if group is None
             else group
         ),
+        profile_id=profile_id,
         error_reasons=[] if error_reasons is None else error_reasons,
         **extras,
     )
@@ -234,7 +238,11 @@ def make_public_compilation(
     if modified_by is None:
         modified_by = created_by
     if group is None:
-        group = CompilationGroupSummary(id=UUID(id) if isinstance(id, str) else id)
+        group = CompilationGroupSummary(
+            id=DEFAULT_GROUP_ID,
+            name=DEFAULT_GROUP_NAME,
+            deactivated=False,
+        )
     return PublicCompilation(
         id=UUID(id) if isinstance(id, str) else id,
         input_definition_id=(
@@ -335,12 +343,20 @@ def make_result_element(
     task_id: str = DEFAULT_TASK_ID,
     status: str = "Completed",
     subtasks: list[dict] | None = None,
+    group: dict[str, Any] | None = None,
 ) -> dict:
     if subtasks is None:
         subtasks = [make_result_subtask()]
+    if group is None:
+        group = {
+            "id": str(DEFAULT_GROUP_ID),
+            "name": DEFAULT_GROUP_NAME,
+            "deactivated": False,
+        }
     return {
         "task_id": task_id,
         "status": status,
+        "group": group,
         "subtasks": subtasks,
     }
 

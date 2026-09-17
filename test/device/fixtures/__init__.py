@@ -14,9 +14,8 @@ remote pydantic types and local dicts in the same fixture is the drift this
 module exists to prevent. Sample JSON dumps captured from the live API live
 under `examples/` for reference.
 
-The remote builders and the `examples/` dumps were verified against
-qlam-core v0.6.x. If you bump that pin, re-capture the examples and re-check
-the builders against the new wire shapes.
+The sanitized `examples/` dumps preserve the field presence and nesting of
+live captures for comparison with the remote builders.
 """
 
 from . import local, remote
