@@ -472,6 +472,7 @@ class Future(AuthMixin, Generic[ResultType]):
                         include={"program_language", "programs", "subtasks"}
                     ),
                     "group_id": task_def.group.id,
+                    "profile_id": task.profile_id,
                 }
             ),
             creation_time=task.created_date,

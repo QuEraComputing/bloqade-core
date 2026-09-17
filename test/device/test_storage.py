@@ -520,10 +520,11 @@ def test_sqlite_storage_migrates_v0_1_schema(tmp_path):
             for row in store.conn.execute("PRAGMA table_info(task_definitions)")
         }
         assert "group_id" in columns
+        assert "profile_id" in columns
         assert store.get_task_group_id("old-task") is None
         assert (
             store.conn.execute("SELECT version_number FROM bloqade_schema").fetchone()[
                 0
             ]
-            == "0.2.0"
+            == "0.2.1"
         )
