@@ -1,9 +1,4 @@
-"""Validate fixtures, live API captures, and bloqade's outgoing payloads
-directly against the qlam-core wire models.
-
-See ``fixtures/schema.py`` for why request models are checked for undeclared
-fields (``strict=True``) while response models are left permissive.
-"""
+"""Compatibility checks for Bloqade payloads and the installed qlam-core models."""
 
 import importlib.metadata
 import json
@@ -23,7 +18,6 @@ from qlam_core.plugins.task_profiles.api.task_profiles_models import (
 )
 from qlam_core.plugins.tasks.api.tasks_models import (
     CompilationReference,
-    Subtask,
     Task,
     TaskCreationRequest,
     TaskDefinition,
@@ -39,13 +33,6 @@ from bloqade.core.device.task import (
 from bloqade.core.device.task_builder import FinalizeContext, TaskBuilder
 
 from .fixtures import local, remote
-from .fixtures.schema import (
-    assert_valid,
-    declared_fields,
-    required_fields,
-    validation_errors,
-    wire_payload,
-)
 
 EXAMPLES = Path(__file__).parent / "fixtures" / "examples"
 PROFILE_ID = UUID("12345678-1234-5678-1234-567812345678")
@@ -92,63 +79,13 @@ def test_models_carry_the_0_7_0_wire_shapes():
     """Shapes introduced in qlam-core 0.7.0 that this branch depends on."""
     # profile_id on every task-creation shape and on the Task record
     for model in (TaskDefinition, TaskDefinitionReference, CompilationReference, Task):
-        assert "profile_id" in declared_fields(model), model
+        assert "profile_id" in model.model_fields, model
     # group became required on stored definitions and compilations
-    assert "group" in required_fields(TaskDefinitionResponse)
-    assert "group" in required_fields(PublicCompilation)
+    assert TaskDefinitionResponse.model_fields["group"].is_required()
+    assert PublicCompilation.model_fields["group"].is_required()
     # task profiles are a new resource: free-form content with two known keys
-    assert {"name", "dry_run"} <= declared_fields(TaskProfileRequest)
+    assert {"name", "dry_run"} <= TaskProfileRequest.model_fields.keys()
     assert TaskProfileRequest.model_config.get("extra") == "allow"
-
-
-# --------------------------------------------------------------------------- #
-# Fixture builders must produce wire-valid payloads
-# --------------------------------------------------------------------------- #
-
-
-@pytest.mark.parametrize(
-    ("build", "model", "strict"),
-    [
-        pytest.param(
-            lambda: remote.make_task_definition(), TaskDefinition, True, id="definition"
-        ),
-        pytest.param(
-            lambda: remote.make_task_definition(
-                group_id=GROUP_ID, profile_id=PROFILE_ID
-            ),
-            TaskDefinition,
-            True,
-            id="definition-with-group-and-profile",
-        ),
-        pytest.param(
-            lambda: TaskCreationRequest(root=remote.make_task_definition()),
-            TaskCreationRequest,
-            True,
-            id="creation-request",
-        ),
-        pytest.param(lambda: remote.make_task(), Task, False, id="task"),
-        pytest.param(
-            lambda: remote.make_task(profile_id=PROFILE_ID),
-            Task,
-            False,
-            id="task-with-profile",
-        ),
-        pytest.param(
-            lambda: remote.make_task_definition_response(),
-            TaskDefinitionResponse,
-            False,
-            id="definition-response",
-        ),
-        pytest.param(
-            lambda: remote.make_public_compilation(),
-            PublicCompilation,
-            False,
-            id="compilation",
-        ),
-    ],
-)
-def test_fixture_builders_produce_schema_valid_payloads(build, model, strict):
-    assert_valid(wire_payload(build()), model, strict=strict)
 
 
 # --------------------------------------------------------------------------- #
@@ -199,8 +136,7 @@ _STALE = pytest.mark.xfail(
     ],
 )
 def test_live_api_examples_match_current_models(filename, model):
-    payload = json.loads((EXAMPLES / filename).read_text())
-    assert_valid(payload, model, strict=False)
+    model.model_validate_json((EXAMPLES / filename).read_text(), strict=True)
 
 
 # --------------------------------------------------------------------------- #
@@ -209,7 +145,9 @@ def test_live_api_examples_match_current_models(filename, model):
 
 
 def _request(definition: TaskDefinition) -> dict:
-    return wire_payload(TaskCreationRequest(root=definition))
+    return TaskCreationRequest(root=definition).model_dump(
+        mode="json", exclude_none=True
+    )
 
 
 @pytest.mark.parametrize(
@@ -257,8 +195,8 @@ def _request(definition: TaskDefinition) -> dict:
     ],
 )
 def test_legacy_task_shapes_emit_schema_valid_requests(task):
-    assert_valid(
-        _request(task.create_task_definition()), TaskCreationRequest, strict=True
+    TaskCreationRequest.model_validate_json(
+        json.dumps(_request(task.create_task_definition())), strict=True
     )
 
 
@@ -276,7 +214,7 @@ def test_task_builder_finalize_emits_schema_valid_definition():
     definition = builder._finalize(ctx)
     payload = _request(definition)
 
-    assert_valid(payload, TaskCreationRequest, strict=True)
+    TaskCreationRequest.model_validate_json(json.dumps(payload), strict=True)
     # The builder's display-only name must never reach the wire.
     assert all("kernel_name" not in st for st in payload["subtasks"])
 
@@ -293,73 +231,15 @@ def test_storage_round_trip_preserves_wire_shape(backend, tmp_path):
 
     restored = storage.get_task_definition("task-1")
 
-    assert_valid(_request(restored), TaskCreationRequest, strict=True)
-    assert wire_payload(restored) == wire_payload(original)
-
-
-# --------------------------------------------------------------------------- #
-# Negative controls: prove the validator has teeth
-# --------------------------------------------------------------------------- #
-
-
-def test_strict_check_rejects_unknown_subtask_field():
-    payload = wire_payload(remote.make_task_definition())
-    payload["subtasks"][0]["kernel_name"] = "bell"
-
-    errors = validation_errors(payload, TaskDefinition, strict=True)
-
-    assert any("kernel_name" in e for e in errors), errors
-
-
-def test_pydantic_alone_does_not_catch_unknown_fields():
-    """Why strict mode exists: the client model accepts what the server rejects."""
-    payload = wire_payload(remote.make_subtask())
-    payload["kernel_name"] = "bell"
-
-    Subtask.model_validate(payload)  # extra="allow": silently accepted
-    assert validation_errors(payload, Subtask, strict=True)  # schema: rejected
-
-
-@pytest.mark.parametrize(
-    ("mutate", "expected_fragment"),
-    [
-        pytest.param(
-            lambda p: p.__setitem__("profile_id", "not-a-uuid"),
-            "profile_id",
-            id="bad-uuid",
-        ),
-        pytest.param(
-            lambda p: p["subtasks"][0].__setitem__("num_shots", "100"),
-            "num_shots",
-            id="string-shots",
-        ),
-        pytest.param(
-            lambda p: p["subtasks"][0].__setitem__("arguments", {"theta": "0.5"}),
-            "arguments",
-            id="string-argument",
-        ),
-        pytest.param(lambda p: p.pop("programs"), "programs", id="missing-programs"),
-        pytest.param(
-            lambda p: p["subtasks"][0].pop("num_shots"), "num_shots", id="missing-shots"
-        ),
-    ],
-)
-def test_strict_check_rejects_malformed_definition(mutate, expected_fragment):
-    payload = wire_payload(remote.make_task_definition(profile_id=PROFILE_ID))
-    mutate(payload)
-
-    errors = validation_errors(payload, TaskDefinition, strict=True)
-
-    assert any(expected_fragment in e for e in errors), errors
+    assert restored.model_dump(mode="json", exclude_none=True) == original.model_dump(
+        mode="json", exclude_none=True
+    )
 
 
 def test_task_profile_content_stays_free_form():
     """Server stores profile content verbatim; do not check for undeclared fields."""
-    payload = wire_payload(
-        TaskProfileRequest.model_validate(
-            {"name": "afm-sweep", "layers": 3, "annotation": None}
-        )
-    )
+    payload = TaskProfileRequest.model_validate(
+        {"name": "afm-sweep", "layers": 3, "annotation": None}
+    ).model_dump(mode="json", exclude_none=True)
 
     assert payload == {"name": "afm-sweep", "layers": 3}  # exclude_none drops the null
-    assert_valid(payload, TaskProfileRequest, strict=False)

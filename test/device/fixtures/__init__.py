@@ -14,13 +14,11 @@ remote pydantic types and local dicts in the same fixture is the drift this
 module exists to prevent. Sample JSON dumps captured from the live API live
 under `examples/` for reference.
 
-`schema` validates fixture output and outgoing payloads directly against
-the qlam-core models (see `test_wire_schema.py`), so a qlam-core
-bump that changes a wire shape fails loudly. The `examples/` dumps are live
-captures; those taken before a now-required field was added are marked as
-stale in `test_wire_schema.py` and should be re-captured.
+The `examples/` dumps are live captures. Those taken before a now-required
+field was added are marked as stale in `test_wire_schema.py` and should be
+re-captured.
 """
 
-from . import local, remote, schema
+from . import local, remote
 
-__all__ = ["local", "remote", "schema"]
+__all__ = ["local", "remote"]
