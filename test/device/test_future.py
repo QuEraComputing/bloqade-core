@@ -1,6 +1,7 @@
 import importlib
 from datetime import datetime, timezone
 from types import SimpleNamespace
+from uuid import UUID
 
 import numpy as np
 import pytest
@@ -708,3 +709,46 @@ def test_fetch_retries_only_the_failing_page_on_403(monkeypatch):
 
     assert attempts == [0, 1, 1, 2]
     assert [name for name, _ in auth_client.calls] == ["refresh_credentials"]
+
+
+def test_from_task_id_stores_profile_id_from_task_record(monkeypatch):
+    """The effective profile lives on the Task record, not the definition."""
+    profile_id = UUID("12345678-1234-5678-1234-567812345678")
+    storage = DictStorage()
+    task_definition_response = remote.make_task_definition_response(
+        id="11111111-1111-1111-1111-111111111111",
+    )
+    task = remote.make_task(
+        id="task-1",
+        definition_id="11111111-1111-1111-1111-111111111111",
+        task_status=TaskStatus.CREATED,
+        created_date=CREATION_TIME,
+        profile_id=profile_id,
+    )
+    tasks_client = remote.FakeTasksClient(get_return=task)
+    defs_client = remote.FakeDefinitionsClient(get_return=task_definition_response)
+    monkeypatch.setattr(future_mod.AuthMixin, "authenticate", lambda auth: None)
+    monkeypatch.setattr(future_mod, "TasksClient", lambda app_context: tasks_client)
+    monkeypatch.setattr(
+        future_mod, "DefinitionsClient", lambda app_context: defs_client
+    )
+
+    Future.from_task_id(task_id="task-1", storage=storage, context_name="ctx")
+
+    stored = storage.get_task_definition("task-1")
+    assert stored.profile_id == profile_id
+    assert stored.group_id == task_definition_response.group.id
+
+
+def test_export_to_preserves_profile_id():
+    profile_id = UUID("12345678-1234-5678-1234-567812345678")
+    source = DictStorage()
+    destination = DictStorage()
+    task_definition = remote.make_task_definition(profile_id=profile_id)
+    source.add_task_definition("task-1", task_definition, CREATION_TIME)
+    future = Future(task_id="task-1", storage=source, context_name="ctx")
+
+    future.export_to(destination)
+
+    assert destination.get_profile_id("task-1") == profile_id
+    assert destination.get_task_definition("task-1") == task_definition

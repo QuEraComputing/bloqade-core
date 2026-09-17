@@ -2,6 +2,7 @@ import sqlite3
 from datetime import datetime, timezone
 from uuid import UUID
 
+import pytest
 from qlam_core.plugins.tasks.api.tasks_models import (
     Subtask,
     TaskDefinition,
@@ -528,3 +529,98 @@ def test_sqlite_storage_migrates_v0_1_schema(tmp_path):
             ]
             == "0.2.1"
         )
+
+
+def test_storage_preserves_task_definition_profile_id(storage):
+    profile_id = UUID("12345678-1234-5678-1234-567812345678")
+    task_def = remote.make_task_definition(profile_id=profile_id)
+
+    add_task_definition(storage, "task-1", task_def)
+
+    assert storage.get_profile_id("task-1") == profile_id
+    assert storage.get_task_definition("task-1").profile_id == profile_id
+    assert storage.get_task_definition("task-1") == task_def
+
+
+def test_storage_profile_id_defaults_to_none(storage):
+    add_task_definition(storage, "task-1", remote.make_task_definition())
+
+    assert storage.get_profile_id("task-1") is None
+    assert storage.get_task_definition("task-1").profile_id is None
+
+
+def test_sqlite_storage_migrates_v0_2_schema(tmp_path):
+    """A 0.2.0 file (has group_id, lacks profile_id) upgrades to 0.2.1."""
+    db_path = tmp_path / "v0_2.sqlite"
+    group_id = "11111111-1111-1111-1111-111111111111"
+    with sqlite3.connect(db_path) as conn:
+        conn.execute("CREATE TABLE bloqade_schema (version_number TEXT PRIMARY KEY)")
+        conn.execute("INSERT INTO bloqade_schema VALUES ('0.2.0')")
+        conn.execute("""
+            CREATE TABLE task_definitions (
+                task_id TEXT PRIMARY KEY,
+                program_language TEXT NOT NULL,
+                creation_time TEXT NOT NULL,
+                group_id TEXT
+            )
+            """)
+        conn.execute(
+            "INSERT INTO task_definitions VALUES (?, ?, ?, ?)",
+            ("old-task", "squin.v0.1.0", CREATION_TIME.isoformat(), group_id),
+        )
+
+    with SQLiteStorage(str(db_path)) as store:
+        columns = {
+            row["name"]
+            for row in store.conn.execute("PRAGMA table_info(task_definitions)")
+        }
+        assert "profile_id" in columns
+        # Existing rows survive the additive migration.
+        assert store.get_task_group_id("old-task") == UUID(group_id)
+        assert store.get_profile_id("old-task") is None
+        assert (
+            store.conn.execute("SELECT version_number FROM bloqade_schema").fetchone()[
+                0
+            ]
+            == "0.2.1"
+        )
+
+
+def _make_current_schema_db(db_path, version: str):
+    with sqlite3.connect(db_path) as conn:
+        conn.execute("CREATE TABLE bloqade_schema (version_number TEXT PRIMARY KEY)")
+        conn.execute("INSERT INTO bloqade_schema VALUES (?)", (version,))
+        conn.execute("""
+            CREATE TABLE task_definitions (
+                task_id TEXT PRIMARY KEY,
+                program_language TEXT NOT NULL,
+                creation_time TEXT NOT NULL,
+                group_id TEXT,
+                profile_id TEXT
+            )
+            """)
+
+
+def test_sqlite_storage_rejects_newer_minor_schema_version(tmp_path):
+    db_path = tmp_path / "newer.sqlite"
+    _make_current_schema_db(db_path, "0.3.0")
+
+    with pytest.raises(ValueError, match="Update bloqade-core"):
+        SQLiteStorage(str(db_path))
+
+
+def test_sqlite_storage_accepts_newer_patch_schema_version(tmp_path):
+    """Patch-level differences are compatible and must not be rejected."""
+    db_path = tmp_path / "patch.sqlite"
+    _make_current_schema_db(db_path, "0.2.9")
+
+    with SQLiteStorage(str(db_path)) as store:
+        assert store.task_ids() == set()
+
+
+def test_sqlite_storage_get_profile_id_rejects_missing_task(tmp_path):
+    with (
+        SQLiteStorage(str(tmp_path / "missing.sqlite")) as storage,
+        pytest.raises(KeyError, match="missing-task"),
+    ):
+        storage.get_profile_id("missing-task")

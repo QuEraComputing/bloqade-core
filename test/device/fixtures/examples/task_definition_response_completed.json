@@ -21,5 +21,10 @@
   "created_date": "2026-06-08T08:49:38.169438Z",
   "created_by": "acbabea1-b48d-40c4-a7f6-d05bcf75cdd0",
   "modified_date": null,
-  "modified_by": null
+  "modified_by": null,
+  "group": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "default-group",
+    "deactivated": false
+  }
 }

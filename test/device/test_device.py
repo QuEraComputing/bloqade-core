@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from kirin.prelude import basic_no_opt
 
 from bloqade.core.device.device import Device
@@ -185,3 +187,29 @@ def test_device_group_is_passed_to_each_task_shape():
     assert device.task(first, group=group).group == group
     assert device.batch_task([first, second], group=group).group == group
     assert device.parameter_scan(first, arguments=[{}], group=group).group == group
+
+
+def test_device_profile_id_is_passed_to_each_task_shape():
+    @basic_no_opt
+    def first():
+        return
+
+    @basic_no_opt
+    def second():
+        return
+
+    profile_id = UUID("12345678-1234-5678-1234-567812345678")
+    device = Device(context_name="ctx")
+
+    assert device.task(first, profile_id=profile_id).profile_id == profile_id
+    assert (
+        device.batch_task([first, second], profile_id=profile_id).profile_id
+        == profile_id
+    )
+    assert (
+        device.parameter_scan(first, arguments=[{}], profile_id=profile_id).profile_id
+        == profile_id
+    )
+    # The string form is carried as given; conversion happens when the
+    # definition is built.
+    assert device.task(first, profile_id=str(profile_id)).profile_id == str(profile_id)
