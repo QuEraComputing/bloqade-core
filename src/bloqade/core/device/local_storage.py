@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from uuid import UUID
 
 import numpy as np
+import semver
 from qlam_core.plugins.tasks.api.tasks_models import (
     Program,
     Subtask,
@@ -84,7 +85,11 @@ class ShotFilter(StorageFilter):
 
 
 class _BloqadeSchemaVersion:
-    version: str = "0.2.0"
+    version: str = "0.2.1"
+
+    @property
+    def semantic_version(self) -> semver.Version:
+        return semver.Version.parse(self.version)
 
 
 class StorageBackend(ABC):
@@ -195,6 +200,9 @@ class StorageBackend(ABC):
         """
         return None
 
+    def get_profile_id(self, task_id: str) -> UUID | None:
+        return None
+
     @abstractmethod
     def get_programs(self, task_ids: tuple[str, ...] | None = None) -> list[dict]:
         """Return stored program records.
@@ -248,6 +256,7 @@ class StorageBackend(ABC):
         """
         program_language = self.get_program_language(task_id=task_id)
         group_id = self.get_task_group_id(task_id=task_id)
+        profile_id = self.get_profile_id(task_id=task_id)
 
         program_dicts = self.get_programs(task_ids=(task_id,))
         program_dicts.sort(key=lambda prog: prog["program_index"])
@@ -279,6 +288,7 @@ class StorageBackend(ABC):
             programs=programs,
             subtasks=subtasks,
             group_id=group_id,
+            profile_id=profile_id,
         )
 
     def get_arguments(
@@ -541,6 +551,11 @@ class DictStorage(StorageBackend):
                 if task_definition.group_id is not None
                 else None
             ),
+            "profile_id": (
+                str(task_definition.profile_id)
+                if task_definition.profile_id is not None
+                else None
+            ),
         }
         self._metadata["task_definitions"] = current_defs
 
@@ -584,6 +599,13 @@ class DictStorage(StorageBackend):
             KeyError: If `task_id` is not present.
         """
         return self._metadata["task_definitions"][task_id]["program_language"]
+
+    def get_profile_id(self, task_id: str) -> UUID | None:
+        profile_id = self._metadata["task_definitions"][task_id].get("profile_id")
+        if profile_id is None:
+            return
+
+        return UUID(profile_id)
 
     def get_task_creation_time(self, task_id: str) -> datetime.datetime:
         """Return the creation time for a stored task.
@@ -789,36 +811,41 @@ class SQLiteStorage(StorageBackend):
                 task_id TEXT PRIMARY KEY,
                 program_language TEXT NOT NULL,
                 creation_time TEXT NOT NULL,
-                group_id TEXT
+                group_id TEXT,
+                profile_id TEXT
             )
             """)
 
-        if stored_version == "0.1.0":
-            # One-way, additive upgrade: adds a nullable column and restamps
-            # the version. Older bloqade versions refuse the upgraded file.
-            logger.info(
-                f"Migrating bloqade storage schema in {db_file!r} from 0.1.0 "
-                f"to {_BloqadeSchemaVersion.version} (adds nullable "
-                "task_definitions.group_id; older bloqade versions will no "
-                "longer open this file)"
-            )
+        if stored_version in ("0.1.0", "0.2.0"):
             columns = {
                 row["name"]
                 for row in self.conn.execute("PRAGMA table_info(task_definitions)")
             }
-            if "group_id" not in columns:
-                self.conn.execute(
-                    "ALTER TABLE task_definitions ADD COLUMN group_id TEXT"
-                )
+            for name in ("group_id", "profile_id"):
+                if name not in columns:
+                    self.conn.execute(
+                        f"ALTER TABLE task_definitions ADD COLUMN {name} TEXT"
+                    )
+            logger.info(
+                f"Migrating bloqade storage schema in {db_file!r} from "
+                f"{stored_version} to {_BloqadeSchemaVersion.version}"
+            )
             self.conn.execute(
                 "UPDATE bloqade_schema SET version_number = ?",
                 (_BloqadeSchemaVersion.version,),
             )
             stored_version = _BloqadeSchemaVersion.version
 
-        if stored_version != _BloqadeSchemaVersion.version:
+        stored_semver = semver.Version.parse(stored_version)
+        bloqade_semver = _BloqadeSchemaVersion().semantic_version
+        if stored_semver.major == 0 and bloqade_semver.major == 0:
+            version_mismatch = stored_semver.minor > bloqade_semver.minor
+        else:
+            version_mismatch = stored_semver.major > bloqade_semver.major
+
+        if version_mismatch:
             raise ValueError(
-                f"Schema version mismatch: expected {_BloqadeSchemaVersion.version}, found {stored_version}"
+                f"Schema version mismatch: stored version is at {stored_semver}, but your bloqade-core installation expects {bloqade_semver}. Update bloqade-core."
             )
 
         self.conn.commit()
@@ -1025,7 +1052,7 @@ class SQLiteStorage(StorageBackend):
 
         creation_time_str = self._datetime_to_sql_txt(creation_time)
         self.conn.execute(
-            "INSERT OR IGNORE INTO task_definitions (task_id, program_language, creation_time, group_id) VALUES (?, ?, ?, ?)",
+            "INSERT OR IGNORE INTO task_definitions (task_id, program_language, creation_time, group_id, profile_id) VALUES (?, ?, ?, ?, ?)",
             (
                 task_id,
                 task_definition.program_language,
@@ -1033,6 +1060,11 @@ class SQLiteStorage(StorageBackend):
                 (
                     str(task_definition.group_id)
                     if task_definition.group_id is not None
+                    else None
+                ),
+                (
+                    str(task_definition.profile_id)
+                    if task_definition.profile_id is not None
                     else None
                 ),
             ),
@@ -1182,6 +1214,18 @@ class SQLiteStorage(StorageBackend):
         """Return the QLAM group stored for a task definition."""
         cursor = self.conn.execute(
             "SELECT group_id FROM task_definitions WHERE task_id = (?)",
+            (task_id,),
+        )
+        row = cursor.fetchone()
+        if row is None:
+            raise KeyError(task_id)
+        if row[0] is None:
+            return None
+        return UUID(row[0])
+
+    def get_profile_id(self, task_id: str) -> UUID | None:
+        cursor = self.conn.execute(
+            "SELECT profile_id FROM task_definitions WHERE task_id = (?)",
             (task_id,),
         )
         row = cursor.fetchone()
