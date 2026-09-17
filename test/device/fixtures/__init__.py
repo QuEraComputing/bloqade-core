@@ -15,8 +15,7 @@ module exists to prevent. Sample JSON dumps captured from the live API live
 under `examples/` for reference.
 
 The sanitized `examples/` dumps preserve the field presence and nesting of
-live captures. `test_wire_schema.py` validates their modeled portions against
-the installed qlam-core version and directly checks the unmodeled result shape.
+live captures for comparison with the remote builders.
 """
 
 from . import local, remote

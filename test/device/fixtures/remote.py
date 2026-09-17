@@ -16,8 +16,7 @@ testing the production normalization paths (`.upper()` in future.py) exercises
 realistic input. The bloqade local dict schema lives in `local.py`.
 
 These builders and the `examples/` dumps they mirror were verified against
-qlam-core v0.7.0 (the `~=0.7.0` pin in pyproject.toml; `test_wire_schema.py`
-asserts the installed version matches the pin).
+qlam-core v0.7.0 (the `~=0.7.0` pin in pyproject.toml).
 """
 
 from __future__ import annotations

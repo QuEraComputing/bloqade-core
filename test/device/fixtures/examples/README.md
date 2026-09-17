@@ -3,9 +3,8 @@
 Sanitized JSON dumps captured from the live qlam-core API, used as the
 reference wire shapes for the builders in `../remote.py`.
 
-`test_wire_schema.py` validates these directly against the installed
-qlam-core models (pinned to `qlam-core~=0.7.0` in `pyproject.toml`;
-a test asserts the installed version matches the pin).
+These captures reflect the `qlam-core~=0.7.0` wire shapes used by the remote
+fixture builders.
 
 | capture | status |
 |---|---|
