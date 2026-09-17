@@ -616,3 +616,11 @@ def test_sqlite_storage_accepts_newer_patch_schema_version(tmp_path):
 
     with SQLiteStorage(str(db_path)) as store:
         assert store.task_ids() == set()
+
+
+def test_sqlite_storage_get_profile_id_rejects_missing_task(tmp_path):
+    with (
+        SQLiteStorage(str(tmp_path / "missing.sqlite")) as storage,
+        pytest.raises(KeyError, match="missing-task"),
+    ):
+        storage.get_profile_id("missing-task")
