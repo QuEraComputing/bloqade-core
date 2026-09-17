@@ -14,9 +14,9 @@ remote pydantic types and local dicts in the same fixture is the drift this
 module exists to prevent. Sample JSON dumps captured from the live API live
 under `examples/` for reference.
 
-The `examples/` dumps are live captures. Those taken before a now-required
-field was added are marked as stale in `test_wire_schema.py` and should be
-re-captured.
+The sanitized `examples/` dumps preserve the field presence and nesting of
+live captures. `test_wire_schema.py` validates their modeled portions against
+the installed qlam-core version and directly checks the unmodeled result shape.
 """
 
 from . import local, remote

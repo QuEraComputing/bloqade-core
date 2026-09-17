@@ -142,6 +142,7 @@ def make_task(
     modified_by: UUID | None = None,
     scheduled_date: datetime | None = None,
     group: TaskGroupSummary | None = None,
+    profile_id: UUID | None = None,
     error_reasons: list[str] | None = None,
     **extras: Any,
 ) -> Task:
@@ -169,6 +170,7 @@ def make_task(
             if group is None
             else group
         ),
+        profile_id=profile_id,
         error_reasons=[] if error_reasons is None else error_reasons,
         **extras,
     )
@@ -237,7 +239,11 @@ def make_public_compilation(
     if modified_by is None:
         modified_by = created_by
     if group is None:
-        group = CompilationGroupSummary(id=UUID(id) if isinstance(id, str) else id)
+        group = CompilationGroupSummary(
+            id=DEFAULT_GROUP_ID,
+            name=DEFAULT_GROUP_NAME,
+            deactivated=False,
+        )
     return PublicCompilation(
         id=UUID(id) if isinstance(id, str) else id,
         input_definition_id=(
@@ -338,12 +344,20 @@ def make_result_element(
     task_id: str = DEFAULT_TASK_ID,
     status: str = "Completed",
     subtasks: list[dict] | None = None,
+    group: dict[str, Any] | None = None,
 ) -> dict:
     if subtasks is None:
         subtasks = [make_result_subtask()]
+    if group is None:
+        group = {
+            "id": str(DEFAULT_GROUP_ID),
+            "name": DEFAULT_GROUP_NAME,
+            "deactivated": False,
+        }
     return {
         "task_id": task_id,
         "status": status,
+        "group": group,
         "subtasks": subtasks,
     }
 

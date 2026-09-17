@@ -92,14 +92,6 @@ def test_models_carry_the_0_7_0_wire_shapes():
 # Live API captures must still parse under the current qlam-core models
 # --------------------------------------------------------------------------- #
 
-_STALE = pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "captured against qlam-core 0.6.x, before `group` became a required "
-        "field in 0.7.0 — re-capture this example from the live API"
-    ),
-)
-
 
 @pytest.mark.parametrize(
     ("filename", "model"),
@@ -112,31 +104,78 @@ _STALE = pytest.mark.xfail(
         pytest.param(
             "task_definition_response_completed.json",
             TaskDefinitionResponse,
-            marks=_STALE,
             id="definition_response_completed",
         ),
         pytest.param(
             "task_definition_response_failed.json",
             TaskDefinitionResponse,
-            marks=_STALE,
             id="definition_response_failed",
         ),
         pytest.param(
             "public_compilation_succeeded.json",
             PublicCompilation,
-            marks=_STALE,
             id="compilation_succeeded",
         ),
         pytest.param(
             "public_compilation_failed.json",
             PublicCompilation,
-            marks=_STALE,
             id="compilation_failed",
         ),
     ],
 )
 def test_live_api_examples_match_current_models(filename, model):
     model.model_validate_json((EXAMPLES / filename).read_text(), strict=True)
+
+
+def test_task_list_example_contains_current_task_shape():
+    page = json.loads((EXAMPLES / "task_list_page.json").read_text())
+
+    for task in page["items"]:
+        Task.model_validate_json(json.dumps(task), strict=True)
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["results_envelope_completed.json", "results_envelope_execution_completed.json"],
+)
+def test_result_examples_contain_current_group_shape(filename):
+    envelope = json.loads((EXAMPLES / filename).read_text())
+
+    for element in envelope["elements"]:
+        assert set(element["group"]) == {"id", "name", "deactivated"}
+        for subtask in element["subtasks"]:
+            assert "subtask_index" not in subtask
+            assert "subtask_id" not in subtask
+
+
+def test_remote_builders_match_recaptured_wire_fields():
+    task_capture = json.loads((EXAMPLES / "task_completed.json").read_text())
+    definition_capture = json.loads(
+        (EXAMPLES / "task_definition_response_completed.json").read_text()
+    )
+    compilation_capture = json.loads(
+        (EXAMPLES / "public_compilation_succeeded.json").read_text()
+    )
+    result_capture = json.loads(
+        (EXAMPLES / "results_envelope_completed.json").read_text()
+    )
+
+    task = remote.make_task().model_dump(mode="json", exclude_none=False)
+    definition = remote.make_task_definition_response().model_dump(
+        mode="json", exclude_none=False
+    )
+    compilation = remote.make_public_compilation().model_dump(
+        mode="json", exclude_none=False
+    )
+    result = remote.make_result_envelope()
+
+    assert set(task) == set(task_capture)
+    assert set(definition) == set(definition_capture)
+    assert set(compilation) == set(compilation_capture) - {"compiled_definition_id"}
+    assert set(result) == set(result_capture)
+    assert set(result["elements"][0]) == set(result_capture["elements"][0])
+    assert task["group"] == result["elements"][0]["group"]
+    assert compilation["group"] == task["group"]
 
 
 # --------------------------------------------------------------------------- #

@@ -15,7 +15,8 @@
         "id": "00000000-0000-0000-0000-000000000000",
         "name": "default-group",
         "deactivated": false
-      }
+      },
+      "profile_id": null
     },
     {
       "id": "4dc1529b-4440-45a6-a718-8f4cdcc8a2ed",
@@ -32,7 +33,8 @@
         "id": "00000000-0000-0000-0000-000000000000",
         "name": "default-group",
         "deactivated": false
-      }
+      },
+      "profile_id": null
     }
   ],
   "page_number": 0,

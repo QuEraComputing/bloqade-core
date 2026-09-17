@@ -3,6 +3,11 @@
     {
       "task_id": "799ea417-f001-41ae-b788-7cba56e8da27",
       "status": "Completed",
+      "group": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "name": "default-group",
+        "deactivated": false
+      },
       "subtasks": [
         {
           "status": "Completed",

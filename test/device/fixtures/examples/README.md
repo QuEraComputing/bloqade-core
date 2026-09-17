@@ -9,16 +9,16 @@ a test asserts the installed version matches the pin).
 
 | capture | status |
 |---|---|
-| `task_*.json` | current — captured 2026-08-19 against 0.7.0 (carry `group`) |
-| `task_definition_response_*.json` | **stale** — 0.6.x capture, missing the now-required `group`; marked `xfail(strict=True)` |
-| `public_compilation_*.json` | **stale** — same |
-| `results_envelope_*.json` | not schema-validated (qlam-core does not model the results envelope); still the reference for `remote.make_result_*` |
-| `task_list_page.json` | not schema-validated |
+| `task_*.json` | current — re-checked 2026-09-17 against 0.7.0 (`group`, nullable `profile_id`) |
+| `task_definition_response_*.json` | current — re-captured 2026-09-17 (`group` is required) |
+| `public_compilation_*.json` | current — re-captured 2026-09-17 (`group` is required) |
+| `results_envelope_*.json` | current — re-checked 2026-09-17; qlam-core does not model this envelope, so its shape is asserted directly |
+| `task_list_page.json` | current — re-checked 2026-09-17; each item is validated as a `Task` |
 
-To refresh a stale capture, re-fetch it from the live API and drop the
-`xfail` marker for that file — the strict marker will fail loudly if the
-capture is refreshed without removing it.
+Identifiers, timestamps, program contents, and measurements are sanitized;
+field presence and nesting reflect the live response.
 
-Notable shape these pin down: a results-envelope subtask carries **no**
-`subtask_index`/`subtask_id`; the index appears only on each `shot_results`
-entry (see `results_envelope_completed.json`).
+Notable shapes these pin down: each results-envelope element carries `group`,
+while a results-envelope subtask carries **no** `subtask_index`/`subtask_id`;
+the index appears only on each `shot_results` entry (see
+`results_envelope_completed.json`).
