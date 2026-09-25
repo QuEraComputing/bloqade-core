@@ -137,7 +137,7 @@ class TaskBuilder:
             return True
 
         for key, val in args.items():
-            # NOTE: already guaranteed to be of type float since Subtask is a pyrdantic.BaseModel
+            # NOTE: already guaranteed to be of type float since Subtask is a pydantic.BaseModel
             if not math.isfinite(val):
                 raise ValueError(f"Arguments need to be finite, got {key}={val}")
 
