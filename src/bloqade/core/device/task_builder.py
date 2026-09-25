@@ -1,6 +1,7 @@
 import base64
 import inspect
 import json
+import math
 from dataclasses import dataclass, field
 from typing import TypeVar
 
@@ -130,7 +131,16 @@ class TaskBuilder:
         if subtask.qlam_subtask.num_shots <= 0:
             raise ValueError("num_shots must be at least 1")
 
-        # TODO: what other validation to do?
+        args = subtask.qlam_subtask.arguments
+
+        if args is None:
+            return True
+
+        for key, val in args.items():
+            # NOTE: already guaranteed to be of type float since Subtask is a pydantic.BaseModel
+            if not math.isfinite(val):
+                raise ValueError(f"Arguments need to be finite, got {key}={val}")
+
         return True
 
     def add_subtask(
