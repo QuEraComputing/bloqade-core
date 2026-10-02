@@ -142,6 +142,18 @@ def test_nonpositive_shots_raise_subtask_validation_error(num_shots):
     assert builder._subtasks[0].kernel_name == "no_args"
 
 
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), float("-inf")])
+def test_nonfinite_arguments_raise_subtask_validation_error(value):
+    builder = TaskBuilder()
+
+    with pytest.raises(SubtaskValidationError, match="Arguments need to be finite"):
+        builder.add_subtask(with_args, 1, x=value, y=1.0)
+
+    assert builder == TaskBuilder()
+    assert builder.add_subtask(with_args, 1, x=0.5, y=1.0) == 0
+    assert builder._subtasks[0].qlam_subtask.arguments == {"x": 0.5, "y": 1.0}
+
+
 def test_kernel_names_are_unique_and_copy_preserves_the_counter(monkeypatch):
     builder = TaskBuilder()
     builder.add_subtask(no_args, 1)
