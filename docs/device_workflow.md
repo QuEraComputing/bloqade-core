@@ -1,34 +1,29 @@
 # Running kernels on a device
 
-`bloqade.core.device` provides the pieces needed to submit a kernel to a
-backend, wait for it to finish, and read out its shot results. The four
-concepts you interact with are `Device`, the task objects it builds, the
-`Future` returned on submission, and the `Result` view fetched from that
-future.
+`bloqade.core.device` provides the pieces needed to submit kernels to a
+backend, wait for them to finish, and read their shot results. The canonical
+workflow constructs workloads with `TaskBuilder` and submits them through
+`Device`.
 
 ```
-Device ──task()──▶ Task ──run_async()──▶ Future ──result()──▶ Result
+TaskBuilder ──Device.run_async()──▶ Future ──result()──▶ Result
 ```
 
 ## Concepts
 
-**Device.** A factory for tasks. It captures the qlam context name to
-authenticate against and the task class to use. The device does not submit
-anything itself; it builds task objects via [`Device.task`](reference/bloqade/core/device/device.md#bloqade.core.device.device.Device.task),
-[`Device.batch_task`](reference/bloqade/core/device/device.md#bloqade.core.device.device.Device.batch_task),
-and [`Device.parameter_scan`](reference/bloqade/core/device/device.md#bloqade.core.device.device.Device.parameter_scan).
+**TaskBuilder.** An append-only description of a workload. Each
+[`add_subtask`](reference/bloqade/core/device/task_builder.md#bloqade.core.device.task_builder.TaskBuilder.add_subtask)
+call records a kernel invocation, shot count, argument set, and optional user
+metadata. A builder can mix distinct kernels and can reuse one kernel across
+multiple subtasks. See [Building tasks with `TaskBuilder`](task_builder.md) for
+the complete construction API.
 
-**Task.** Bundles one or more kernels with per-subtask metadata, arguments,
-and shot counts. A task is what actually gets sent to the backend. Calling
-[`run_async(dry_run=True)`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC.run_async)
-validates the task and prints a summary without submitting;
-`run_async(dry_run=False)` serializes the kernels, submits them, and returns
-a `Future`. The concrete task shapes are
-[`SingleKernelTask`](reference/bloqade/core/device/task.md#bloqade.core.device.task.SingleKernelTask),
-[`KernelBatchTask`](reference/bloqade/core/device/task.md#bloqade.core.device.task.KernelBatchTask),
-and [`ParameterScanTask`](reference/bloqade/core/device/task.md#bloqade.core.device.task.ParameterScanTask),
-all built on the shared [`TaskABC`](reference/bloqade/core/device/task.md#bloqade.core.device.task.TaskABC)
-base class.
+**Device.** Owns the backend context and the language, serializer, dialects,
+and validation rules accepted by that backend. Calling
+[`Device.run_async`](reference/bloqade/core/device/device.md#bloqade.core.device.device.Device.run_async)
+finalizes a builder. With `dry_run=True`, it validates and prints a summary
+without authenticating or submitting. With `dry_run=False`, it submits the
+finalized definition and returns a `Future`.
 
 **Future.** A handle to a submitted task. It polls task status against the
 backend, fetches available shot results into storage, and constructs a
@@ -47,10 +42,9 @@ returns one boolean `np.ndarray` per subtask. The `where_subtasks`,
 `where_arguments`, `where_metadata`, and `where_shots` methods narrow the
 view without copying data.
 
-## The intended flow
+## The canonical `TaskBuilder` flow
 
-In the example below, you can see how the intended flow looks when submitting
-a simple squin kernel to a machine.
+The example below submits a simple Squin kernel using `TaskBuilder`.
 The `context_name` sets the context as specified in your `~/.qsh/config.json`.
 
 The kernel languages used on this page (`squin`, `qasm2`) ship with the
@@ -60,7 +54,7 @@ QASM2 specialization below) before running these snippets.
 
 ```python
 from bloqade import squin
-from bloqade.core.device import Device
+from bloqade.core.device import Device, TaskBuilder
 
 # 1. Define a kernel.
 @squin.kernel
@@ -69,35 +63,63 @@ def bell():
     squin.h(q[0])
     squin.cx(q[0], q[1])
 
-# 2. Build a task from the device.
-device = Device(context_name="my-context")
-task = device.task(
-    kernel=bell,
+# 2. Configure the device and build its workload.
+device = Device(
+    context_name="my-context",
+    program_language="squin",
+    language_version="0.1.0",
+)
+builder = TaskBuilder()
+builder.add_subtask(
+    bell,
     num_shots=2,
     metadata={"tag": "bell"},      # metadata is arbitrary user JSON
-    program_language="squin",
 )
 
 # 3a. Dry-run first to see what would be submitted.
-task.run_async(dry_run=True)
+device.run_async(builder, dry_run=True)
 
 # 3b. Submit. The first call triggers browser-based authentication.
-future = task.run_async(dry_run=False)
+future = device.run_async(builder, dry_run=False)
 
 # 4. Wait for completion and read shot bitstrings.
 result = future.result(timeout=80.0)
 print(result.shot_results())
 ```
 
-`device.task(...)` returns a
-[`SingleKernelTask`](reference/bloqade/core/device/task.md#bloqade.core.device.task.SingleKernelTask).
-Use `device.batch_task(...)` for a
-[`KernelBatchTask`](reference/bloqade/core/device/task.md#bloqade.core.device.task.KernelBatchTask)
-that runs multiple independent kernels in one task, or
-`device.parameter_scan(...)` for a
-[`ParameterScanTask`](reference/bloqade/core/device/task.md#bloqade.core.device.task.ParameterScanTask)
-that runs one kernel against several argument sets. The downstream steps
-(`run_async`, `future.result`) are identical.
+Each call to `builder.add_subtask(...)` appends another invocation. This single
+API covers one kernel, multiple kernels, parameter sweeps, and interleaved
+workloads. The builder remains editable after a dry run or submission.
+
+## Deprecated task-object workflow
+
+!!! warning "Deprecated"
+
+    `Device.task()`, `Device.batch_task()`, and `Device.parameter_scan()` are
+    deprecated. They remain available for backwards compatibility, but new
+    code should use `TaskBuilder` and `Device.run_async()`.
+
+The deprecated task factories and task-owned `run_async()` method work as
+follows:
+
+```python
+task = device.task(
+    kernel=bell,
+    num_shots=2,
+    metadata={"tag": "bell"},
+    program_language="squin",
+)
+
+task.run_async(dry_run=True)
+future = task.run_async(dry_run=False)
+result = future.result(timeout=80.0)
+```
+
+Existing code may continue to use
+[`Device.task`](reference/bloqade/core/device/device.md#bloqade.core.device.device.Device.task),
+[`Device.batch_task`](reference/bloqade/core/device/device.md#bloqade.core.device.device.Device.batch_task),
+and [`Device.parameter_scan`](reference/bloqade/core/device/device.md#bloqade.core.device.device.Device.parameter_scan).
+Do not use this workflow for new integrations.
 
 ## Groups
 
@@ -110,15 +132,14 @@ group submitted with a task is resolved in this order, mirroring the qsh CLI:
    configured submission mode.
 
 ```python
-device = Device(context_name="my-context")
 group = "qec-experiments"
 
-task = device.task(bell, group=group)
-batch = device.batch_task([bell, bell], group=group)
-scan = device.parameter_scan(bell, arguments=[{}, {}], group=group)
+builder = TaskBuilder()
+builder.add_subtask(bell, num_shots=100)
+future = device.run_async(builder, dry_run=False, group=group)
 ```
 
-Task-level and configured group values are resolved through QLAM before
+Submission-level and configured group values are resolved through QLAM before
 submission. The resolved group ID is recorded on task definitions, including
 definitions stored in `DictStorage` and `SQLiteStorage`. The group a task actually landed in is
 reported on every task response (`future.get_task().group`).
@@ -129,7 +150,7 @@ bloqade.
 
 ## Persisting results
 
-`run_async` accepts a `storage` argument that controls where the task
+`Device.run_async` accepts a `storage` argument that controls where the task
 definition and fetched shots are kept. If you omit it, a fresh
 [`DictStorage`](reference/bloqade/core/device/local_storage.md) is used —
 that is, the data lives in memory only and is lost when the process exits.
@@ -140,7 +161,7 @@ instead to keep everything on disk and resume work in a later session:
 from bloqade.core.device import SQLiteStorage
 
 storage = SQLiteStorage("results.sql")
-future = task.run_async(dry_run=False, storage=storage)
+future = device.run_async(builder, dry_run=False, storage=storage)
 result = future.result(timeout=80.0)
 
 storage.close()  # optional; GC will also close it
@@ -235,9 +256,14 @@ The [`ShotFilter`](reference/bloqade/core/device/local_storage.md) and
 in `local_storage.py` describe every field you can scope on directly if
 you need finer control than the `where_*` helpers provide.
 
-## Specializing a task
+## Specializing deprecated task objects
 
-The default task serializes kernels with `kirin`'s JSON encoder, which fits
+This section documents customization of the deprecated task-object workflow
+for maintainers of existing integrations. New code should configure
+serialization and validation on the device and submit a `TaskBuilder` through
+`Device.run_async()`.
+
+The default legacy task serializes kernels with `kirin`'s JSON encoder, which fits
 most use cases. When the backend expects a different program format, or when
 you want to attach extra fields to the submitted task, subclass the relevant
 task type and point the device at it.
@@ -259,7 +285,6 @@ from kirin.ir.method import Method
 from bloqade.core.device import Device, Future, Result
 from bloqade.core.device.task import SingleKernelTask
 
-@dataclass
 @dataclass
 class QASM2Task(SingleKernelTask):
     @property

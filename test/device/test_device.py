@@ -1,5 +1,6 @@
 from uuid import UUID
 
+import pytest
 from kirin.prelude import basic_no_opt
 
 from bloqade.core.device.device import Device
@@ -10,6 +11,8 @@ from bloqade.core.device.task import (
     SingleKernelTask,
 )
 
+pytestmark = pytest.mark.filterwarnings("ignore::DeprecationWarning")
+
 
 class CustomFuture(Future):
     pass
@@ -18,6 +21,44 @@ class CustomFuture(Future):
 class RecordingSerializer:
     def encode(self, encoded_module):
         return f"serialized:{encoded_module.version}"
+
+
+def test_legacy_task_factories_warn_at_the_call_site():
+    @basic_no_opt
+    def kernel():
+        return
+
+    device = Device(context_name="ctx")
+    calls = [
+        (
+            lambda: device.task(kernel),
+            (
+                "Device.task() is deprecated; use TaskBuilder.add_subtask() and "
+                "Device.run_async() instead."
+            ),
+        ),
+        (
+            lambda: device.batch_task([kernel]),
+            (
+                "Device.batch_task() is deprecated; use TaskBuilder.add_subtask() "
+                "and Device.run_async() instead."
+            ),
+        ),
+        (
+            lambda: device.parameter_scan(kernel, arguments=[{}]),
+            (
+                "Device.parameter_scan() is deprecated; use "
+                "TaskBuilder.add_subtask() and Device.run_async() instead."
+            ),
+        ),
+    ]
+
+    for call, expected_message in calls:
+        with pytest.warns(DeprecationWarning) as recorded:
+            call()
+
+        assert str(recorded[0].message) == expected_message
+        assert recorded[0].filename == __file__
 
 
 def test_device_task_builds_single_kernel_task_with_device_defaults():
