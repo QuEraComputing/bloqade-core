@@ -150,8 +150,7 @@ class Device(AuthMixin, Generic[FutureType]):
             FutureType | None: ``None`` for a dry run; otherwise the future
                 associated with the submitted QLAM task.
         """
-        finalize_ctx = self._finalize_context()
-        task_definition = task_builder._finalize(finalize_ctx)
+        task_definition = self.create_task_definition(task_builder)
         if dry_run:
             print(task_builder.summary())
             return
@@ -187,6 +186,32 @@ class Device(AuthMixin, Generic[FutureType]):
         """Resolve a configured or task-level group name to its UUID."""
         with GroupsClient(self.app_context) as groups_client:
             return self.call_with_auth_refresh(lambda: groups_client.resolve_id(group))
+
+    def create_task_definition(self, task_builder: TaskBuilder) -> TaskDefinition:
+        """Validate and serialize a builder without submitting it.
+
+        Uses this device's program language, language version, serializer,
+        supported dialects, and validation suite. No authentication, QLAM
+        requests, storage writes, or summary printing are performed. The
+        builder remains editable and can be finalized again.
+
+        Args:
+            task_builder (TaskBuilder): Builder containing the kernel
+                invocations to validate and serialize.
+
+        Returns:
+            TaskDefinition: Definition suitable for inspection, export, or
+                passing to ``submit_task_definition()``. Group and profile
+                selection are deferred to submission.
+
+        Raises:
+            TaskFinalizeError: If a kernel fails the device's dialect or
+                validation checks.
+            TypeError: If the serializer returns neither ``str`` nor ``bytes``.
+        """
+        finalize_ctx = self._finalize_context()
+        task_definition = task_builder._finalize(finalize_ctx)
+        return task_definition
 
     def submit_task_definition(
         self,
