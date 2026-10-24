@@ -91,6 +91,16 @@ Each call to `builder.add_subtask(...)` appends another invocation. This single
 API covers one kernel, multiple kernels, parameter sweeps, and interleaved
 workloads. The builder remains editable after a dry run or submission.
 
+The repository includes runnable `TaskBuilder` examples with a device-level
+QASM2 serializer. Each script requires `bloqade-circuit[qasm2]`; replace its
+`context_name` with one that matches your local QLAM config.
+
+- [`demo/qasm_single_task.py`](https://github.com/QuEraComputing/bloqade-core/blob/main/demo/qasm_single_task.py)
+  — submits a QASM2 kernel with the default in-memory storage.
+- [`demo/qasm_single_task_persistent.py`](https://github.com/QuEraComputing/bloqade-core/blob/main/demo/qasm_single_task_persistent.py)
+  — submits the same workload with `SQLiteStorage` so results survive across
+  sessions.
+
 ## Deprecated task-object workflow
 
 !!! warning "Deprecated"
@@ -348,16 +358,6 @@ polling logic, logical-result decoding, custom export hooks — without
 touching the task or device flow. `Future.result_cls` plays the same role
 for `Result`, so a specialized `Future` can surface a specialized result
 view through `future.result(...)`.
-
-Note that every snippet on this page uses a placeholder `context_name`;
-substitute one that matches your local qlam config. Runnable variants of
-this flow live in the repository:
-
-- [`demo/qasm_single_task.py`](https://github.com/QuEraComputing/bloqade-core/blob/main/demo/qasm_single_task.py)
-  — the QASM2 specialization with the default in-memory storage.
-- [`demo/qasm_single_task_persistent.py`](https://github.com/QuEraComputing/bloqade-core/blob/main/demo/qasm_single_task_persistent.py)
-  — the same QASM2 specialization, but pinned to a `SQLiteStorage` file so
-  results survive across sessions.
 
 ## Logging
 
