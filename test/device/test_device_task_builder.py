@@ -55,10 +55,12 @@ def test_device_dry_run_prints_without_submission_and_keeps_builder_editable(
 
     assert device.run_async(builder, dry_run=True) is None
     output = capsys.readouterr().out
-    assert (
-        "builder_kernel, Program 0, Args {'value': 1.25}, "
-        "Metadata {'kind': 'test'} -> 11 shots"
-    ) in output
+    assert output == builder.short_summary()
+    assert "0. builder_kernel" in output
+    assert "Subtasks: 1" in output
+    assert "DRY RUN -- NO PROGRAM WAS ACTUALLY SUBMITTED FOR EXECUTION" in output
+    assert "Args" not in output
+    assert "Metadata" not in output
     assert builder == before_dry_run
     assert builder.add_subtask(builder_kernel, 3, value=2.5) == 1
 

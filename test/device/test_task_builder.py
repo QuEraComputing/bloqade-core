@@ -179,7 +179,33 @@ def test_kernel_names_are_unique_and_copy_preserves_the_counter(monkeypatch):
     assert anonymous_builder._subtasks[0].kernel_name == "kernel"
 
 
-def test_summary_and_detailed_output_include_subtask_information():
+@pytest.mark.parametrize("empty", [False, True])
+def test_short_summary_is_compact_and_does_not_print_or_mutate(empty, capsys):
+    builder = TaskBuilder()
+    if not empty:
+        builder.add_subtask(with_args, 9, {"kind": "test"}, 1.0, 2.0)
+        builder.add_subtask(other, 1)
+        builder.add_subtask(with_args, 3, x=3.0, y=4.0)
+    before_summary = builder.copy()
+
+    summary = builder.short_summary()
+
+    assert "DRY RUN -- NO PROGRAM WAS ACTUALLY SUBMITTED FOR EXECUTION" in summary
+    assert f"Programs (kernels): {0 if empty else 2}" in summary
+    assert f"Subtasks: {0 if empty else 3}" in summary
+    assert "dry_run=False" in summary
+    assert "builder.print_detailed()" in summary
+    assert "Args" not in summary
+    assert "Metadata" not in summary
+    assert "func.func" not in summary
+    if not empty:
+        assert summary.count("with_args") == 1
+        assert summary.index("0. with_args") < summary.index("1. other")
+    assert capsys.readouterr().out == ""
+    assert builder == before_summary
+
+
+def test_summary_and_detailed_output_include_subtask_information(capsys):
     builder = TaskBuilder()
     builder.add_subtask(with_args, 9, {"kind": "test"}, 1.0, 2.0)
     builder.add_subtask(other, 1)
@@ -190,12 +216,23 @@ def test_summary_and_detailed_output_include_subtask_information():
         "Metadata {'kind': 'test'} -> 9 shots"
     ) in builder.summary()
     assert "Metadata None -> 1 shots" in builder.summary()
+    assert capsys.readouterr().out == ""
 
-    detailed = builder.print_detailed()
+    before_print = builder.copy()
+    assert builder.print_detailed() is None
+    detailed = capsys.readouterr().out
     assert "Programs:" in detailed
     assert "Subtasks:" in detailed
+    assert with_args.print_str() in detailed
+    assert other.print_str() in detailed
     assert "Args {'x': 1.0, 'y': 2.0}, Metadata {'kind': 'test'} -> 9 shots" in detailed
     assert "Metadata None -> 1 shots" in detailed
+    assert builder == before_print
+
+
+def test_print_detailed_handles_an_empty_builder(capsys):
+    assert TaskBuilder().print_detailed() is None
+    assert capsys.readouterr().out == "Task:\n\tPrograms:\n\tSubtasks:\n"
 
 
 def test_finalize_builds_plain_ordered_payload_without_mutating_builder():

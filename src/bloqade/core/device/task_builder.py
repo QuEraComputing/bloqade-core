@@ -75,11 +75,41 @@ class TaskBuilder:
     def __str__(self) -> str:
         return self.summary()
 
-    def summary(self) -> str:
-        """Return a human-readable summary printed on dry-run.
+    def short_summary(self) -> str:
+        """Return the compact preview printed by a device dry run.
+
+        Lists each distinct program once and the total number of subtasks,
+        without kernel IR, arguments, metadata, or per-subtask shot counts.
+        This method only formats text; it does not validate, serialize, or
+        submit the builder.
 
         Returns:
-            str: Summary describing what would be submitted.
+            str: Dry-run notice, program list, subtask count, and instructions
+                for submission or detailed inspection.
+        """
+        msg = "=" * 60 + "\n"
+        msg += "DRY RUN -- NO PROGRAM WAS ACTUALLY SUBMITTED FOR EXECUTION\n"
+        msg += f"Programs (kernels): {len(self._programs)}\n"
+        for program, program_idx in sorted(self._programs.items(), key=lambda x: x[1]):
+            msg += f"\t{program_idx}. {program.sym_name}\n"
+        msg += f"Subtasks: {len(self._subtasks)}\n"
+        msg += "Set dry_run=False to actually execute the subtasks.\n"
+        msg += (
+            "Call builder.print_detailed() to inspect kernel IR and subtask details.\n"
+        )
+        msg += "=" * 60 + "\n"
+        return msg
+
+    def summary(self) -> str:
+        """Return program names and details for every subtask.
+
+        Includes arguments, metadata, and shot counts, but not kernel IR.
+        This is also the text returned by ``str(builder)``. Use
+        ``short_summary()`` for the compact dry-run preview, or
+        ``print_detailed()`` to print kernel IR alongside subtask details.
+
+        Returns:
+            str: Program list and per-subtask details. Nothing is printed.
         """
         ret_str = ""
         ret_str += "Task:\n"
@@ -101,8 +131,14 @@ class TaskBuilder:
 
         return ret_str
 
-    def print_detailed(self) -> str:
-        """Return a detailed summary containing program IR and subtask arguments."""
+    def print_detailed(self) -> None:
+        """Print kernel IR and details for every subtask to standard output.
+
+        Prints each distinct kernel's IR once, followed by each subtask's
+        program index, arguments, metadata, and shot count. This method does
+        not validate or submit the builder and returns ``None``. Call it
+        directly, without wrapping it in ``print()``.
+        """
         ret_str = ""
         ret_str += "Task:\n"
         ret_str += "\tPrograms:\n"
@@ -120,7 +156,7 @@ class TaskBuilder:
                 user_metadata = None
             ret_str += f"\t\t{subtask_idx}. Subtask: {subtask.kernel_name}, Program {subtask.qlam_subtask.program_index}, Args {subtask.qlam_subtask.arguments}, Metadata {user_metadata} -> {subtask.qlam_subtask.num_shots} shots\n"
 
-        return ret_str
+        print(ret_str, end="")
 
     # TODO: do we assume that the kernel is a kirin kernel? We do for hashing
     def _validate_subtask(self, subtask: _Subtask) -> bool:
