@@ -346,6 +346,84 @@ def test_result_validate_rejects_incompatible_task_ids(second_subtask, message):
         result.validate()
 
 
+@pytest.mark.parametrize("matching_content", [True, False])
+@pytest.mark.parametrize(
+    "arguments",
+    [(None, None), (None, {}), ({"theta": 1.0}, {"theta": 1.0})],
+)
+def test_result_validate_compares_referenced_program_content(
+    storage, matching_content, arguments
+):
+    for index, task_id in enumerate(("task-1", "task-2")):
+        content = "kernel-a" if matching_content or index == 0 else "kernel-b"
+        storage.add_task_definition(
+            task_id,
+            remote.make_task_definition(
+                programs=[
+                    remote.make_program(content="unused"),
+                    remote.make_program(content=content),
+                ],
+                subtasks=[
+                    remote.make_subtask(
+                        program_index=1, arguments=arguments[index], num_shots=index + 1
+                    )
+                ],
+            ),
+            CREATION_TIME,
+        )
+    result = Result(storage=storage)
+
+    if matching_content:
+        assert result.subtasks()[0]["num_shots"] == 3
+    else:
+        with pytest.raises(
+            ValueError, match="program content for subtask_index=0"
+        ) as exc:
+            result.subtasks()
+        message = str(exc.value)
+        assert "task-1" in message and "task-2" in message
+        assert "program_index=1" in message
+        assert "verify=False" in message
+        assert result._is_valid is False
+        assert result.subtasks(verify=False)[0]["num_shots"] == 3
+
+
+@pytest.mark.parametrize(
+    "shot_filter",
+    [
+        ShotFilter(task_ids=("task-1", "task-2"), subtask_indices=(0,)),
+        ShotFilter(task_subtask_pairs=(("task-1", 0), ("task-2", 0))),
+        ShotFilter(task_ids=("task-1",)),
+    ],
+)
+def test_result_validate_only_compares_selected_subtask_programs(storage, shot_filter):
+    for task_id in ("task-1", "task-2", "task-3"):
+        storage.add_task_definition(
+            task_id,
+            remote.make_task_definition(
+                programs=[
+                    remote.make_program(
+                        content="shared" if task_id != "task-3" else "different"
+                    ),
+                    remote.make_program(content=f"different-{task_id}"),
+                ],
+                subtasks=[
+                    remote.make_subtask(program_index=0),
+                    remote.make_subtask(program_index=1),
+                ],
+            ),
+            CREATION_TIME,
+        )
+
+    Result(storage=storage, shot_filter=shot_filter).validate()
+
+    with pytest.raises(ValueError, match="program content for subtask_index=1"):
+        Result(
+            storage=storage,
+            shot_filter=ShotFilter(task_ids=("task-1", "task-2")),
+        ).validate()
+
+
 def test_result_validate_treats_missing_and_empty_arguments_as_compatible():
     storage = DictStorage()
     add_task(storage, "task-1", [remote.make_subtask(num_shots=1)])
