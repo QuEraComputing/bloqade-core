@@ -65,7 +65,22 @@ def _format_validation_errors(result: ValidationResult) -> list[str]:
 
 @dataclass
 class TaskBuilder:
-    """Incrementally assemble subtasks before finalizing them for a device."""
+    """Canonical API for constructing workloads submitted through a device.
+
+    Add kernel invocations with ``add_subtask()``, then pass the builder to
+    ``Device.run_async()``. The builder owns the ordered programs, arguments,
+    metadata, and shot counts; the device owns backend-specific validation and
+    serialization.
+
+    Builders are mutable and append-only. Adding the same ``ir.Method`` object
+    more than once creates multiple subtasks that reuse one program entry.
+    Finalization does not mutate the builder, so it may be inspected, copied,
+    extended, dry-run, or submitted again.
+
+    ``Device.task()``, ``Device.batch_task()``, and
+    ``Device.parameter_scan()`` are deprecated task-construction APIs. New code
+    should use ``TaskBuilder`` for single kernels, batches, and parameter scans.
+    """
 
     _programs: dict[ir.Method, int] = field(default_factory=dict)
     _subtasks: list[_Subtask] = field(default_factory=list)
@@ -151,6 +166,33 @@ class TaskBuilder:
         *args: CallArgs.args,
         **kernel_args: CallArgs.kwargs,
     ) -> int:
+        """Append one kernel invocation and return its subtask index.
+
+        Positional and keyword kernel arguments are bound against the kernel's
+        Python signature and stored by parameter name. ``metadata`` is
+        JSON-encoded as per-subtask user metadata. Reusing the same ``kernel``
+        object reuses its program index while retaining independent arguments,
+        metadata, and shot counts for this subtask.
+
+        Args:
+            kernel (ir.Method): Kernel to invoke.
+            num_shots (int): Number of shots for this invocation. Must be at
+                least one.
+            metadata (dict | None): Optional JSON-serializable user metadata
+                associated with this subtask. Defaults to None.
+            *args: Positional arguments for ``kernel``.
+            **kernel_args: Keyword arguments for ``kernel``.
+
+        Returns:
+            int: Zero-based index of the appended subtask.
+
+        Raises:
+            TypeError: If the kernel has no inspectable Python function or the
+                supplied arguments do not match its signature.
+            ValueError: If ``metadata`` is not a dictionary or ``None``.
+            SubtaskValidationError: If the shot count or bound kernel arguments
+                are invalid.
+        """
         # TODO: define equality? we COULD implement hashing on kirin kernels. as a first pass maybe it's OK to
         # just do exact object check
         if metadata is not None and not isinstance(metadata, dict):
@@ -366,7 +408,15 @@ class TaskBuilder:
         )
 
     def copy(self) -> "TaskBuilder":
-        """Return a shallow, independently editable copy of this builder."""
+        """Return a shallow, independently editable copy of this builder.
+
+        The mutable program, subtask, and name-index containers are copied, so
+        later calls to ``add_subtask()`` affect only the copy. Existing kernel
+        objects and subtask records are shared rather than deep-copied.
+
+        Returns:
+            TaskBuilder: Builder containing the same programs and subtasks.
+        """
         return TaskBuilder(
             _programs=dict(self._programs),
             _subtasks=list(self._subtasks),

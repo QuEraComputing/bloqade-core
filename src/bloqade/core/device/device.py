@@ -1,3 +1,4 @@
+import warnings
 from dataclasses import dataclass, field
 from typing import Any, Generic, Literal, cast, overload
 from uuid import UUID
@@ -26,11 +27,13 @@ from .task_builder import FinalizeContext, TaskBuilder
 # NOTE: 'Device' is like the 'master class' for communicating with the server.
 @dataclass(kw_only=True)
 class Device(AuthMixin, Generic[FutureType]):
-    """Create legacy tasks and finalize or submit task builders.
+    """Finalize and submit task builders to a backend.
 
-    Legacy factory methods return task objects that submit themselves. For the
-    builder API, the device supplies serialization and validation context and
-    owns dry-run and submission through :meth:`run_async`.
+    The canonical submission flow constructs a ``TaskBuilder``, then passes it
+    to ``run_async()``. The device supplies serialization and
+    validation context and owns dry-run and submission. The ``task()``,
+    ``batch_task()``, and ``parameter_scan()`` factories are deprecated and
+    remain available for backwards compatibility.
 
     Attributes:
         qpu_mode (str | None): Explicit qlam QPU mode used by tasks created
@@ -124,10 +127,11 @@ class Device(AuthMixin, Generic[FutureType]):
     ) -> FutureType | None:
         """Validate and finalize a builder, optionally submitting it.
 
-        A dry run performs the same kernel validation and serialization as a
-        submission, prints the builder summary, and returns ``None`` without
-        authenticating, writing storage, or calling QLAM. Finalization does not
-        mutate the builder, so it remains editable after a dry run.
+        This is the canonical task-submission entry point. A dry run performs
+        the same kernel validation and serialization as a submission, prints
+        the builder summary, and returns ``None`` without authenticating,
+        writing storage, or calling QLAM. Finalization does not mutate the
+        builder, so it remains editable after a dry run.
 
         Args:
             task_builder (TaskBuilder): Incrementally assembled task to
@@ -300,7 +304,12 @@ class Device(AuthMixin, Generic[FutureType]):
         group: str | None = None,
         profile_id: str | UUID | None = None,
     ) -> SingleKernelTask[FutureType]:
-        """Create a task for one kernel.
+        """Create a deprecated legacy task object for one kernel.
+
+        Deprecated:
+            Use ``TaskBuilder``, call ``add_subtask()`` once, and submit it with
+            ``run_async()``. This factory remains available for backwards
+            compatibility.
 
         Args:
             kernel (ir.Method): The kernel to execute.
@@ -327,6 +336,12 @@ class Device(AuthMixin, Generic[FutureType]):
         Returns:
             SingleKernelTask[FutureType]: A task object ready for dry-run or submission.
         """
+        warnings.warn(
+            "Device.task() is deprecated; use TaskBuilder.add_subtask() and "
+            "Device.run_async() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
         return self.single_kernel_task_cls(
             context_name=self.context_name,
@@ -355,7 +370,12 @@ class Device(AuthMixin, Generic[FutureType]):
         group: str | None = None,
         profile_id: str | UUID | None = None,
     ) -> KernelBatchTask[FutureType]:
-        """Create a task containing one subtask per kernel.
+        """Create a deprecated legacy task containing one subtask per kernel.
+
+        Deprecated:
+            Use ``TaskBuilder``, call ``add_subtask()`` for each kernel, and
+            submit it with ``run_async()``. This factory remains available
+            for backwards compatibility.
 
         Args:
             kernels (list[ir.Method]): Kernels to execute.
@@ -383,6 +403,12 @@ class Device(AuthMixin, Generic[FutureType]):
             KernelBatchTask[FutureType]: A batch task object ready for dry-run or
                 submission.
         """
+        warnings.warn(
+            "Device.batch_task() is deprecated; use TaskBuilder.add_subtask() and "
+            "Device.run_async() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
         return self.kernel_batch_task_cls(
             context_name=self.context_name,
@@ -411,7 +437,12 @@ class Device(AuthMixin, Generic[FutureType]):
         group: str | None = None,
         profile_id: str | UUID | None = None,
     ) -> ParameterScanTask[FutureType]:
-        """Create a parameter-scan task for one kernel.
+        """Create a deprecated legacy parameter-scan task for one kernel.
+
+        Deprecated:
+            Use ``TaskBuilder``, call ``add_subtask()`` once per argument set
+            with the same kernel, and submit it with ``run_async()``. This
+            factory remains available for backwards compatibility.
 
         Args:
             kernel (ir.Method): Kernel to execute for each parameter set.
@@ -438,6 +469,12 @@ class Device(AuthMixin, Generic[FutureType]):
             ParameterScanTask[FutureType]: A parameter-scan task object ready for
                 dry-run or submission.
         """
+        warnings.warn(
+            "Device.parameter_scan() is deprecated; use "
+            "TaskBuilder.add_subtask() and Device.run_async() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
         return self.parameter_scan_task_cls(
             context_name=self.context_name,
