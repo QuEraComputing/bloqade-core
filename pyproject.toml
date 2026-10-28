@@ -13,7 +13,7 @@ dependencies = [
     "qlam-core~=0.10.0",
     "semver>=3.1.0",
 ]
-requires-python = ">= 3.10"
+requires-python = ">= 3.11"
 
 [build-system]
 requires = ["hatchling"]
@@ -63,9 +63,9 @@ src_paths = ["src/bloqade"]
 line-length = 88
 
 [tool.ruff]
-# The package supports Python 3.10+, so do not suggest syntax introduced in
+# The package supports Python 3.11+, so do not suggest syntax introduced in
 # Python 3.12 (PEP 695 type parameters).
-target-version = "py310"
+target-version = "py311"
 exclude = [
     ".bzr",
     ".direnv",
