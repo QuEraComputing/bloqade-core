@@ -2,13 +2,17 @@ import importlib
 from uuid import UUID
 
 import pytest
+from kirin import ir
+from kirin.ir.exception import ValidationError
 from kirin.prelude import basic_no_opt
+from kirin.validation import ValidationSuite
+from kirin.validation.validationpass import ValidationResult
 from qlam_core.plugins.tasks.api.tasks_models import TaskStatus
 
 from bloqade.core.device.device import Device
 from bloqade.core.device.future import ApiFetchOptions
 from bloqade.core.device.local_storage import DictStorage
-from bloqade.core.device.task_builder import TaskBuilder
+from bloqade.core.device.task_builder import TaskBuilder, TaskFinalizeError
 
 from .fixtures import local, remote
 
@@ -34,6 +38,72 @@ def make_builder() -> TaskBuilder:
     builder = TaskBuilder()
     builder.add_subtask(builder_kernel, 11, {"kind": "test"}, value=1.25)
     return builder
+
+
+def test_create_task_definition_uses_device_settings_without_submission(
+    monkeypatch, capsys
+):
+    device = Device(
+        context_name="ctx",
+        program_language="custom",
+        language_version="3",
+        kernel_serializer=RecordingSerializer(),
+        dialect_group=builder_kernel.dialects,
+    )
+    builder = make_builder()
+    before_finalize = builder.copy()
+
+    def fail_if_called(*args, **kwargs):
+        raise AssertionError("creating a definition must not authenticate or submit")
+
+    monkeypatch.setattr(device, "authenticate", fail_if_called)
+    monkeypatch.setattr(device, "submit_task_definition", fail_if_called)
+
+    definition = device.create_task_definition(builder)
+
+    assert definition.program_language == "custom.v3"
+    assert definition.programs[0].content == "serialized:3"
+    assert definition.subtasks[0].program_index == 0
+    assert definition.subtasks[0].num_shots == 11
+    assert definition.subtasks[0].arguments == {"value": 1.25}
+    assert definition.subtasks[0].subtask_metadata is not None
+    assert definition.subtasks[0].subtask_metadata.user_metadata == '{"kind": "test"}'
+    assert definition.group_id is None
+    assert definition.profile_id is None
+    assert capsys.readouterr().out == ""
+    assert builder == before_finalize
+    assert device.create_task_definition(builder) == definition
+    builder.add_subtask(builder_kernel, 3, value=2.5)
+    assert len(device.create_task_definition(builder).subtasks) == 2
+    assert len(definition.subtasks) == 1
+
+
+@pytest.mark.parametrize("validation_kind", ["dialects", "suite"])
+def test_create_task_definition_rejects_invalid_kernels_before_serializing(
+    monkeypatch, validation_kind
+):
+    device = Device(context_name="ctx", kernel_serializer=RecordingSerializer())
+    if validation_kind == "dialects":
+        device.dialect_group = ir.DialectGroup([])
+        expected_error = "dialect.*not supported"
+    else:
+        device.validation_suite = ValidationSuite([])
+        monkeypatch.setattr(
+            device.validation_suite,
+            "validate",
+            lambda kernel: ValidationResult(
+                {"device-check": [ValidationError(kernel.code, "invalid operation")]}
+            ),
+        )
+        expected_error = "invalid operation"
+
+    def fail_if_serialized(*args, **kwargs):
+        raise AssertionError("invalid kernels must not be serialized")
+
+    monkeypatch.setattr(device.kernel_serializer, "encode", fail_if_serialized)
+
+    with pytest.raises(TaskFinalizeError, match=expected_error):
+        device.create_task_definition(make_builder())
 
 
 def test_device_dry_run_prints_without_submission_and_keeps_builder_editable(
