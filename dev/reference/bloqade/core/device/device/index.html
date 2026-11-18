@@ -70,9 +70,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.task.KernelBatchTask</code>)' href=../task/#bloqade.core.device.task.KernelBatchTask>KernelBatchTask</a>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code> </td> <td> <div class=doc-md-description> <p>KernelBatchTask[FutureType]: A batch task object ready for dry-run or submission.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>361</span>
-<span class=normal>362</span>
-<span class=normal>363</span>
+  </span> (<code>bloqade.core.device.task.KernelBatchTask</code>)' href=../task/#bloqade.core.device.task.KernelBatchTask>KernelBatchTask</a>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code> </td> <td> <div class=doc-md-description> <p>KernelBatchTask[FutureType]: A batch task object ready for dry-run or submission.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>363</span>
 <span class=normal>364</span>
 <span class=normal>365</span>
 <span class=normal>366</span>
@@ -135,7 +133,9 @@
 <span class=normal>423</span>
 <span class=normal>424</span>
 <span class=normal>425</span>
-<span class=normal>426</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>batch_task</span><span class=p>(</span>
+<span class=normal>426</span>
+<span class=normal>427</span>
+<span class=normal>428</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>batch_task</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>kernels</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>],</span>
     <span class=n>arguments</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>]</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
@@ -217,9 +217,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.task.ParameterScanTask</code>)' href=../task/#bloqade.core.device.task.ParameterScanTask>ParameterScanTask</a>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code> </td> <td> <div class=doc-md-description> <p>ParameterScanTask[FutureType]: A parameter-scan task object ready for dry-run or submission.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>428</span>
-<span class=normal>429</span>
-<span class=normal>430</span>
+  </span> (<code>bloqade.core.device.task.ParameterScanTask</code>)' href=../task/#bloqade.core.device.task.ParameterScanTask>ParameterScanTask</a>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code> </td> <td> <div class=doc-md-description> <p>ParameterScanTask[FutureType]: A parameter-scan task object ready for dry-run or submission.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>430</span>
 <span class=normal>431</span>
 <span class=normal>432</span>
 <span class=normal>433</span>
@@ -281,7 +279,9 @@
 <span class=normal>489</span>
 <span class=normal>490</span>
 <span class=normal>491</span>
-<span class=normal>492</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>parameter_scan</span><span class=p>(</span>
+<span class=normal>492</span>
+<span class=normal>493</span>
+<span class=normal>494</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>parameter_scan</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>kernel</span><span class=p>:</span> <span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>,</span>
     <span class=n>arguments</span><span class=p>:</span> <span class=nb>list</span><span class=p>[</span><span class=nb>dict</span><span class=p>],</span>
@@ -373,7 +373,7 @@
     <span class=n>storage</span><span class=p>:</span> <span class=n>StorageBackend</span> <span class=o>|</span> <span class=kc>None</span> <span class=o>=</span> <span class=kc>None</span><span class=p>,</span>
     <span class=n>fetch_options</span><span class=p>:</span> <span class=n>ApiFetchOptions</span> <span class=o>=</span> <span class=n>DEFAULT_FETCH_OPTIONS</span>
 <span class=p>)</span> <span class=o>-&gt;</span> <span class=n>FutureType</span> <span class=o>|</span> <span class=kc>None</span>
-</code></pre></div> <div class="doc doc-contents "> <p>Validate and finalize a builder, optionally submitting it.</p> <p>This is the canonical task-submission entry point. A dry run performs the same kernel validation and serialization as a submission, prints the builder summary, and returns <code>None</code> without authenticating, writing storage, or calling QLAM. Finalization does not mutate the builder, so it remains editable after a dry run.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_builder</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TaskBuilder</span>
+</code></pre></div> <div class="doc doc-contents "> <p>Validate and finalize a builder, optionally submitting it.</p> <p>This is the canonical task-submission entry point. A dry run performs the same kernel validation and serialization as a submission, prints <code>task_builder.short_summary()</code>, and returns <code>None</code> without authenticating, writing storage, or calling QLAM. Call <code>task_builder.print_detailed()</code> to inspect kernel IR and per-subtask details. Finalization does not mutate the builder, so it remains editable after a dry run.</p> <p><span class=doc-section-title>Parameters:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> <th>Default</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code>task_builder</code> </td> <td> <code><a class="autorefs autorefs-internal" title='<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TaskBuilder</span>
 
 
   <span class="doc doc-labels">
@@ -433,7 +433,9 @@
 <span class=normal>165</span>
 <span class=normal>166</span>
 <span class=normal>167</span>
-<span class=normal>168</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>run_async</span><span class=p>(</span>
+<span class=normal>168</span>
+<span class=normal>169</span>
+<span class=normal>170</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>run_async</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>task_builder</span><span class=p>:</span> <span class=n>TaskBuilder</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
@@ -447,9 +449,11 @@
 
 <span class=sd>    This is the canonical task-submission entry point. A dry run performs</span>
 <span class=sd>    the same kernel validation and serialization as a submission, prints</span>
-<span class=sd>    the builder summary, and returns ``None`` without authenticating,</span>
-<span class=sd>    writing storage, or calling QLAM. Finalization does not mutate the</span>
-<span class=sd>    builder, so it remains editable after a dry run.</span>
+<span class=sd>    ``task_builder.short_summary()``, and returns ``None`` without</span>
+<span class=sd>    authenticating, writing storage, or calling QLAM. Call</span>
+<span class=sd>    ``task_builder.print_detailed()`` to inspect kernel IR and per-subtask</span>
+<span class=sd>    details. Finalization does not mutate the builder, so it remains</span>
+<span class=sd>    editable after a dry run.</span>
 
 <span class=sd>    Args:</span>
 <span class=sd>        task_builder (TaskBuilder): Incrementally assembled task to</span>
@@ -475,7 +479,7 @@
     <span class=n>finalize_ctx</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_finalize_context</span><span class=p>()</span>
     <span class=n>task_definition</span> <span class=o>=</span> <span class=n>task_builder</span><span class=o>.</span><span class=n>_finalize</span><span class=p>(</span><span class=n>finalize_ctx</span><span class=p>)</span>
     <span class=k>if</span> <span class=n>dry_run</span><span class=p>:</span>
-        <span class=nb>print</span><span class=p>(</span><span class=n>task_builder</span><span class=o>.</span><span class=n>summary</span><span class=p>())</span>
+        <span class=nb>print</span><span class=p>(</span><span class=n>task_builder</span><span class=o>.</span><span class=n>short_summary</span><span class=p>(),</span> <span class=n>end</span><span class=o>=</span><span class=s2>""</span><span class=p>)</span>
         <span class=k>return</span>
     <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>submit_task_definition</span><span class=p>(</span>
         <span class=n>task_definition</span><span class=o>=</span><span class=n>task_definition</span><span class=p>,</span>
@@ -497,9 +501,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=../future/#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a></code> </td> <td> <div class=doc-md-description> <p>Pagination and polling options attached to the returned future. Defaults to <code>ApiFetchOptions()</code>.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>group</code></td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Optional QLAM group name or UUID string. Used when <code>task_definition.group_id</code> is None. Defaults to configured group precedence.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>profile_id</code></td> <td> <code><span title=str>str</span> | <span title=uuid.UUID>UUID</span> | None</code> </td> <td> <div class=doc-md-description> <p>Optional task profile UUID. Used only when <code>task_definition.profile_id</code> is None. Defaults to None.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>FutureType</code></td> <td> <code><span title=bloqade.core.device.future.FutureType>FutureType</span></code> </td> <td> <div class=doc-md-description> <p>Future attached to the created task ID.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If the backend response is missing a task ID.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>195</span>
-<span class=normal>196</span>
-<span class=normal>197</span>
+  </span> (<code>bloqade.core.device.future.ApiFetchOptions</code>)' href=../future/#bloqade.core.device.future.ApiFetchOptions>ApiFetchOptions</a></code> </td> <td> <div class=doc-md-description> <p>Pagination and polling options attached to the returned future. Defaults to <code>ApiFetchOptions()</code>.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>group</code></td> <td> <code><span title=str>str</span> | None</code> </td> <td> <div class=doc-md-description> <p>Optional QLAM group name or UUID string. Used when <code>task_definition.group_id</code> is None. Defaults to configured group precedence.</p> </div> </td> </tr> <tr class=doc-section-item> <td><code>profile_id</code></td> <td> <code><span title=str>str</span> | <span title=uuid.UUID>UUID</span> | None</code> </td> <td> <div class=doc-md-description> <p>Optional task profile UUID. Used only when <code>task_definition.profile_id</code> is None. Defaults to None.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Returns:</span></p> <table> <thead> <tr> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td><code>FutureType</code></td> <td> <code><span title=bloqade.core.device.future.FutureType>FutureType</span></code> </td> <td> <div class=doc-md-description> <p>Future attached to the created task ID.</p> </div> </td> </tr> </tbody> </table> <p><span class=doc-section-title>Raises:</span></p> <table> <thead> <tr> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr class=doc-section-item> <td> <code><span title=ValueError>ValueError</span></code> </td> <td> <div class=doc-md-description> <p>If the backend response is missing a task ID.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>197</span>
 <span class=normal>198</span>
 <span class=normal>199</span>
 <span class=normal>200</span>
@@ -586,7 +588,9 @@
 <span class=normal>281</span>
 <span class=normal>282</span>
 <span class=normal>283</span>
-<span class=normal>284</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>submit_task_definition</span><span class=p>(</span>
+<span class=normal>284</span>
+<span class=normal>285</span>
+<span class=normal>286</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>submit_task_definition</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=o>*</span><span class=p>,</span>
     <span class=n>task_definition</span><span class=p>:</span> <span class=n>TaskDefinition</span><span class=p>,</span>
@@ -692,9 +696,7 @@
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span> (<code>bloqade.core.device.task.SingleKernelTask</code>)' href=../task/#bloqade.core.device.task.SingleKernelTask>SingleKernelTask</a>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code> </td> <td> <div class=doc-md-description> <p>SingleKernelTask[FutureType]: A task object ready for dry-run or submission.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>295</span>
-<span class=normal>296</span>
-<span class=normal>297</span>
+  </span> (<code>bloqade.core.device.task.SingleKernelTask</code>)' href=../task/#bloqade.core.device.task.SingleKernelTask>SingleKernelTask</a>[<span title=bloqade.core.device.future.FutureType>FutureType</span>]</code> </td> <td> <div class=doc-md-description> <p>SingleKernelTask[FutureType]: A task object ready for dry-run or submission.</p> </div> </td> </tr> </tbody> </table> <details class=mkdocstrings-source> <summary>Source code in <code>src/bloqade/core/device/device.py</code></summary> <div class=highlight><table class=highlighttable><tr><td class=linenos><div class=linenodiv><pre><span></span><span class=normal>297</span>
 <span class=normal>298</span>
 <span class=normal>299</span>
 <span class=normal>300</span>
@@ -756,7 +758,9 @@
 <span class=normal>356</span>
 <span class=normal>357</span>
 <span class=normal>358</span>
-<span class=normal>359</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>task</span><span class=p>(</span>
+<span class=normal>359</span>
+<span class=normal>360</span>
+<span class=normal>361</span></pre></div></td><td class=code><div><pre><span></span><code><span class=k>def</span><span class=w> </span><span class=nf>task</span><span class=p>(</span>
     <span class=bp>self</span><span class=p>,</span>
     <span class=n>kernel</span><span class=p>:</span> <span class=n>ir</span><span class=o>.</span><span class=n>Method</span><span class=p>,</span>
     <span class=n>num_shots</span><span class=p>:</span> <span class=nb>int</span> <span class=o>=</span> <span class=mi>1</span><span class=p>,</span>
