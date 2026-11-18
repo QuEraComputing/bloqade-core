@@ -113,12 +113,16 @@ to the individual subtask. It can later be used to group or filter results.
 
 ## Inspect and copy a builder
 
-`summary()` shows program references, arguments, metadata, and shot counts.
-`print_detailed()` additionally includes each program's Kirin IR:
+`short_summary()` returns a compact preview listing each program and the total
+number of subtasks; this is what a dry run prints. `summary()` returns program
+references plus every subtask's arguments, metadata, and shot counts.
+`print_detailed()` prints that detail along with each program's Kirin IR
+(it prints directly and returns `None`):
 
 ```python
+print(builder.short_summary())
 print(builder.summary())
-print(builder.print_detailed())
+builder.print_detailed()
 ```
 
 Use `copy()` when several tasks share a common prefix:
@@ -137,7 +141,7 @@ deep-copied.
 
 ## Finalization belongs to the device
 
-When you pass in the `TaskBuilder` object to the device via `Device.run_async(TaskBuilder, dry_run=...)`, the kernels will be validated, serialized, and a QLAM `TaskDefinition` will be created. If `dry_run=True`, a summary of the programs and subtasks will be printed.
+When you pass in the `TaskBuilder` object to the device via `Device.run_async(TaskBuilder, dry_run=...)`, the kernels will be validated, serialized, and a QLAM `TaskDefinition` will be created. If `dry_run=True`, `builder.short_summary()` is printed: the program names and the number of subtasks.
 
 The builder remains editable after either finalization or a dry run.
 
