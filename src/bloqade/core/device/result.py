@@ -1,10 +1,9 @@
 import json
 from collections.abc import Callable, Hashable, Sequence
 from dataclasses import dataclass, field, replace
-from typing import TypeVar
+from typing import Self, TypeVar
 
 import numpy as np
-from typing_extensions import Self
 
 from .local_storage import ShotFilter, ShotResult, StorageBackend, StorageFilter
 

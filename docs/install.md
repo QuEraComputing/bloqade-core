@@ -1,7 +1,7 @@
 # Installation
 
 Bloqade-Core is available on the PyPI registry. Bloqade-Core supports Python
-3.10 or later. We recommend using Python 3.10+ for the best experience.
+3.11 or later. We recommend using Python 3.12+ for the best experience.
 
 We strongly recommend developing project using [`uv`](https://docs.astral.sh/uv/),
 which is the official development environment for Kirin and Bloqade-Core. You can
