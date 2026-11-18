@@ -129,9 +129,11 @@ class Device(AuthMixin, Generic[FutureType]):
 
         This is the canonical task-submission entry point. A dry run performs
         the same kernel validation and serialization as a submission, prints
-        the builder summary, and returns ``None`` without authenticating,
-        writing storage, or calling QLAM. Finalization does not mutate the
-        builder, so it remains editable after a dry run.
+        ``task_builder.short_summary()``, and returns ``None`` without
+        authenticating, writing storage, or calling QLAM. Call
+        ``task_builder.print_detailed()`` to inspect kernel IR and per-subtask
+        details. Finalization does not mutate the builder, so it remains
+        editable after a dry run.
 
         Args:
             task_builder (TaskBuilder): Incrementally assembled task to
@@ -157,7 +159,7 @@ class Device(AuthMixin, Generic[FutureType]):
         finalize_ctx = self._finalize_context()
         task_definition = task_builder._finalize(finalize_ctx)
         if dry_run:
-            print(task_builder.summary())
+            print(task_builder.short_summary(), end="")
             return
         return self.submit_task_definition(
             task_definition=task_definition,
