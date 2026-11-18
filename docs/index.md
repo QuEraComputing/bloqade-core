@@ -6,7 +6,12 @@ of tools for transforming and modeling geometric objects used for defining
 layouts and operation of neutral atom quantum computers.
 
 Currently the only supported geometry is a grid, but more geometries will be added in
-the future. For a full list of features, see the [API Reference](reference/bloqade/geometry/prelude/).
+the future. For a full list of features, see the [API Reference](reference/bloqade/geometry/prelude.md).
+
+To construct and submit kernel workloads, start with
+[Building tasks with `TaskBuilder`](task_builder.md), the canonical submission
+workflow. The older task-object factories are deprecated and remain available
+only for backwards compatibility.
 
 ## Installation
 

@@ -11,13 +11,15 @@ nav:
   - Home:
     - index.md
     - Installation: install.md
+    - Building tasks with TaskBuilder: task_builder.md
     - Running kernels on a device: device_workflow.md
     - Contributing: contrib.md
 
   - API Reference:
     - Device:
       - Device: reference/bloqade/core/device/device.md
-      - Task: reference/bloqade/core/device/task.md
+      - Task builder: reference/bloqade/core/device/task_builder.md
+      - Deprecated task APIs: reference/bloqade/core/device/task.md
       - Future: reference/bloqade/core/device/future.md
       - Result: reference/bloqade/core/device/result.md
       - Local storage: reference/bloqade/core/device/local_storage.md

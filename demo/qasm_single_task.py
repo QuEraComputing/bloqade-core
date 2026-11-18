@@ -7,34 +7,20 @@ qasm_single_task_persistent.py.
 NOTE: requires bloqade-circuit[qasm2] to be installed.
 """
 
-from dataclasses import dataclass, field
-
 from bloqade.qasm2.emit import QASM2
-from kirin.ir.method import Method
+from kirin.serialization.core.serializationmodule import SerializationModule
 
 from bloqade import qasm2
-from bloqade.core.device import Device, Future, Result, set_logging
-from bloqade.core.device.task import SingleKernelTask
+from bloqade.core.device import Device, TaskBuilder, set_logging
 
 set_logging()
 
 
-# NOTE: custom task that overrides serialization with QASM2 string emit
-@dataclass
-class QASM2Task(SingleKernelTask):
-    @property
-    def program_language_version(self) -> str:
-        return "2.0.0"
-
-    def serialize_kernel(self, kernel: Method) -> str:
+# Device serializers receive an encoded Kirin module. Decode it before QASM emit.
+class QASM2Serializer:
+    def encode(self, encoded_module: SerializationModule) -> str:
+        kernel = qasm2.main.decode(encoded_module)
         return QASM2().emit_str(kernel)
-
-
-@dataclass
-class QASM2Device(Device):
-    single_kernel_task_cls: type[SingleKernelTask[Future[Result]]] = field(
-        default=QASM2Task, init=False
-    )
 
 
 # 1. Create a simple kernel (simulator supports up to 10 qubits)
@@ -45,23 +31,30 @@ def bell():
     qasm2.cx(q[0], q[1])
 
 
-# 2. Create the task using the device -- optionally set some metadata
+# 2. Configure the device and build the task -- optionally set some metadata
 # NOTE: context_name and program_language are set to qasm for testing
-device = QASM2Device(context_name="gemini-qasm")
-task = device.task(
-    kernel=bell, num_shots=2, metadata={"tag": "bell"}, program_language="qasm"
+device = Device(
+    context_name="gemini-qasm",
+    program_language="qasm",
+    language_version="2.0.0",
+    kernel_serializer=QASM2Serializer(),
+)
+builder = TaskBuilder()
+builder.add_subtask(
+    bell, num_shots=2, metadata={"tag": "bell"}
 )  # metadata is completely customizable
 
 # 3a. Dry run
-task.run_async(dry_run=True)
+device.run_async(builder, dry_run=True)
 
 # 3b. Actually submit
 # NOTE: at this point, a browser window should open to authenticate
-future = task.run_async(dry_run=False)
+future = device.run_async(builder, dry_run=False)
 
 # NOTE: if you want to resume fetching results, just comment out the line above
 # and use the one below
-# future = Future.from_task_id(task_id=f"{task_id}", context_name="testbed")
+# from bloqade.core.device import Future
+# future = Future.from_task_id(task_id="<task-id>", context_name="gemini-qasm")
 
 # 4. Wait for completion and get all results
 result = future.result(timeout=80.0)
